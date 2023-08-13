@@ -14,6 +14,7 @@
 </div>
 
 <style lang="scss">
+	@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&display=swap');
 	@import url('https://fonts.cdnfonts.com/css/google-sans');
 	@import url('https://fonts.cdnfonts.com/css/arial');
 
@@ -28,15 +29,38 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		height: calc(100vh - calc(7vh + 5vh));
+		min-height: calc(100vh - 7vh);
+		height: auto;
 		box-sizing: border-box;
+		overflow-y: auto;
+		font-family: 'Arial CE', sans-serif;
 	}
 
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		height: 5vh;
+	// footer {
+	// 	display: flex;
+	// 	flex-direction: column;
+	// 	justify-content: center;
+	// 	align-items: center;
+	// 	height: 5vh;
+	// }
+
+	/* width */
+	::-webkit-scrollbar {
+		width: 0.8rem;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		background: #f1f1f1;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: #888;
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: #555;
 	}
 </style>

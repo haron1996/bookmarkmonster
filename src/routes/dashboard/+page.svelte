@@ -3,8 +3,18 @@
 	import profilePic from '$lib/images/profile-pic.jpg';
 	import bookmarkThumbnail from '$lib/images/bookmark-thumbnail.png';
 	import favicon from '$lib/images/faviconV2.png';
+	import { afterNavigate } from '$app/navigation';
+	import Overlay from '../Overlay.svelte';
+	import AddBookmark from '../AddBookmark.svelte';
+	import CreateTag from '../CreateTag.svelte';
+	import { showCreateTagComponent } from '../../utils/showCreateTagComponent';
+	import TagCreated from '../alerts/TagCreated.svelte';
+	import DuplicateTagAlert from '../alerts/DuplicateTagAlert.svelte';
+	import { showCreateBookmarkComponent } from '../../utils/showAddBookmarkComponent';
 
 	let sideBarWidthFromStore: number;
+
+	let session: any;
 
 	const tags: string[] = [
 		'illustration',
@@ -20,6 +30,18 @@
 		'animals',
 		'cities'
 	];
+
+	afterNavigate(() => {
+		loadUserSession();
+	});
+
+	const loadUserSession = () => {
+		const sessionString = localStorage.getItem('session') as string | null;
+
+		if (sessionString === null) return;
+
+		session = JSON.parse(sessionString);
+	};
 
 	const handleClickOnTag = (e: MouseEvent) => {
 		const clickedEl = e.target as HTMLElement;
@@ -39,24 +61,21 @@
 		clickedTag.classList.add('active-tag');
 	};
 
-	const handleClickOnCreateTag = (e: MouseEvent) => {
-		console.log('add tag');
-	};
-
 	$: sideBarWidthFromStore = $sideBarWidth;
 </script>
 
 <div class="app">
 	<div class="sidebar">
-		<div class="profile">
-			<div class="profile-pic">
-				<img src={profilePic} alt="profile" />
+		{#if session}
+			<div class="profile">
+				<img src={session.User.picture} alt="profile" />
+
+				<div class="name-and-email">
+					<h3>{session.User.name}</h3>
+					<span>{session.User.email}</span>
+				</div>
 			</div>
-			<div class="name-and-email">
-				<h3>Kwandap Kipchumba</h3>
-				<span>kwandapchumba@gmail.com</span>
-			</div>
-		</div>
+		{/if}
 		<div class="tags">
 			<div
 				class="tag active-tag"
@@ -75,7 +94,7 @@
 				</div>
 			{/each}
 		</div>
-		<div class="create-tag" on:click|stopPropagation={handleClickOnCreateTag} role="none">
+		<div class="create-tag" on:click|stopPropagation={showCreateTagComponent} role="none">
 			<div class="new-tag">
 				<i class="las la-plus" />
 				<span>create tag</span>
@@ -91,7 +110,7 @@
 				placeholder="Type to search a bookmark..."
 				autocomplete="off"
 			/>
-			<button>
+			<button on:click|stopPropagation={showCreateBookmarkComponent}>
 				<span>add bookmark</span>
 			</button>
 		</div>
@@ -116,6 +135,21 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- overlay for popups -->
+	<Overlay />
+
+	<!-- add bookmark component -->
+	<AddBookmark />
+
+	<!-- create tag component -->
+	<CreateTag />
+
+	<!-- bookmark saved alert -->
+	<TagCreated />
+
+	<!-- duplicate tag alert -->
+	<DuplicateTagAlert />
 </div>
 
 <style lang="scss">
@@ -128,7 +162,7 @@
 		display: flex;
 
 		.sidebar {
-			width: 20vw;
+			width: 27.5rem;
 			height: 100%;
 			background-color: rgb(255, 255, 255);
 			display: flex;
@@ -164,6 +198,7 @@
 						white-space: nowrap;
 						overflow: hidden;
 						text-overflow: ellipsis;
+						font-family: 'Arial CE', sans-serif;
 					}
 
 					span {
@@ -171,6 +206,7 @@
 						white-space: nowrap;
 						overflow: hidden;
 						text-overflow: ellipsis;
+						font-family: 'Arial CE', sans-serif;
 					}
 				}
 			}
@@ -198,6 +234,7 @@
 
 					span {
 						font-size: 1.3rem;
+						font-family: 'Arial CE', sans-serif;
 					}
 				}
 			}
@@ -224,6 +261,7 @@
 
 					span {
 						font-size: 1.3rem;
+						font-family: 'Arial CE', sans-serif;
 					}
 				}
 
@@ -234,7 +272,7 @@
 		}
 
 		.main {
-			width: calc(100vw - 20vw);
+			width: calc(100vw - 27.5rem);
 			height: 100%;
 			background-color: rgb(255, 255, 255);
 
@@ -254,6 +292,7 @@
 					outline: none;
 					border-radius: 0.3rem;
 					font-size: 1.3rem;
+					font-family: 'Arial CE', sans-serif;
 
 					&:hover {
 						border-color: rgb(47, 88, 205);
@@ -275,6 +314,7 @@
 						font-size: 1.3rem;
 						color: rgb(47, 88, 205);
 						text-transform: capitalize;
+						font-family: 'Arial CE', sans-serif;
 					}
 
 					&:hover {
@@ -340,6 +380,7 @@
 								line-height: 1.6;
 								color: rgb(24, 23, 40);
 								font-weight: 600;
+								font-family: 'Arial CE', sans-serif;
 
 								&:hover {
 									color: rgb(78, 79, 235);
@@ -369,6 +410,7 @@
 								overflow: hidden;
 								text-overflow: ellipsis;
 								max-width: 30%;
+								font-family: 'Arial CE', sans-serif;
 							}
 						}
 					}
