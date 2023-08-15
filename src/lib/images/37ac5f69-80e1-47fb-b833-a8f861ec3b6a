@@ -1,0 +1,13 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <style>
+		path {
+			fill: #3285F5;
+		}
+		@media ( prefers-color-scheme: dark ) {
+			path {
+				fill: #F7F9FC;
+			}
+		}
+	</style>
+  <defs></defs>
+  <path id="favicon" d="M15.67,16,8,11.81.33,16A45.14,45.14,0,0,1,3.45,7.47,45.74,45.74,0,0,1,8,0a46.4,46.4,0,0,1,4.52,7.47A45.94,45.94,0,0,1,15.67,16Z"/></svg>

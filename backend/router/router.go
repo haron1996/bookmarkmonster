@@ -40,11 +40,13 @@ func Router() *chi.Mux {
 		r.Use(mw.AuthenticateRequest())
 		r.Route("/tags", func(r chi.Router) {
 			r.Get("/", h.GetAllUserTags)
-			r.Get("/{tagName}", h.GetUserTags)
+			r.Get("/{tagName}", h.SearchUserTags)
 			r.Post("/create-tag", h.CreateTag)
 		})
 
 		r.Route("/bookmarks", func(r chi.Router) {
+			r.Get("/", h.GetUserBookmarks)
+			r.Get("/{tagid}", h.GetUserBookmarksByTagID)
 			r.Post("/add", h.AddBookmark)
 		})
 	})

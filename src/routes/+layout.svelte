@@ -13,7 +13,7 @@
 	<footer />
 </div>
 
-<style lang="scss">
+<style lang="scss" global>
 	@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&display=swap');
 	@import url('https://fonts.cdnfonts.com/css/google-sans');
 	@import url('https://fonts.cdnfonts.com/css/arial');
@@ -43,24 +43,4 @@
 	// 	align-items: center;
 	// 	height: 5vh;
 	// }
-
-	/* width */
-	::-webkit-scrollbar {
-		width: 0.8rem;
-	}
-
-	/* Track */
-	::-webkit-scrollbar-track {
-		background: #f1f1f1;
-	}
-
-	/* Handle */
-	::-webkit-scrollbar-thumb {
-		background: #888;
-	}
-
-	/* Handle on hover */
-	::-webkit-scrollbar-thumb:hover {
-		background: #555;
-	}
 </style>

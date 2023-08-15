@@ -1,6 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { bookmarks } from '../stores/stores';
+	import { bookmarks, currentTagID, processingBookmark, session, tags } from '../stores/stores';
 	import type { Bookmark } from '../types/bookmark';
 	import type { Tag } from '../types/tag';
 	import { hideAddBookmarkComponent } from '../utils/hideAddBookmarkComponent';
@@ -113,8 +114,6 @@
 				}
 			});
 		} else {
-			console.log('no matching tags existing! creating tag...');
-
 			const sessionString = localStorage.getItem('session') as string | null;
 
 			if (sessionString === null) return;
@@ -133,13 +132,21 @@
 				body: JSON.stringify({ name: tagName })
 			});
 
-			const result = await response.json();
+			if (response.status === 200) {
+				const result = await response.json();
 
-			const tag: Tag = result[0];
+				const tag: Tag = result[0];
 
-			selectedTags = [...selectedTags, tag];
+				selectedTags = [...selectedTags, tag];
 
-			tagName = '';
+				tags.update((tags) => [...tags, tag]);
+
+				tagName = '';
+			} else {
+				console.log('could not create tag', response.status);
+				tagName = '';
+				return;
+			}
 		}
 	};
 
@@ -204,8 +211,82 @@
 		// 	return;
 		// }
 
+		processingBookmark.set(true);
+
+		hideAddBookmarkComponent();
+
+		if (selectedTags.length === 0) {
+			if (tagName != '') {
+				if (matchingTags.length > 0) {
+					matchingTags.forEach((tag) => {
+						if (tag.name === tagName) {
+							if (
+								selectedTags
+									.map((t) => {
+										return t.name;
+									})
+									.includes(tagName)
+							) {
+								tagName = '';
+
+								processingBookmark.set(false);
+
+								return;
+							} else {
+								selectedTags = [...selectedTags, tag];
+
+								tagName = '';
+
+								processingBookmark.set(false);
+
+								return;
+							}
+						}
+					});
+				} else {
+					const response = await fetch(`http://localhost:5000/authenticated/tags/create-tag`, {
+						method: 'POST',
+						mode: 'cors',
+						cache: 'no-cache',
+						credentials: 'include',
+						headers: {
+							'Content-Type': 'application/json',
+							authorization: `Bearer${$session.AccessToken}`
+						},
+						redirect: 'follow',
+						referrerPolicy: 'no-referrer',
+						body: JSON.stringify({ name: tagName })
+					});
+
+					if (response.status === 200) {
+						const result = await response.json();
+
+						const tag: Tag = result[0];
+
+						selectedTags = [...selectedTags, tag];
+
+						tags.update((tags) => [...tags, tag]);
+
+						tagName = '';
+
+						processingBookmark.set(false);
+					} else {
+						console.log('could not create tag', response.status, response.statusText);
+						tagName = '';
+						processingBookmark.set(false);
+						return;
+					}
+				}
+			} else {
+				console.log('tag(s) required');
+				processingBookmark.set(false);
+				return;
+			}
+		}
+
 		if (selectedTags.length === 0) {
 			console.log('provide at least one tag');
+			processingBookmark.set(false);
 			return;
 		}
 
@@ -227,14 +308,62 @@
 			body: JSON.stringify({ bookmark: bookmark, tags: selectedTags })
 		});
 
-		const result = await response.json();
+		if (response.ok) {
+			const result = await response.json();
 
-		const createdBookmark: Bookmark = result[0];
+			const createdBookmark: Bookmark = result[0];
 
-		bookmarks.update((bookmarks) => [...bookmarks, createdBookmark]);
+			bookmarks.update((bookmarks) => [...bookmarks, createdBookmark]);
 
-		console.log($bookmarks);
+			if ($currentTagID === 'all-tags') {
+				const getUserBookmarks = async () => {
+					const response = await fetch(`http://localhost:5000/authenticated/bookmarks`, {
+						method: 'GET',
+						mode: 'cors',
+						cache: 'no-cache',
+						credentials: 'include',
+						headers: {
+							'Content-Type': 'application/json',
+							authorization: `Bearer${$session.AccessToken}`
+						},
+						redirect: 'follow',
+						referrerPolicy: 'no-referrer'
+					});
+
+					const result = await response.json();
+
+					bookmarks.set(result[0]);
+				};
+
+				await getUserBookmarks();
+			} else {
+				const allTagsDiv = document.getElementsByClassName('all-tags')[0] as HTMLDivElement | null;
+
+				if (allTagsDiv === null) return;
+
+				allTagsDiv.click();
+			}
+
+			//todo
+			// track created tag
+			// go to that tag and get related bookmarks
+		} else {
+			console.log(response.status, response.statusText);
+		}
+
+		bookmark = '';
+
+		selectedTags = [];
+
+		processingBookmark.set(false);
 	};
+
+	function handleKeyDownInTagInput(e: KeyboardEvent) {
+		if (e.code === 'Comma') {
+			e.preventDefault();
+			handleTagFormSubmit();
+		}
+	}
 </script>
 
 <div class="container" id="addBookmark">
@@ -243,7 +372,7 @@
 		<i class="las la-times" on:click|stopPropagation={hideAddBookmarkComponent} role="none" />
 	</div>
 	<div class="inputs-and-buttons">
-		<form class="bookmark-input" on:submit={handleAddBookmarkFormSubmit} id="urlForm">
+		<form class="bookmark-input" on:submit|preventDefault={() => {}} id="urlForm">
 			<input
 				id="myURL"
 				name="myURL"
@@ -270,7 +399,7 @@
 				</div>
 			</div>
 		</form>
-		<form class="tags-input" on:submit={handleTagFormSubmit}>
+		<form class="tags-input" on:submit|preventDefault={handleTagFormSubmit}>
 			<div class="selectedTags">
 				{#if selectedTags.length > 0}
 					{#each selectedTags as { name, id, user_id, added, updated, deleted }}
@@ -297,6 +426,7 @@
 				on:input|stopPropagation={getUserMatchingTags}
 				on:mousedown={getAllUserTagsIfInputEmpty}
 				on:blur={handleTagsInputBlurEvent}
+				on:keydown|stopPropagation={handleKeyDownInTagInput}
 			/>
 			<div class="matchingTags">
 				{#if matchingTags.length > 0}
@@ -335,6 +465,7 @@
 		right: 0.5%;
 		width: 40rem;
 		height: 98vh;
+		max-height: 98vh;
 		overflow-y: auto;
 		background-color: rgb(245, 245, 245);
 		display: flex;

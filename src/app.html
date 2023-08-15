@@ -24,5 +24,27 @@
 
 	html {
 		font-size: 62.5%;
+		scroll-behavior: smooth;
+
+		/* width */
+		::-webkit-scrollbar {
+			width: 0.8rem;
+			height: 0.5rem;
+			background-color: transparent;
+		}
+
+		/* Track */
+		::-webkit-scrollbar-track {
+			background-color: transparent;
+		}
+
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+			background-color: rgb(252, 174, 174);
+		}
+
+		::-webkit-scrollbar-track-piece {
+			background-color: transparent;
+		}
 	}
 </style>

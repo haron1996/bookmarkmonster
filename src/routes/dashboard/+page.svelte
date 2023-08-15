@@ -1,9 +1,13 @@
 <script lang="ts">
-	import { sideBarWidth } from '../../stores/stores';
-	import profilePic from '$lib/images/profile-pic.jpg';
-	import bookmarkThumbnail from '$lib/images/bookmark-thumbnail.png';
-	import favicon from '$lib/images/faviconV2.png';
-	import { afterNavigate } from '$app/navigation';
+	import {
+		bookmarks,
+		currentTagID,
+		processingBookmark,
+		session,
+		sideBarWidth,
+		tags
+	} from '../../stores/stores';
+	import { afterNavigate, goto } from '$app/navigation';
 	import Overlay from '../Overlay.svelte';
 	import AddBookmark from '../AddBookmark.svelte';
 	import CreateTag from '../CreateTag.svelte';
@@ -11,36 +15,123 @@
 	import TagCreated from '../alerts/TagCreated.svelte';
 	import DuplicateTagAlert from '../alerts/DuplicateTagAlert.svelte';
 	import { showCreateBookmarkComponent } from '../../utils/showAddBookmarkComponent';
+	import GlobePNG from '$lib/images/globe.png';
+	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 
 	let sideBarWidthFromStore: number;
 
-	let session: any;
-
-	const tags: string[] = [
-		'illustration',
-		'school',
-		'work',
-		'marketing',
-		'diet',
-		'health',
-		'maths',
-		'physics',
-		'history',
-		'climate',
-		'animals',
-		'cities'
-	];
-
-	afterNavigate(() => {
+	afterNavigate(async () => {
 		loadUserSession();
+
+		await getUserTags();
+
+		//await getUserBookmarks();
+
+		checkUrlTagAndFetchAppropriateBookmarks();
 	});
 
 	const loadUserSession = () => {
 		const sessionString = localStorage.getItem('session') as string | null;
 
-		if (sessionString === null) return;
+		if (sessionString === null) {
+			goto(`${$page.url.origin}`);
+			console.log('session is empty');
+			return;
+		}
 
-		session = JSON.parse(sessionString);
+		session.set(JSON.parse(sessionString));
+	};
+
+	function checkUrlTagAndFetchAppropriateBookmarks() {
+		const currentTagNameinURL: string | null = $page.url.searchParams.get('tag');
+		if (currentTagNameinURL === null) {
+			// not tag search param found
+			const newURL: URL = new URL($page.url.href);
+
+			newURL.searchParams.set('tag', 'all-tags');
+
+			window.history.pushState({}, '', newURL);
+
+			currentTagID.set('all-tags');
+
+			return;
+		}
+		const currentUserTags = document.querySelectorAll('.tag') as NodeListOf<HTMLDivElement> | null;
+		if (currentUserTags === null) return;
+		currentUserTags.forEach((t) => {
+			t.classList.remove('active-tag');
+			if (t.dataset.name) {
+				if (t.dataset.name === currentTagNameinURL) {
+					if (t.dataset.id === undefined) return;
+					t.classList.add('active-tag');
+					currentTagID.set(t.dataset.id);
+				}
+			}
+		});
+		console.log();
+	}
+
+	const getUserTags = async () => {
+		if (browser) {
+			const sessionString = localStorage.getItem('session') as string | null;
+
+			if (sessionString === null) {
+				goto(`${$page.url.origin}`);
+				console.log('session is empty');
+				return;
+			}
+
+			session.set(JSON.parse(sessionString));
+
+			const response = await fetch(`http://localhost:5000/authenticated/tags`, {
+				method: 'GET',
+				mode: 'cors',
+				cache: 'no-cache',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `Bearer${$session.AccessToken}`
+				},
+				redirect: 'follow',
+				referrerPolicy: 'no-referrer'
+			});
+
+			const result = await response.json();
+
+			tags.set(result[0]);
+		}
+	};
+
+	const getUserBookmarks = async () => {
+		if (browser) {
+			const sessionString = localStorage.getItem('session') as string | null;
+
+			if (sessionString === null) {
+				goto(`${$page.url.origin}`);
+				console.log('session is empty');
+				return;
+			}
+
+			session.set(JSON.parse(sessionString));
+
+			const response = await fetch(`http://localhost:5000/authenticated/bookmarks`, {
+				method: 'GET',
+				mode: 'cors',
+				cache: 'no-cache',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `Bearer${$session.AccessToken}`
+				},
+				redirect: 'follow',
+				referrerPolicy: 'no-referrer'
+			});
+
+			const result = await response.json();
+
+			bookmarks.set(result[0]);
+		}
 	};
 
 	const handleClickOnTag = (e: MouseEvent) => {
@@ -59,40 +150,139 @@
 		});
 
 		clickedTag.classList.add('active-tag');
+
+		if (clickedTag.closest('.all-tags') === null) {
+			if (clickedTag.dataset.id) {
+				currentTagID.set(clickedTag.dataset.id);
+			}
+
+			if (clickedTag.dataset.name === undefined) return;
+
+			$page.url.searchParams.delete('tag');
+
+			const newURL: URL = new URL($page.url.href);
+
+			newURL.searchParams.set('tag', clickedTag.dataset.name);
+
+			window.history.pushState({}, '', newURL);
+
+			//window.history.pushState({}, '', `${$page.url.href}/?tag=${clickedTag.dataset.name}`);
+		} else if (clickedTag.closest('.all-tags')) {
+			if (clickedTag.dataset.id) {
+				currentTagID.set(clickedTag.dataset.id);
+			}
+
+			if (clickedTag.dataset.name === undefined) return;
+
+			$page.url.searchParams.delete('tag');
+
+			const newURL: URL = new URL($page.url.href);
+
+			newURL.searchParams.set('tag', clickedTag.dataset.name);
+
+			window.history.pushState({}, '', newURL);
+		}
 	};
 
+	function openBookmark(e: MouseEvent) {
+		const el = e.currentTarget as HTMLElement;
+
+		const b = el.closest('.bookmark') as HTMLDivElement | null;
+
+		if (b === null) return;
+
+		const bookmarkLink: string | undefined = b.dataset.bookmark;
+
+		if (bookmarkLink === undefined) return;
+
+		window.open(bookmarkLink, '_blank');
+	}
+
+	async function getUserBookmarksByTagID() {
+		if (browser) {
+			if ($session.AccessToken) {
+				const response = await fetch(
+					`http://localhost:5000/authenticated/bookmarks/${$currentTagID}`,
+					{
+						method: 'GET',
+						mode: 'cors',
+						cache: 'no-cache',
+						credentials: 'include',
+						headers: {
+							'Content-Type': 'application/json',
+							authorization: `Bearer${$session.AccessToken}`
+						},
+						redirect: 'follow',
+						referrerPolicy: 'no-referrer'
+					}
+				);
+
+				if (response.ok) {
+					const result = await response.json();
+
+					if (result[0] === null) {
+						bookmarks.set([]);
+						return;
+					}
+
+					bookmarks.set(result[0]);
+				} else {
+					console.log(response.status, response.statusText);
+				}
+			}
+		}
+	}
+
 	$: sideBarWidthFromStore = $sideBarWidth;
+
+	$: $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
 </script>
+
+<svelte:head>
+	<title>BookmarkMonster | Dashboard</title>
+</svelte:head>
 
 <div class="app">
 	<div class="sidebar">
-		{#if session}
-			<div class="profile">
-				<img src={session.User.picture} alt="profile" />
-
+		<div class="profile">
+			{#if $session && $session.User && $session.User.picture && $session.User.name && $session.User.email}
+				<img src={$session.User.picture} alt="profile" />
 				<div class="name-and-email">
-					<h3>{session.User.name}</h3>
-					<span>{session.User.email}</span>
+					<h3>{$session.User.name}</h3>
+					<span>{$session.User.email}</span>
 				</div>
-			</div>
-		{/if}
-		<div class="tags">
-			<div
-				class="tag active-tag"
-				id="tag"
-				on:click|stopPropagation={handleClickOnTag}
-				on:keyup
-				role="none"
-			>
-				<i class="las la-hashtag" />
-				<span>all tags</span>
-			</div>
-			{#each tags as tag}
-				<div class="tag" id="tag" on:click|stopPropagation={handleClickOnTag} on:keyup role="none">
+			{/if}
+		</div>
+
+		<div class="tags" id="userTags">
+			{#if $tags.length > 0}
+				<div
+					class="tag active-tag all-tags"
+					id="tag"
+					on:click|stopPropagation={handleClickOnTag}
+					data-id="all-tags"
+					data-name="all-tags"
+					role="none"
+				>
 					<i class="las la-hashtag" />
-					<span>{tag}</span>
+					<span>all tags</span>
 				</div>
-			{/each}
+				{#each $tags as { id, name, user_id, added, updated, deleted }}
+					<div
+						class="tag"
+						id="tag"
+						on:click|stopPropagation={handleClickOnTag}
+						on:keyup
+						role="none"
+						data-id={id}
+						data-userid={user_id}
+						data-name={name}
+					>
+						<i class="las la-hashtag" />
+						<span>{name}</span>
+					</div>
+				{/each}
+			{/if}
 		</div>
 		<div class="create-tag" on:click|stopPropagation={showCreateTagComponent} role="none">
 			<div class="new-tag">
@@ -107,32 +297,58 @@
 				type="search"
 				name="search"
 				id="search"
-				placeholder="Type to search a bookmark..."
+				placeholder="Type to start searching (coming soon)"
 				autocomplete="off"
 			/>
-			<button on:click|stopPropagation={showCreateBookmarkComponent}>
-				<span>add bookmark</span>
+			<button
+				on:click|stopPropagation={showCreateBookmarkComponent}
+				class:disabled={$processingBookmark}
+			>
+				{#if $processingBookmark}
+					<div class="loader" />
+					<span>adding bookmark...</span>
+				{:else}
+					<span>add bookmark</span>
+				{/if}
 			</button>
 		</div>
 		<div class="bookmarks">
-			<div class="bookmark">
-				<div class="thumbnail">
-					<img src={bookmarkThumbnail} alt="bookmark thumbnail" />
-				</div>
-				<div class="title-favicon-and-domain">
-					<div class="title">
-						<a href="/">
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis ab quod molestiae
-							voluptas veniam asperiores ipsam, assumenda facere mollitia aut explicabo dignissimos
-							repudiandae magni beatae eius labore minus facilis quae.
-						</a>
+			{#each $bookmarks as { id, bookmark, title, thumbnail, notes, user_id, host, updated, favicon, added, deleted }}
+				<div
+					class="bookmark"
+					data-id={id}
+					data-bookmark={bookmark}
+					data-title={title}
+					data-thumbnail={thumbnail}
+					data-notes={notes}
+					data-userid={user_id}
+					data-favicon={favicon}
+					data-updated={updated}
+					data-added={added}
+					data-deleted={deleted}
+				>
+					<div class="thumbnail">
+						<img src={thumbnail} alt="bookmark thumbnail" loading="lazy" draggable="false" />
 					</div>
-					<div class="favicon-and-domain">
-						<img src={favicon} alt="bookmark favicon" />
-						<span>google.com</span>
+					<div class="title-favicon-and-domain">
+						<div class="title">
+							<a
+								href={bookmark}
+								target="_blank"
+								on:click|preventDefault|stopPropagation={openBookmark}>{title}</a
+							>
+						</div>
+						<div class="favicon-and-domain">
+							{#if favicon === ''}
+								<img src={GlobePNG} alt="bookmark favicon" />
+							{:else}
+								<img src={favicon} alt="bookmark favicon" />
+							{/if}
+							<span>{host}</span>
+						</div>
 					</div>
 				</div>
-			</div>
+			{/each}
 		</div>
 	</div>
 
@@ -293,9 +509,10 @@
 					border-radius: 0.3rem;
 					font-size: 1.3rem;
 					font-family: 'Arial CE', sans-serif;
+					pointer-events: none;
 
 					&:hover {
-						border-color: rgb(47, 88, 205);
+						border-color: rgb(255, 137, 137);
 					}
 				}
 
@@ -307,21 +524,51 @@
 					display: flex;
 					align-items: center;
 					cursor: pointer;
-					gap: 0.3em;
-					background-color: transparent;
+					gap: 1em;
+					background-color: rgb(0, 121, 255);
+					margin-right: 0em;
 
 					span {
 						font-size: 1.3rem;
-						color: rgb(47, 88, 205);
+						color: rgb(255, 255, 255);
 						text-transform: capitalize;
 						font-family: 'Arial CE', sans-serif;
 					}
 
 					&:hover {
-						background-color: rgb(47, 88, 205);
+						background-color: rgb(6, 143, 255);
+					}
+				}
 
-						span {
-							color: rgb(255, 255, 255);
+				.disabled {
+					pointer-events: none;
+				}
+
+				.loader {
+					border: 0.2rem solid #f3f3f3;
+					border-radius: 50%;
+					border-top: 0.2rem solid #3498db;
+					width: 1.8rem;
+					height: 1.8rem;
+					-webkit-animation: spin 2s linear infinite; /* Safari */
+					animation: spin 0.5s linear infinite;
+
+					/* Safari */
+					@-webkit-keyframes spin {
+						0% {
+							-webkit-transform: rotate(0deg);
+						}
+						100% {
+							-webkit-transform: rotate(360deg);
+						}
+					}
+
+					@keyframes spin {
+						0% {
+							transform: rotate(0deg);
+						}
+						100% {
+							transform: rotate(360deg);
 						}
 					}
 				}
@@ -330,6 +577,11 @@
 			.bookmarks {
 				height: calc(100vh - 7vh);
 				padding: 0.5em;
+				overflow-y: auto;
+				display: flex;
+				flex-wrap: wrap;
+				align-content: flex-start;
+				gap: 1em;
 
 				.bookmark {
 					height: 30rem;
@@ -353,7 +605,7 @@
 							height: 100%;
 							width: 100%;
 							max-inline-size: 100%;
-							object-fit: cover;
+							object-fit: fill;
 						}
 					}
 
@@ -394,11 +646,12 @@
 							height: 50%;
 							display: flex;
 							align-items: center;
-							justify-content: space-between;
+							gap: 1em;
+							//justify-content: space-between;
 
 							img {
-								height: 2.5rem;
-								width: 2.5rem;
+								height: 2rem;
+								width: 2rem;
 								object-fit: cover;
 								border-radius: 100vh;
 							}
@@ -409,14 +662,14 @@
 								white-space: nowrap;
 								overflow: hidden;
 								text-overflow: ellipsis;
-								max-width: 30%;
+								max-width: 90%;
 								font-family: 'Arial CE', sans-serif;
 							}
 						}
 					}
 
 					&:hover {
-						border-color: rgb(78, 79, 235);
+						box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 					}
 				}
 			}

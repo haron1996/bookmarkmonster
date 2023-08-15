@@ -1,16 +1,34 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
 	import logo from '$lib/images/logo.png';
 	import googleLogoSrc from '$lib/images/google-logo.png';
+
+	const getGoogleLoginUrl = async () => {
+		const response = await fetch('http://localhost:5000/auth/get-google-login-url', {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer'
+		});
+
+		const result = await response.json();
+
+		window.open(result, '_self');
+	};
 </script>
 
 <header>
-	<img src={logo} alt="logo" class="logo" />
+	<img src={logo} alt="logo" class="logo" draggable="false" />
 
 	<!-- <nav /> -->
 
-	<button class="google">
-		<img src={googleLogoSrc} alt="google logo" class="google-logo" />
+	<button class="google" on:click={getGoogleLoginUrl}>
+		<img src={googleLogoSrc} alt="google logo" class="google-logo" draggable="false" />
 		<span>Continue with Google</span>
 	</button>
 </header>
@@ -35,8 +53,8 @@
 			align-items: center;
 			justify-content: center;
 			min-width: max-content;
-			background-color: rgb(255, 255, 255);
-			border: 0.1rem solid rgb(0, 0, 0, 0.1);
+			background-color: rgb(0, 121, 255);
+			border: none;
 			cursor: pointer;
 			height: 3.5rem;
 			width: 15%;
@@ -54,15 +72,11 @@
 			span {
 				font-family: 'Arial CE', sans-serif;
 				font-size: 1.3rem;
-				color: #020202;
+				color: rgb(255, 255, 255);
 			}
 
 			&:hover {
 				background-color: rgb(6, 143, 255);
-
-				span {
-					color: rgb(255, 255, 255);
-				}
 			}
 		}
 	}

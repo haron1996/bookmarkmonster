@@ -1,6 +1,22 @@
-<script>
-	import heroSrc from '$lib/images/hero.png';
+<script lang="ts">
+	import { afterNavigate, goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import heroSrc from '$lib/images/dashboard.png';
 	import googleLogoSrc from '$lib/images/google-logo.png';
+	import { session } from '../stores/stores';
+
+	afterNavigate(() => {
+		loadUserSession();
+	});
+
+	const loadUserSession = () => {
+		const sessionString = localStorage.getItem('session') as string | null;
+
+		if (sessionString != null) {
+			goto(`${$page.url.origin}/dashboard`);
+			return;
+		}
+	};
 
 	const getGoogleLoginUrl = async () => {
 		const response = await fetch('http://localhost:5000/auth/get-google-login-url', {
@@ -22,19 +38,26 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<title>BookmarkMonster - Free online bookmark manager | Save websites you can visit later</title>
+	<meta name="description" content="Free online bookmark manager" />
 </svelte:head>
 
 <section>
-	<img src={heroSrc} alt="hero" class="hero" id="hero" on:contextmenu|preventDefault={() => {}} />
+	<img
+		src={heroSrc}
+		alt="hero"
+		class="hero"
+		id="hero"
+		on:contextmenu|preventDefault={() => {}}
+		draggable="false"
+	/>
 	<div class="offer">
 		<h1>Free online bookmark manager</h1>
-		<p>Save and tag web content and websites so you can refer to it later.</p>
+		<p>Save and tag websites so you can refer to it later.</p>
 	</div>
 	<div class="buttons">
 		<button class="google" on:click|stopPropagation={getGoogleLoginUrl}>
-			<img src={googleLogoSrc} alt="google logo" class="google-logo" />
+			<img src={googleLogoSrc} alt="google logo" class="google-logo" draggable="false" />
 			<span>Continue with Google</span>
 		</button>
 		<div class="or" />
@@ -45,7 +68,7 @@
 				id="email"
 				autocomplete="off"
 				spellcheck="false"
-				placeholder="Your email address"
+				placeholder="Continue with email (coming soon)"
 			/>
 			<button type="submit">
 				<span>Get magic code</span>
@@ -140,7 +163,7 @@
 					width: 30%;
 					min-width: max-content;
 					height: 100%;
-					background-color: rgb(6, 143, 255);
+					background-color: rgb(6, 143, 255, 0.5);
 					border: none;
 					border-radius: 0.3rem;
 					cursor: pointer;
@@ -172,7 +195,7 @@
 				align-items: center;
 				justify-content: center;
 				width: 60%;
-				background-color: white;
+				background-color: rgb(0, 121, 255);
 				border: 0.1rem solid rgb(0, 0, 0, 0.1);
 				cursor: pointer;
 				height: 4rem;
@@ -188,11 +211,11 @@
 				span {
 					font-family: 'Arial CE', sans-serif;
 					font-size: 1.3rem;
-					color: #020202;
+					color: rgb(255, 255, 255);
 				}
 
 				&:hover {
-					border-color: rgb(6, 143, 255);
+					background-color: rgb(6, 143, 255);
 				}
 			}
 		}

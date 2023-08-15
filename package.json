@@ -2,6 +2,7 @@
 	"name": "cbm",
 	"version": "0.0.1",
 	"scripts": {
+		"start": "node build",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",

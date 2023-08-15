@@ -15,7 +15,7 @@ import (
 	"github.com/kwandapchumba/bookmarkmonster/utils"
 )
 
-func (h *BaseHandler) GetUserTags(w http.ResponseWriter, r *http.Request) {
+func (h *BaseHandler) SearchUserTags(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	tagName := chi.URLParam(r, "tagName")
@@ -30,12 +30,12 @@ func (h *BaseHandler) GetUserTags(w http.ResponseWriter, r *http.Request) {
 
 	tagName = fmt.Sprintf("%s%s%s", percent, tagName, percent)
 
-	params := sqlc.GetTagsContainingTagNameAndUserIDParams{
+	params := sqlc.SearchTagsContainingTagNameAndUserIDParams{
 		Name:   tagName,
 		UserID: payload.UserID,
 	}
 
-	tags, err := q.GetTagsContainingTagNameAndUserID(ctx, params)
+	tags, err := q.SearchTagsContainingTagNameAndUserID(ctx, params)
 	if err != nil {
 		var pgErr *pgconn.PgError
 

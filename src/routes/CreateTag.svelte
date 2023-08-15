@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Tag } from '../types/tag';
-	import { tags } from '../stores/stores';
+	import { session, tags } from '../stores/stores';
 	import { hideOverlay } from '../utils/hideOverlay';
 	import { showTagCreatedAlert } from '../utils/showTagCreatedAlert';
 	import { hideTagCreatedAlert } from '../utils/hideTagCreatedAlert';
@@ -18,7 +18,7 @@
 
 		if (suggestedTags === null) return;
 
-		suggestedTags.style.display = 'flex';
+		suggestedTags.style.display = 'none';
 	};
 
 	const hideSuggestedTags = () => {
@@ -30,9 +30,25 @@
 	};
 
 	const createTag = async () => {
-		const sessionString = localStorage.getItem('session') as string | null;
+		if (tagName === '') {
+			console.log('tag name required');
+			return;
+		}
 
-		if (sessionString === null) return;
+		if (
+			$tags
+				.map((t) => {
+					return t.name;
+				})
+				.includes(tagName)
+		) {
+			console.log('tag already exists');
+			tagName = '';
+
+			hideOverlay();
+
+			return;
+		}
 
 		const response = await fetch(`http://localhost:5000/authenticated/tags/create-tag`, {
 			method: 'POST',
@@ -41,40 +57,41 @@
 			credentials: 'include',
 			headers: {
 				'Content-Type': 'application/json',
-				authorization: `Bearer${JSON.parse(sessionString).AccessToken}`
+				authorization: `Bearer${$session.AccessToken}`
 			},
 			redirect: 'follow',
 			referrerPolicy: 'no-referrer',
 			body: JSON.stringify({ name: tagName })
 		});
 
-		const result = await response.json();
+		if (response.status === 200) {
+			const result = await response.json();
 
-		if (result.message === 'duplicate tag') {
-			showDuplicateTagAlert();
+			if (result.message) {
+				console.log(result.message);
+				return;
+			}
 
-			setTimeout(() => {
-				hideDuplicateTagAlert();
-			}, 3000);
+			if (result.message === 'duplicate tag') {
+				showDuplicateTagAlert();
 
-			return;
+				setTimeout(() => {
+					hideDuplicateTagAlert();
+				}, 3000);
+
+				return;
+			}
+
+			tag = result[0];
+
+			tags.update((tags) => [tag, ...tags]);
+		} else {
+			console.log(response.status, response.statusText);
 		}
 
-		tag = result[0];
-
-		tags.update((tags) => [...tags, tag]);
-
-		showTagCreatedAlert();
-
-		setTimeout(() => {
-			hideTagCreatedAlert();
-		}, 3000);
-
-		// setTimeout(() => {
-		// 	hideOverlay();
-		// }, 3500);
-
 		tagName = '';
+
+		hideOverlay();
 	};
 </script>
 
@@ -136,8 +153,8 @@
 		left: 0.5%;
 		width: 27.5rem;
 		height: 98vh;
+		max-height: 98vh;
 		background-color: rgb(245, 245, 245);
-		padding: 1em;
 		display: flex;
 		flex-direction: column;
 		transform: translateX(0);
@@ -147,12 +164,14 @@
 		gap: 1em;
 		transform: translateX(-200%);
 		transition: all ease 300ms;
+		overflow-y: auto;
 
 		.top {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			min-height: 7vh;
+			padding: 1em;
 
 			h6 {
 				font-size: 1.5rem;
@@ -166,10 +185,11 @@
 		}
 
 		.input-and-submit-button {
-			min-height: calc(100vh - 7vh);
+			min-height: max-content;
 			display: flex;
 			flex-direction: column;
 			gap: 2em;
+			padding: 1em;
 
 			.input {
 				width: 100%;
@@ -187,7 +207,6 @@
 					border-radius: inherit;
 
 					&:placeholder-shown {
-						background-color: rgb(255, 234, 221);
 						font-family: 'Arial CE', sans-serif;
 					}
 
@@ -202,7 +221,8 @@
 					left: 0;
 					right: 0;
 					width: inherit;
-					height: 40rem;
+					min-height: max-content;
+					max-height: 70vh;
 					overflow-y: auto;
 					background-color: rgb(255, 255, 255);
 					box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;

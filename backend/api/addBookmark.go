@@ -3,6 +3,7 @@ package api
 import (
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -18,6 +19,7 @@ import (
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
 	"github.com/kwandapchumba/bookmarkmonster/mw"
 	token "github.com/kwandapchumba/bookmarkmonster/token"
@@ -118,62 +120,73 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 		pageTitle = strings.TrimSpace(title.MustText())
 	}
 
-	resp, err := http.Get(fmt.Sprintf("https://www.google.com/s2/favicons?domain=%v&sz=64", req.Bookmark))
+	var bookmarkFaviconURL string
+	var faviconLocationEmpty bool
+
+	resp, err := http.Get(fmt.Sprintf("https://www.google.com/s2/favicons?domain=%v&sz=64", urlToOpen))
 	if err != nil {
-		log.Println(err)
+		log.Printf("error getting favicon url: %v", err)
 		utils.Response(w, "something went wrong", http.StatusInternalServerError)
 		return
 	}
 
-	faviconLocation := resp.Header.Get("content-location")
-
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			MaxVersion: tls.VersionTLS12,
-		},
+	if resp.StatusCode != 200 {
+		log.Println("favicon location empty")
+		faviconLocationEmpty = true
+		bookmarkFaviconURL = ""
 	}
 
-	client := &http.Client{Transport: tr}
+	if !faviconLocationEmpty {
+		faviconLocation := resp.Header.Get("content-location")
 
-	request, err := http.NewRequest("GET", faviconLocation, nil)
-	if err != nil {
-		log.Println(err)
-		utils.Response(w, "something went wrong", http.StatusInternalServerError)
-		return
-	}
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{
+				MaxVersion: tls.VersionTLS12,
+			},
+		}
 
-	request.Header.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0")
-	request.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+		client := &http.Client{Transport: tr}
 
-	response, err := client.Do(request)
-	if err != nil {
-		log.Println(err)
-		utils.Response(w, "something went wrong", http.StatusInternalServerError)
-		return
-	}
+		request, err := http.NewRequest("GET", faviconLocation, nil)
+		if err != nil {
+			log.Printf("error getting favicon: %v", err)
+			utils.Response(w, "something went wrong", http.StatusInternalServerError)
+			return
+		}
 
-	defer response.Body.Close()
+		request.Header.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0")
+		request.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
 
-	if response.StatusCode != 200 {
-		log.Printf("status code: %v", response.StatusCode)
-		utils.Response(w, "something went wrong", http.StatusInternalServerError)
-		return
-	}
+		response, err := client.Do(request)
+		if err != nil {
+			log.Printf("could not send request: %v", err)
+			utils.Response(w, "something went wrong", http.StatusInternalServerError)
+			return
+		}
 
-	file, err := os.Create("bookmarkFavicon.png")
-	if err != nil {
-		log.Println(err)
-		utils.Response(w, "something went wrong", http.StatusInternalServerError)
-		return
-	}
+		defer response.Body.Close()
 
-	defer file.Close()
+		if response.StatusCode != 200 {
+			log.Printf("status code: %v", response.StatusCode)
+			utils.Response(w, "something went wrong", http.StatusInternalServerError)
+			return
+		}
 
-	_, err = io.Copy(file, response.Body)
-	if err != nil {
-		log.Println(err)
-		utils.Response(w, "something went wrong", http.StatusInternalServerError)
-		return
+		file, err := os.Create("bookmarkFavicon.png")
+		if err != nil {
+			log.Println(err)
+			utils.Response(w, "something went wrong", http.StatusInternalServerError)
+			return
+		}
+
+		defer file.Close()
+
+		_, err = io.Copy(file, response.Body)
+		if err != nil {
+			log.Println(err)
+			utils.Response(w, "something went wrong", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	config, err := utils.LoadConfig(".")
@@ -228,32 +241,34 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 
 	bookmarkScreenshotURL := fmt.Sprintf("https://%s.vultrobjects.com/bookmark-screenshots/%s", reg, *s3InputBookmarkScreenshotObject.Key)
 
-	// load bookmark favicon
-	bookmarkFaviconFile, err := os.Open("bookmarkFavicon.png")
-	if err != nil {
-		log.Println(err)
-		utils.Response(w, "something went wrong", http.StatusInternalServerError)
-		return
-	}
-
-	// upload bookmark screenshot
-	s3InputBookmarkFaviconObject := s3.PutObjectInput{
-		Bucket: aws.String("/bookmark-favicons"),
-		Key:    aws.String(uuid.New().String()),
-		Body:   bookmarkFaviconFile,
-		ACL:    aws.String("public-read"),
-	}
-
-	_, err = s3Client.PutObject(&s3InputBookmarkFaviconObject)
-	if err != nil {
+	if !faviconLocationEmpty {
+		// load bookmark favicon
+		bookmarkFaviconFile, err := os.Open("bookmarkFavicon.png")
 		if err != nil {
 			log.Println(err)
 			utils.Response(w, "something went wrong", http.StatusInternalServerError)
 			return
 		}
-	}
 
-	bookmarkFaviconURL := fmt.Sprintf("https://%s.vultrobjects.com/bookmark-favicons/%s", reg, *s3InputBookmarkFaviconObject.Key)
+		// upload bookmark favicon
+		s3InputBookmarkFaviconObject := s3.PutObjectInput{
+			Bucket: aws.String("/bookmark-favicons"),
+			Key:    aws.String(uuid.New().String()),
+			Body:   bookmarkFaviconFile,
+			ACL:    aws.String("public-read"),
+		}
+
+		_, err = s3Client.PutObject(&s3InputBookmarkFaviconObject)
+		if err != nil {
+			if err != nil {
+				log.Println(err)
+				utils.Response(w, "something went wrong", http.StatusInternalServerError)
+				return
+			}
+		}
+
+		bookmarkFaviconURL = fmt.Sprintf("https://%s.vultrobjects.com/bookmark-favicons/%s", reg, *s3InputBookmarkFaviconObject.Key)
+	}
 
 	const pLoad mw.ContextKey = "payload"
 
@@ -264,7 +279,7 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 	params := sqlc.AddBookmarkParams{
 		ID:        uuid.New().String(),
 		Title:     pageTitle,
-		Bookmark:  req.Bookmark,
+		Bookmark:  urlToOpen,
 		Host:      host,
 		Favicon:   bookmarkFaviconURL,
 		Thumbnail: bookmarkScreenshotURL,
@@ -276,6 +291,29 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		utils.Response(w, "something went wrong", http.StatusInternalServerError)
 		return
+	}
+
+	// tag bookmark
+	for _, tag := range req.Tags {
+		params := sqlc.BookmarkTagParams{
+			BookmarkID: bookmark.ID,
+			TagID:      tag.ID,
+		}
+
+		_, err := q.BookmarkTag(ctx, params)
+		if err != nil {
+			var pgErr *pgconn.PgError
+			switch {
+			case errors.As(err, &pgErr):
+				log.Printf("could not create bookmark: %v", pgErr)
+				utils.Response(w, "something went wrong", http.StatusInternalServerError)
+				return
+			default:
+				log.Printf("could not create bookmark: %v", err)
+				utils.Response(w, "something went wrong", http.StatusInternalServerError)
+				return
+			}
+		}
 	}
 
 	utils.JsonResponse(w, bookmark)

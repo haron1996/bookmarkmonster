@@ -14,8 +14,11 @@ type Querier interface {
 	CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (Userr, error)
 	GetAllUserTags(ctx context.Context, userID string) ([]Tag, error)
-	GetTagsContainingTagNameAndUserID(ctx context.Context, arg GetTagsContainingTagNameAndUserIDParams) ([]Tag, error)
+	GetBookmarkByID(ctx context.Context, id string) (Bookmark, error)
+	GetUserBookmarks(ctx context.Context, userID string) ([]Bookmark, error)
+	GetUserBookmarksByTagID(ctx context.Context, tagID string) ([]BookmarkTag, error)
 	GetUserByEmailAndID(ctx context.Context, arg GetUserByEmailAndIDParams) (Userr, error)
+	SearchTagsContainingTagNameAndUserID(ctx context.Context, arg SearchTagsContainingTagNameAndUserIDParams) ([]Tag, error)
 	UpdateUserLastLoginAndRefreshToken(ctx context.Context, arg UpdateUserLastLoginAndRefreshTokenParams) (Userr, error)
 }
 

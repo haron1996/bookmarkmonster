@@ -3,7 +3,7 @@ export const hideAddBookmarkComponent = () => {
 
 	if (addBookmarkComponent === null) return;
 
-	addBookmarkComponent.style.transform = 'translateX(100%)';
+	addBookmarkComponent.style.transform = 'translateX(200%)';
 
 	const overlay = document.getElementById('overlay') as HTMLDivElement | null;
 
