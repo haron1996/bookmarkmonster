@@ -1,15 +1,23 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { bookmarks } from '../stores/stores';
+	import type { Bookmark } from '../types/bookmark';
+	import type { Tag } from '../types/tag';
 	import { hideAddBookmarkComponent } from '../utils/hideAddBookmarkComponent';
 	import { hideOverlay } from '../utils/hideOverlay';
 
 	let bookmark: string = '';
+	let tagName: string = '';
+	let tag: Tag = {};
+	let matchingTags: Tag[] = [];
+	let selectedTags: Tag[] = [];
 
 	const showDefaultURLs = () => {
 		const defaultURLS = document.getElementById('defaultURLs') as HTMLDivElement | null;
 
 		if (defaultURLS === null) return;
 
-		defaultURLS.style.display = 'flex';
+		defaultURLS.style.display = 'none';
 	};
 
 	const hideDefaultURLs = () => {
@@ -19,6 +27,214 @@
 
 		defaultURLS.style.display = 'none';
 	};
+
+	const getAllUserTagsIfInputEmpty = async () => {
+		if (tagName != '') return;
+
+		const sessionString = localStorage.getItem('session') as string | null;
+
+		if (sessionString === null) return;
+
+		const response = await fetch(`http://localhost:5000/authenticated/tags`, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${JSON.parse(sessionString).AccessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer'
+		});
+
+		const result = await response.json();
+
+		matchingTags = result[0];
+	};
+
+	const getUserMatchingTags = async () => {
+		if (tagName === '') {
+			matchingTags = [];
+			return;
+		}
+
+		const sessionString = localStorage.getItem('session') as string | null;
+
+		if (sessionString === null) return;
+
+		const response = await fetch(`http://localhost:5000/authenticated/tags/${tagName}`, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${JSON.parse(sessionString).AccessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer'
+		});
+
+		const result = await response.json();
+
+		matchingTags = result[0];
+	};
+
+	const handleTagsInputBlurEvent = () => {
+		if (tagName === '') {
+			matchingTags = [];
+		}
+	};
+
+	const handleTagFormSubmit = async () => {
+		if (tagName === '') return;
+
+		if (matchingTags.length > 0) {
+			matchingTags.forEach((tag) => {
+				if (tag.name === tagName) {
+					if (
+						selectedTags
+							.map((t) => {
+								return t.name;
+							})
+							.includes(tagName)
+					) {
+						tagName = '';
+
+						return;
+					} else {
+						selectedTags = [...selectedTags, tag];
+
+						tagName = '';
+
+						return;
+					}
+				}
+			});
+		} else {
+			console.log('no matching tags existing! creating tag...');
+
+			const sessionString = localStorage.getItem('session') as string | null;
+
+			if (sessionString === null) return;
+
+			const response = await fetch(`http://localhost:5000/authenticated/tags/create-tag`, {
+				method: 'POST',
+				mode: 'cors',
+				cache: 'no-cache',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `Bearer${JSON.parse(sessionString).AccessToken}`
+				},
+				redirect: 'follow',
+				referrerPolicy: 'no-referrer',
+				body: JSON.stringify({ name: tagName })
+			});
+
+			const result = await response.json();
+
+			const tag: Tag = result[0];
+
+			selectedTags = [...selectedTags, tag];
+
+			tagName = '';
+		}
+	};
+
+	const handleClickOnMatchingTag = (e: MouseEvent) => {
+		const clickTarget = e.currentTarget as HTMLElement;
+
+		const clickedMatchingTag = clickTarget.closest('.tag') as HTMLDivElement | null;
+
+		if (clickedMatchingTag === null) return;
+
+		matchingTags.forEach((tag) => {
+			if (tag.id === clickedMatchingTag.dataset.id) {
+				if (
+					selectedTags
+						.map((t) => {
+							return t.name;
+						})
+						.includes(tag.name)
+				) {
+					tagName = '';
+
+					return;
+				} else {
+					selectedTags = [...selectedTags, tag];
+
+					tagName = '';
+				}
+			}
+		});
+	};
+
+	const removeTagFromSelectedTags = (e: MouseEvent) => {
+		const clickTarget = e.currentTarget as HTMLElement;
+
+		const clickedSelectedTag = clickTarget.closest('.tag') as HTMLDivElement | null;
+
+		if (clickedSelectedTag === null) return;
+
+		selectedTags.forEach((tag) => {
+			if (tag.id === clickedSelectedTag.dataset.id) {
+				selectedTags = selectedTags.filter((tag) => tag.id != clickedSelectedTag.dataset.id);
+			}
+		});
+	};
+
+	function isValidURL(url: string) {
+		try {
+			const urlFromString = new URL(url);
+			if (urlFromString.protocol === 'https:') {
+				return true;
+			} else if (urlFromString.protocol === 'http:') {
+				return false;
+			}
+		} catch (error) {
+			return false;
+		}
+	}
+
+	const handleAddBookmarkFormSubmit = async () => {
+		// if (!isValidURL(bookmark)) {
+		// 	console.log('enter a valid url');
+		// 	return;
+		// }
+
+		if (selectedTags.length === 0) {
+			console.log('provide at least one tag');
+			return;
+		}
+
+		const sessionString = localStorage.getItem('session') as string | null;
+
+		if (sessionString === null) return;
+
+		const response = await fetch(`http://localhost:5000/authenticated/bookmarks/add`, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${JSON.parse(sessionString).AccessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({ bookmark: bookmark, tags: selectedTags })
+		});
+
+		const result = await response.json();
+
+		const createdBookmark: Bookmark = result[0];
+
+		bookmarks.update((bookmarks) => [...bookmarks, createdBookmark]);
+
+		console.log($bookmarks);
+	};
 </script>
 
 <div class="container" id="addBookmark">
@@ -26,13 +242,13 @@
 		<h6>Add Bookmark</h6>
 		<i class="las la-times" on:click|stopPropagation={hideAddBookmarkComponent} role="none" />
 	</div>
-	<div class="input-and-buttons">
-		<div class="input">
+	<div class="inputs-and-buttons">
+		<form class="bookmark-input" on:submit={handleAddBookmarkFormSubmit} id="urlForm">
 			<input
 				id="myURL"
 				name="myURL"
-				type="url"
-				placeholder="https://example.com"
+				type="text"
+				placeholder="Enter bookmark eg https://example.com"
 				pattern="https://.*"
 				autocomplete="off"
 				spellcheck="false"
@@ -53,12 +269,58 @@
 					<span class="label">Stack Overflow</span>
 				</div>
 			</div>
-		</div>
+		</form>
+		<form class="tags-input" on:submit={handleTagFormSubmit}>
+			<div class="selectedTags">
+				{#if selectedTags.length > 0}
+					{#each selectedTags as { name, id, user_id, added, updated, deleted }}
+						<div class="tag" data-name={name} data-id={id} data-userid={user_id}>
+							<i class="las la-hashtag" />
+							<span>{name}</span>
+							<i
+								class="las la-times"
+								on:click|stopPropagation={removeTagFromSelectedTags}
+								role="none"
+							/>
+						</div>
+					{/each}
+				{/if}
+			</div>
+			<input
+				type="text"
+				name="tags"
+				id="tags"
+				placeholder="Select existing or create tag"
+				autocomplete="off"
+				spellcheck="false"
+				bind:value={tagName}
+				on:input|stopPropagation={getUserMatchingTags}
+				on:mousedown={getAllUserTagsIfInputEmpty}
+				on:blur={handleTagsInputBlurEvent}
+			/>
+			<div class="matchingTags">
+				{#if matchingTags.length > 0}
+					{#each matchingTags as { name, id, user_id, added, deleted, updated }}
+						<div
+							class="tag"
+							data-id={id}
+							data-name={name}
+							data-userid={user_id}
+							on:mousedown={handleClickOnMatchingTag}
+							role="none"
+						>
+							<i class="las la-hashtag" />
+							<span>{name}</span>
+						</div>
+					{/each}
+				{/if}
+			</div>
+		</form>
 		<div class="buttons">
 			<button class="cancel" on:click|stopPropagation={hideAddBookmarkComponent}>
 				<span>Cancel</span>
 			</button>
-			<button type="submit">
+			<button type="submit" on:click|stopPropagation={handleAddBookmarkFormSubmit}>
 				<span>Save</span>
 			</button>
 		</div>
@@ -71,9 +333,9 @@
 		position: fixed;
 		top: 1%;
 		right: 0.5%;
-		min-width: 40rem;
-		width: auto;
+		width: 40rem;
 		height: 98vh;
+		overflow-y: auto;
 		background-color: rgb(245, 245, 245);
 		display: flex;
 		flex-direction: column;
@@ -101,16 +363,16 @@
 			}
 		}
 
-		.input-and-buttons {
+		.inputs-and-buttons {
 			display: flex;
 			flex-direction: column;
 			gap: 2em;
 
-			.input {
+			.bookmark-input {
 				border-radius: 0.3rem;
 				position: relative;
 
-				input[type='url'] {
+				input[type='text'] {
 					width: 100%;
 					min-height: 3.5rem;
 					padding: 0.5em;
@@ -126,13 +388,15 @@
 
 					&:placeholder-shown {
 						background-color: rgb(255, 234, 221);
+						background-color: rgb(255, 255, 255);
 					}
 				}
 
 				#defaultURLs {
 					box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 					border: 0.1rem solid rgb(0, 0, 0, 0.1);
-					height: 40rem;
+					min-height: max-content;
+					max-height: 70vh;
 					overflow-y: auto;
 					position: absolute;
 					top: 101%;
@@ -143,6 +407,7 @@
 					background-color: rgb(255, 255, 255);
 					display: flex;
 					flex-direction: column;
+					z-index: 3;
 					display: none;
 
 					.option {
@@ -163,6 +428,98 @@
 						}
 
 						span.label {
+							color: rgb(0, 0, 0, 0.6);
+						}
+
+						&:hover {
+							background-color: rgb(255, 234, 221);
+						}
+					}
+				}
+			}
+
+			.tags-input {
+				min-height: max-content;
+				width: 100%;
+				border-radius: 0.3rem;
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				gap: 0.5em;
+
+				.selectedTags {
+					display: flex;
+					flex-wrap: wrap;
+					gap: 0.7em;
+
+					.tag {
+						min-width: max-content;
+						padding: 0.5em;
+						display: flex;
+						gap: 0.5em;
+						align-items: center;
+						background-color: #9ba4b5;
+						border-radius: 0.5rem;
+
+						i {
+							font-size: 1.5rem;
+						}
+
+						span {
+							font-family: 'Arial CE', sans-serif;
+							font-size: 1.3rem;
+						}
+
+						i.la-times {
+							cursor: pointer;
+						}
+					}
+				}
+
+				input[type='text'] {
+					min-height: 3.5rem;
+					width: inherit;
+					padding: 0.5em;
+					font-family: 'Arial CE', sans-serif;
+					font-size: 1.3rem;
+					border-radius: inherit;
+					border: 0.1rem solid rgb(0, 0, 0, 0.1);
+				}
+
+				.matchingTags {
+					position: absolute;
+					top: 101%;
+					left: 0;
+					right: 0;
+					width: inherit;
+					max-height: 70vh;
+					overflow-y: auto;
+					min-height: max-content;
+					background-color: rgb(255, 255, 255);
+					display: flex;
+					flex-direction: column;
+					border-radius: inherit;
+					box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+					z-index: 3;
+
+					.tag {
+						display: flex;
+						align-items: center;
+						gap: 1em;
+						min-height: 4rem;
+						border-bottom: 0.1rem solid rgb(0, 0, 0, 0.1);
+						padding: 0.5em;
+						cursor: pointer;
+
+						i {
+							font-size: 1.5rem;
+							color: rgb(0, 0, 0, 0.6);
+						}
+
+						span {
+							font-family: 'Arial CE', sans-serif;
+							font-size: 1.3rem;
 							color: rgb(0, 0, 0, 0.6);
 						}
 

@@ -62,7 +62,7 @@
 
 		tag = result[0];
 
-		tags.update((tags) => [tag, ...tags]);
+		tags.update((tags) => [...tags, tag]);
 
 		showTagCreatedAlert();
 
@@ -70,9 +70,9 @@
 			hideTagCreatedAlert();
 		}, 3000);
 
-		setTimeout(() => {
-			hideOverlay();
-		}, 3500);
+		// setTimeout(() => {
+		// 	hideOverlay();
+		// }, 3500);
 
 		tagName = '';
 	};
