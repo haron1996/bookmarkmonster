@@ -9,8 +9,12 @@ import (
 )
 
 type Querier interface {
+	AddBookmark(ctx context.Context, arg AddBookmarkParams) (Bookmark, error)
+	BookmarkTag(ctx context.Context, arg BookmarkTagParams) (BookmarkTag, error)
 	CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (Userr, error)
+	GetAllUserTags(ctx context.Context, userID string) ([]Tag, error)
+	GetTagsContainingTagNameAndUserID(ctx context.Context, arg GetTagsContainingTagNameAndUserIDParams) ([]Tag, error)
 	GetUserByEmailAndID(ctx context.Context, arg GetUserByEmailAndIDParams) (Userr, error)
 	UpdateUserLastLoginAndRefreshToken(ctx context.Context, arg UpdateUserLastLoginAndRefreshTokenParams) (Userr, error)
 }

@@ -18,11 +18,15 @@ type Bookmark struct {
 	Favicon   string             `json:"favicon"`
 	Thumbnail string             `json:"thumbnail"`
 	Notes     pgtype.Text        `json:"notes"`
-	TagID     string             `json:"tag_id"`
 	UserID    string             `json:"user_id"`
 	Added     time.Time          `json:"added"`
 	Updated   pgtype.Timestamptz `json:"updated"`
 	Deleted   pgtype.Timestamptz `json:"deleted"`
+}
+
+type BookmarkTag struct {
+	BookmarkID string `json:"bookmark_id"`
+	TagID      string `json:"tag_id"`
 }
 
 type Tag struct {

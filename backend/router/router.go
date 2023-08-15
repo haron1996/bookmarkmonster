@@ -39,7 +39,13 @@ func Router() *chi.Mux {
 	r.Route("/authenticated", func(r chi.Router) {
 		r.Use(mw.AuthenticateRequest())
 		r.Route("/tags", func(r chi.Router) {
+			r.Get("/", h.GetAllUserTags)
+			r.Get("/{tagName}", h.GetUserTags)
 			r.Post("/create-tag", h.CreateTag)
+		})
+
+		r.Route("/bookmarks", func(r chi.Router) {
+			r.Post("/add", h.AddBookmark)
 		})
 	})
 

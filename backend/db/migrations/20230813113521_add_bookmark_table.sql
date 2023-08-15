@@ -3,13 +3,12 @@ DROP TABLE IF EXISTS bookmark;
 
 CREATE TABLE bookmark (
     id text not null primary key,
-    title text not null constraint bookmark_title_must_be_unique unique,
-    bookmark text not null constraint bookmark_must_be_unique unique,
+    title text not null,
+    bookmark text not null,
     host text not null,
     favicon text not null,
     thumbnail text not null,
     notes text,
-    tag_id text not null references tag(id) on delete cascade,
     user_id text not null references userr(id) on delete cascade,
     added timestamptz not null default current_timestamp,
     updated timestamptz,

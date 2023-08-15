@@ -3,3 +3,9 @@ run:
 
 tidy:
 	go mod tidy
+
+sqlc:
+	sqlc generate
+
+compile:
+	sqlc compile

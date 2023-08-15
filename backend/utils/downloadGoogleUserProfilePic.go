@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"crypto/tls"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -17,18 +19,32 @@ func DownloadGoogleUserProfilePic(profilePicLocation string) (*os.File, error) {
 
 	defer f.Close()
 
-	url := profilePicLocation
-
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, errors.New("could not get url")
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			MaxVersion: tls.VersionTLS12,
+		},
 	}
 
-	defer res.Body.Close()
+	client := &http.Client{Transport: tr}
 
-	_, err = io.Copy(f, res.Body)
+	request, err := http.NewRequest("GET", profilePicLocation, nil)
 	if err != nil {
-		return nil, errors.New("could not copy image")
+		return nil, fmt.Errorf("could not instantiate new request: %v", err)
+	}
+
+	request.Header.Add("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:81.0) Gecko/20100101 Firefox/81.0")
+	request.Header.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf("could not send request: %v", err)
+	}
+
+	defer response.Body.Close()
+
+	_, err = io.Copy(f, response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("could not copy file: %v", err)
 	}
 
 	return f, nil
