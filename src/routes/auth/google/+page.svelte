@@ -33,7 +33,7 @@
 
 			localStorage.setItem('session', JSON.stringify(session));
 
-			$apiHost === ''
+			$apiHost === 'https://api.bookmarkmonster.xyz'
 				? goto('https://bookmarkmonster.xyz/dashboard')
 				: goto('http://localhost:5173/dashboard');
 		}
