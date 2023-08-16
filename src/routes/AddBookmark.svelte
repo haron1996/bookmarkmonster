@@ -384,7 +384,7 @@
 				id="myURL"
 				name="myURL"
 				type="text"
-				placeholder="Enter bookmark eg https://example.com"
+				placeholder="https://example.com"
 				pattern="https://.*"
 				autocomplete="off"
 				spellcheck="false"
@@ -584,7 +584,6 @@
 				display: flex;
 				flex-direction: column;
 				gap: 0.5em;
-				display: none;
 
 				.selectedTags {
 					display: flex;
