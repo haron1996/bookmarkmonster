@@ -16,7 +16,7 @@ func Router() *chi.Mux {
 		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins:   []string{"https://*", "http://*", "https://bookmarkmonster.xyz"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Access-Control-Allow-Origin"},
+		AllowedHeaders:   []string{"X-PINGOTHER", "Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Access-Control-Allow-Origin"},
 		ExposedHeaders:   []string{"Access-Control-Allow-Origin"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
@@ -29,6 +29,7 @@ func Router() *chi.Mux {
 	r.Use(middleware.AllowContentEncoding("application/json", "application/x-www-form-urlencoded"))
 	r.Use(middleware.CleanPath)
 	r.Use(middleware.RedirectSlashes)
+	r.Use(middleware.RealIP)
 
 	h := api.NewBaseHandler(connection.ConnectDB())
 

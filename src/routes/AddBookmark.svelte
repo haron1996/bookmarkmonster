@@ -251,15 +251,19 @@
 						}
 					});
 				} else {
+					const headers = {
+						'Content-Type': 'application/json',
+						'Access-Control-Allow-Origin': '*',
+						'Access-Control-Allow-Methods': 'POST,PATCH,OPTIONS',
+						authorization: `Bearer${$session.AccessToken}`
+					};
+
 					const response = await fetch(`${$apiHost}/authenticated/tags/create-tag`, {
 						method: 'POST',
 						mode: 'cors',
 						cache: 'no-cache',
 						credentials: 'include',
-						headers: {
-							'Content-Type': 'application/json',
-							authorization: `Bearer${$session.AccessToken}`
-						},
+						headers: headers,
 						redirect: 'follow',
 						referrerPolicy: 'no-referrer',
 						body: JSON.stringify({ name: tagName })
