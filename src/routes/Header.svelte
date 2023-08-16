@@ -2,9 +2,10 @@
 	import { page } from '$app/stores';
 	import logo from '$lib/images/logo.png';
 	import googleLogoSrc from '$lib/images/google-logo.png';
+	import { apiHost } from '../stores/stores';
 
 	const getGoogleLoginUrl = async () => {
-		const response = await fetch('http://localhost:5000/auth/get-google-login-url', {
+		const response = await fetch(`${$apiHost}/auth/get-google-login-url`, {
 			method: 'GET',
 			mode: 'cors',
 			cache: 'no-cache',

@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import heroSrc from '$lib/images/dashboard.png';
 	import googleLogoSrc from '$lib/images/google-logo.png';
-	import { session } from '../stores/stores';
+	import { apiHost, session } from '../stores/stores';
 
 	afterNavigate(() => {
 		loadUserSession();
@@ -19,7 +19,7 @@
 	};
 
 	const getGoogleLoginUrl = async () => {
-		const response = await fetch('http://localhost:5000/auth/get-google-login-url', {
+		const response = await fetch(`${$apiHost}/auth/get-google-login-url`, {
 			method: 'GET',
 			mode: 'cors',
 			cache: 'no-cache',

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		apiHost,
 		bookmarks,
 		currentTagID,
 		processingBookmark,
@@ -84,7 +85,7 @@
 
 			session.set(JSON.parse(sessionString));
 
-			const response = await fetch(`http://localhost:5000/authenticated/tags`, {
+			const response = await fetch(`${$apiHost}/authenticated/tags`, {
 				method: 'GET',
 				mode: 'cors',
 				cache: 'no-cache',
@@ -115,7 +116,7 @@
 
 			session.set(JSON.parse(sessionString));
 
-			const response = await fetch(`http://localhost:5000/authenticated/bookmarks`, {
+			const response = await fetch(`${$apiHost}/authenticated/bookmarks`, {
 				method: 'GET',
 				mode: 'cors',
 				cache: 'no-cache',
@@ -201,21 +202,18 @@
 	async function getUserBookmarksByTagID() {
 		if (browser) {
 			if ($session.AccessToken) {
-				const response = await fetch(
-					`http://localhost:5000/authenticated/bookmarks/${$currentTagID}`,
-					{
-						method: 'GET',
-						mode: 'cors',
-						cache: 'no-cache',
-						credentials: 'include',
-						headers: {
-							'Content-Type': 'application/json',
-							authorization: `Bearer${$session.AccessToken}`
-						},
-						redirect: 'follow',
-						referrerPolicy: 'no-referrer'
-					}
-				);
+				const response = await fetch(`${$apiHost}/authenticated/bookmarks/${$currentTagID}`, {
+					method: 'GET',
+					mode: 'cors',
+					cache: 'no-cache',
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/json',
+						authorization: `Bearer${$session.AccessToken}`
+					},
+					redirect: 'follow',
+					referrerPolicy: 'no-referrer'
+				});
 
 				if (response.ok) {
 					const result = await response.json();

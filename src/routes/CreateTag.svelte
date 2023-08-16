@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { Tag } from '../types/tag';
-	import { session, tags } from '../stores/stores';
+	import { apiHost, session, tags } from '../stores/stores';
 	import { hideOverlay } from '../utils/hideOverlay';
 	import { showTagCreatedAlert } from '../utils/showTagCreatedAlert';
 	import { hideTagCreatedAlert } from '../utils/hideTagCreatedAlert';
 	import { showDuplicateTagAlert } from '../utils/showDuplicateTagAlert';
 	import { hideDuplicateTagAlert } from '../utils/hideDuplicateTagAlert';
+	import { page } from '$app/stores';
 
 	let tag: Tag = {};
 
@@ -50,7 +51,7 @@
 			return;
 		}
 
-		const response = await fetch(`http://localhost:5000/authenticated/tags/create-tag`, {
+		const response = await fetch(`${$apiHost}/authenticated/tags/create-tag`, {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',

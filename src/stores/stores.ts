@@ -1,7 +1,9 @@
-import { writable } from 'svelte/store';
+import { readable, writable } from 'svelte/store';
 import type { Tag } from '../types/tag';
 import type { Bookmark } from '../types/bookmark';
 import type { Session } from '../types/session';
+
+export const apiHost = readable<string>('https://api.bookmarkmonster.xyz');
 
 export const sideBarWidth = writable<number>(25);
 

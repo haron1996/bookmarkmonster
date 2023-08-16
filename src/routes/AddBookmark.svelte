@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { bookmarks, currentTagID, processingBookmark, session, tags } from '../stores/stores';
+	import {
+		apiHost,
+		bookmarks,
+		currentTagID,
+		processingBookmark,
+		session,
+		tags
+	} from '../stores/stores';
 	import type { Bookmark } from '../types/bookmark';
 	import type { Tag } from '../types/tag';
 	import { hideAddBookmarkComponent } from '../utils/hideAddBookmarkComponent';
@@ -36,7 +43,7 @@
 
 		if (sessionString === null) return;
 
-		const response = await fetch(`http://localhost:5000/authenticated/tags`, {
+		const response = await fetch(`${$apiHost}/authenticated/tags`, {
 			method: 'GET',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -64,7 +71,7 @@
 
 		if (sessionString === null) return;
 
-		const response = await fetch(`http://localhost:5000/authenticated/tags/${tagName}`, {
+		const response = await fetch(`${$apiHost}/authenticated/tags/${tagName}`, {
 			method: 'GET',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -118,7 +125,7 @@
 
 			if (sessionString === null) return;
 
-			const response = await fetch(`http://localhost:5000/authenticated/tags/create-tag`, {
+			const response = await fetch(`${$apiHost}/authenticated/tags/create-tag`, {
 				method: 'POST',
 				mode: 'cors',
 				cache: 'no-cache',
@@ -244,7 +251,7 @@
 						}
 					});
 				} else {
-					const response = await fetch(`http://localhost:5000/authenticated/tags/create-tag`, {
+					const response = await fetch(`${$apiHost}/authenticated/tags/create-tag`, {
 						method: 'POST',
 						mode: 'cors',
 						cache: 'no-cache',
@@ -294,7 +301,7 @@
 
 		if (sessionString === null) return;
 
-		const response = await fetch(`http://localhost:5000/authenticated/bookmarks/add`, {
+		const response = await fetch(`${$apiHost}/authenticated/bookmarks/add`, {
 			method: 'POST',
 			mode: 'cors',
 			cache: 'no-cache',
@@ -317,7 +324,7 @@
 
 			if ($currentTagID === 'all-tags') {
 				const getUserBookmarks = async () => {
-					const response = await fetch(`http://localhost:5000/authenticated/bookmarks`, {
+					const response = await fetch(`${$apiHost}/authenticated/bookmarks`, {
 						method: 'GET',
 						mode: 'cors',
 						cache: 'no-cache',

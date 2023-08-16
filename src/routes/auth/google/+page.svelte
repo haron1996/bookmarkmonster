@@ -2,6 +2,7 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { apiHost } from '../../../stores/stores';
 
 	let code: string | null;
 
@@ -13,7 +14,7 @@
 
 	const exchangeCodeForToken = async () => {
 		if (code) {
-			const response = await fetch(`http://localhost:5000/auth/register-google-user`, {
+			const response = await fetch(`${$apiHost}/auth/register-google-user`, {
 				method: 'POST',
 				mode: 'cors',
 				cache: 'no-cache',
