@@ -31,11 +31,15 @@
 
 			const session = result[0];
 
+			console.log(session);
+
 			localStorage.setItem('session', JSON.stringify(session));
 
-			$apiHost === 'https://api.bookmarkmonster.xyz'
-				? goto('https://bookmarkmonster.xyz/dashboard')
-				: goto('http://localhost:5173/dashboard');
+			// $apiHost === 'https://api.bookmarkmonster.xyz'
+			// 	? goto('https://bookmarkmonster.xyz/dashboard')
+			// 	: goto('http://localhost:5173/dashboard');
+
+			goto('https://bookmarkmonster.xyz/dashboard');
 		}
 	};
 </script>
