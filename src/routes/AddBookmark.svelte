@@ -265,7 +265,7 @@
 						body: JSON.stringify({ name: tagName })
 					});
 
-					if (response.status === 200) {
+					if (response.ok) {
 						const result = await response.json();
 
 						const tag: Tag = result[0];
