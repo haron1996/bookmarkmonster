@@ -107,7 +107,7 @@
 				type="text"
 				name="tag"
 				id="tag"
-				placeholder="Engineering"
+				placeholder="AI"
 				autocomplete="off"
 				spellcheck="false"
 				bind:value={tagName}
