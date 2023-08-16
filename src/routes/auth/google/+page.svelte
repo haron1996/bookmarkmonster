@@ -33,7 +33,7 @@
 
 			localStorage.setItem('session', JSON.stringify(session));
 
-			goto('http://localhost:5173/dashboard');
+			goto(`${$page.url.host}/dashboard`);
 		}
 	};
 </script>
