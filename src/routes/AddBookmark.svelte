@@ -584,6 +584,7 @@
 				display: flex;
 				flex-direction: column;
 				gap: 0.5em;
+				display: none;
 
 				.selectedTags {
 					display: flex;

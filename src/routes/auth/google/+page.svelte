@@ -31,8 +31,6 @@
 
 			const session = result[0];
 
-			console.log(session);
-
 			localStorage.setItem('session', JSON.stringify(session));
 
 			// $apiHost === 'https://api.bookmarkmonster.xyz'
