@@ -426,7 +426,7 @@
 				type="text"
 				name="tags"
 				id="tags"
-				placeholder="Select existing or create tag"
+				placeholder="add at least one tag"
 				autocomplete="off"
 				spellcheck="false"
 				bind:value={tagName}

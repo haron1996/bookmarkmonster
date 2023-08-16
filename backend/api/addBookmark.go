@@ -18,6 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
+	"github.com/go-rod/rod/lib/proto"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
@@ -97,7 +98,19 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 
 	browser := rod.New().ControlURL(u).MustConnect()
 
-	page := browser.MustPage(urlToOpen).MustWaitLoad()
+	page := browser.MustPage(urlToOpen).MustWaitStable()
+
+	router := page.HijackRequests()
+
+	router.MustAdd("*popup*", func(ctx *rod.Hijack) {
+		// There're a lot of types you can use in this enum, like NetworkResourceTypeScript for javascript files
+		// In this case we're using NetworkResourceTypeImage to block images
+		if ctx.Request.Type() == proto.NetworkResourceTypeScript {
+			ctx.Response.Fail(proto.NetworkErrorReasonBlockedByClient)
+			return
+		}
+		ctx.ContinueRequest(&proto.FetchContinueRequest{})
+	})
 
 	defer browser.MustClose()
 
