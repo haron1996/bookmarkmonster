@@ -291,7 +291,7 @@
 			}
 		}
 
-		if (selectedTags.length > 0 && tagName != '') {
+		if (selectedTags.length > 0) {
 			if (tagName != '') {
 				if (matchingTags.length > 0) {
 					matchingTags.forEach((tag) => {
