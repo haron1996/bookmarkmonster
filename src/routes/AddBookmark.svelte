@@ -303,7 +303,7 @@
 
 		const response = await fetch(`${$apiHost}/authenticated/bookmarks/add`, {
 			method: 'POST',
-			mode: 'no-cors',
+			mode: 'cors',
 			cache: 'no-cache',
 			credentials: 'include',
 			headers: {
