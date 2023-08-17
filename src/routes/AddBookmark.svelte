@@ -291,73 +291,71 @@
 			}
 		}
 
-		if (selectedTags.length > 0) {
-			if (tagName != '') {
-				if (matchingTags.length > 0) {
-					matchingTags.forEach((tag) => {
-						if (tag.name === tagName) {
-							if (
-								selectedTags
-									.map((t) => {
-										return t.name;
-									})
-									.includes(tagName)
-							) {
-								tagName = '';
+		if (selectedTags.length > 0 && tagName != '') {
+			if (matchingTags.length > 0) {
+				matchingTags.forEach((tag) => {
+					if (tag.name === tagName) {
+						if (
+							selectedTags
+								.map((t) => {
+									return t.name;
+								})
+								.includes(tagName)
+						) {
+							tagName = '';
 
-								processingBookmark.set(false);
+							processingBookmark.set(false);
 
-								return;
-							} else {
-								selectedTags = [...selectedTags, tag];
+							return;
+						} else {
+							selectedTags = [...selectedTags, tag];
 
-								tagName = '';
+							tagName = '';
 
-								processingBookmark.set(false);
+							processingBookmark.set(false);
 
-								return;
-							}
+							return;
 						}
-					});
-				} else {
-					const response = await fetch(`${$apiHost}/authenticated/tags/create-tag`, {
-						method: 'POST',
-						mode: 'cors',
-						cache: 'no-cache',
-						credentials: 'include',
-						headers: {
-							'Content-Type': 'application/json',
-							authorization: `Bearer${$session.AccessToken}`
-						},
-						redirect: 'follow',
-						referrerPolicy: 'no-referrer',
-						body: JSON.stringify({ name: tagName })
-					});
-
-					if (response.ok) {
-						const result = await response.json();
-
-						const tag: Tag = result[0];
-
-						selectedTags = [...selectedTags, tag];
-
-						tags.update((tags) => [...tags, tag]);
-
-						tagName = '';
-
-						processingBookmark.set(false);
-					} else {
-						console.log('could not create tag', response.status, response.statusText);
-						tagName = '';
-						processingBookmark.set(false);
-						return;
 					}
-				}
+				});
 			} else {
-				console.log('tag(s) required');
-				processingBookmark.set(false);
-				return;
+				const response = await fetch(`${$apiHost}/authenticated/tags/create-tag`, {
+					method: 'POST',
+					mode: 'cors',
+					cache: 'no-cache',
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/json',
+						authorization: `Bearer${$session.AccessToken}`
+					},
+					redirect: 'follow',
+					referrerPolicy: 'no-referrer',
+					body: JSON.stringify({ name: tagName })
+				});
+
+				if (response.ok) {
+					const result = await response.json();
+
+					const tag: Tag = result[0];
+
+					selectedTags = [...selectedTags, tag];
+
+					tags.update((tags) => [...tags, tag]);
+
+					tagName = '';
+
+					processingBookmark.set(false);
+				} else {
+					console.log('could not create tag', response.status, response.statusText);
+					tagName = '';
+					processingBookmark.set(false);
+					return;
+				}
 			}
+		} else {
+			console.log('tag(s) required');
+			processingBookmark.set(false);
+			return;
 		}
 
 		const sessionString = localStorage.getItem('session') as string | null;
