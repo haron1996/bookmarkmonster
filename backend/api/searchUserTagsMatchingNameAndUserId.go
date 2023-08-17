@@ -24,7 +24,7 @@ func (h *BaseHandler) SearchUserTags(w http.ResponseWriter, r *http.Request) {
 
 	payload := ctx.Value(pLoad).(*token.PayLoad)
 
-	q := sqlc.New(h.db)
+	q := sqlc.New(h.pool)
 
 	percent := "%"
 

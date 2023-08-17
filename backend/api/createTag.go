@@ -37,7 +37,7 @@ func (h *BaseHandler) CreateTag(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	q := sqlc.New(h.db)
+	q := sqlc.New(h.pool)
 
 	const pLoad mw.ContextKey = "payload"
 

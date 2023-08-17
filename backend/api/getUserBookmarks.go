@@ -22,7 +22,7 @@ func (h *BaseHandler) GetUserBookmarks(w http.ResponseWriter, r *http.Request) {
 
 	userid := payload.UserID
 
-	q := sqlc.New(h.db)
+	q := sqlc.New(h.pool)
 
 	bookmarks, err := q.GetUserBookmarks(ctx, userid)
 	if err != nil {

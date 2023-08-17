@@ -22,7 +22,7 @@ func (h *BaseHandler) GetAllUserTags(w http.ResponseWriter, r *http.Request) {
 
 	userid := payload.UserID
 
-	q := sqlc.New(h.db)
+	q := sqlc.New(h.pool)
 
 	tags, err := q.GetAllUserTags(ctx, userid)
 	if err != nil {

@@ -18,7 +18,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
-	"github.com/go-rod/rod/lib/proto"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
@@ -94,23 +93,11 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	u := launcher.New().UserDataDir("~/.config/google-chrome").Leakless(true).NoSandbox(true).Headless(true).Env(append(os.Environ(), "TZ=America/New_York")...).MustLaunch()
+	u := launcher.New().UserDataDir("~/.config/google-chrome").Leakless(true).NoSandbox(true).Headless(true).MustLaunch()
 
 	browser := rod.New().ControlURL(u).MustConnect()
 
 	page := browser.MustPage(urlToOpen).MustWaitStable()
-
-	router := page.HijackRequests()
-
-	router.MustAdd("*popup*", func(ctx *rod.Hijack) {
-		// There're a lot of types you can use in this enum, like NetworkResourceTypeScript for javascript files
-		// In this case we're using NetworkResourceTypeImage to block images
-		if ctx.Request.Type() == proto.NetworkResourceTypeScript {
-			ctx.Response.Fail(proto.NetworkErrorReasonBlockedByClient)
-			return
-		}
-		ctx.ContinueRequest(&proto.FetchContinueRequest{})
-	})
 
 	defer browser.MustClose()
 
@@ -143,14 +130,20 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("response statuscode is: %v", resp.StatusCode)
+
 	if resp.StatusCode != 200 {
 		log.Println("favicon location empty")
 		faviconLocationEmpty = true
 		bookmarkFaviconURL = ""
 	}
 
+	log.Printf("bookmark favicon location is empty: %v", faviconLocationEmpty)
+
 	if !faviconLocationEmpty {
 		faviconLocation := resp.Header.Get("content-location")
+
+		log.Printf("favicon location is: %v", faviconLocation)
 
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{
@@ -179,26 +172,31 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 
 		defer response.Body.Close()
 
-		if response.StatusCode != 200 {
-			log.Printf("status code: %v", response.StatusCode)
-			utils.Response(w, "something went wrong", http.StatusInternalServerError)
-			return
-		}
+		// if response.StatusCode != 200 {
+		// 	log.Printf("coudl not get favicon with status code: %v", response.StatusCode)
+		// 	// utils.Response(w, "something went wrong", http.StatusInternalServerError)
+		// 	// return
+		// 	bookmarkFaviconURL = ""
+		// }
 
-		file, err := os.Create("bookmarkFavicon.png")
-		if err != nil {
-			log.Println(err)
-			utils.Response(w, "something went wrong", http.StatusInternalServerError)
-			return
-		}
+		if response.StatusCode == 200 {
+			file, err := os.Create("bookmarkFavicon.png")
+			if err != nil {
+				log.Println(err)
+				utils.Response(w, "something went wrong", http.StatusInternalServerError)
+				return
+			}
 
-		defer file.Close()
+			defer file.Close()
 
-		_, err = io.Copy(file, response.Body)
-		if err != nil {
-			log.Println(err)
-			utils.Response(w, "something went wrong", http.StatusInternalServerError)
-			return
+			_, err = io.Copy(file, response.Body)
+			if err != nil {
+				log.Println(err)
+				utils.Response(w, "something went wrong", http.StatusInternalServerError)
+				return
+			}
+		} else {
+			faviconLocationEmpty = true
 		}
 	}
 
@@ -287,7 +285,7 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 
 	payload := ctx.Value(pLoad).(*token.PayLoad)
 
-	q := sqlc.New(h.db)
+	q := sqlc.New(h.pool)
 
 	params := sqlc.AddBookmarkParams{
 		ID:        uuid.New().String(),

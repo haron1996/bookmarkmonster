@@ -63,7 +63,7 @@ func (h *BaseHandler) RegisterGoogleUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	q := sqlc.New(h.db)
+	q := sqlc.New(h.pool)
 
 	getUserParams := sqlc.GetUserByEmailAndIDParams{
 		Email: googleUser.Email,

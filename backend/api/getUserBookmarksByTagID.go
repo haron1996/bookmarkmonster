@@ -24,7 +24,7 @@ func (h *BaseHandler) GetUserBookmarksByTagID(w http.ResponseWriter, r *http.Req
 
 	// userid := payload.UserID
 
-	q := sqlc.New(h.db)
+	q := sqlc.New(h.pool)
 
 	bookmarkTags, err := q.GetUserBookmarksByTagID(ctx, tagid)
 	if err != nil {

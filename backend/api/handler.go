@@ -1,15 +1,15 @@
 package api
 
 import (
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type BaseHandler struct {
-	db *pgx.Conn
+	pool *pgxpool.Pool
 }
 
-func NewBaseHandler(db *pgx.Conn) *BaseHandler {
+func NewBaseHandler(pool *pgxpool.Pool) *BaseHandler {
 	return &BaseHandler{
-		db: db,
+		pool: pool,
 	}
 }
