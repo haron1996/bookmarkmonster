@@ -20,7 +20,7 @@ func Router() *chi.Mux {
 		ExposedHeaders:   []string{"Access-Control-Allow-Origin"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
-		Debug:            false,
+		Debug:            true,
 	}))
 
 	r.Use(middleware.Logger)
