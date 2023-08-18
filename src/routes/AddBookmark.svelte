@@ -271,7 +271,7 @@
 
 					const result = await response.json();
 
-					const b: Bookmark[] = result[0];
+					//const b: Bookmark[] = result[0];
 
 					bookmarks.set(result[0]);
 				};
@@ -283,7 +283,9 @@
 
 				console.log(allTagsDiv);
 
-				if (allTagsDiv === null) return;
+				if (allTagsDiv === null) {
+					processingBookmark.set = false;
+				}
 
 				console.log(allTagsDiv);
 
