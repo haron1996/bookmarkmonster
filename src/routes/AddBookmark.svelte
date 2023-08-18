@@ -279,7 +279,9 @@
 				await getUserBookmarks();
 			} else {
 				console.log($currentTagID);
-				const allTagsDiv = document.getElementById('addTagsDiv') as HTMLDivElement | null;
+				const allTagsDiv = document.getElementById('allTagsDiv') as HTMLDivElement | null;
+
+				console.log(allTagsDiv);
 
 				if (allTagsDiv === null) return;
 
