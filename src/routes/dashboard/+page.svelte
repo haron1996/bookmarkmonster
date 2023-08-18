@@ -271,7 +271,7 @@
 			{#if $tags.length > 0}
 				<div
 					class="tag active-tag all-tags"
-					id="tag"
+					id="allTagsDiv"
 					on:click|stopPropagation={handleClickOnTag}
 					data-id="all-tags"
 					data-name="all-tags"

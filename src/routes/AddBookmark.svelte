@@ -278,9 +278,12 @@
 
 				await getUserBookmarks();
 			} else {
-				const allTagsDiv = document.getElementsByClassName('all-tags')[0] as HTMLDivElement | null;
+				console.log($currentTagID);
+				const allTagsDiv = document.getElementById('addTagsDiv') as HTMLDivElement | null;
 
 				if (allTagsDiv === null) return;
+
+				console.log(allTagsDiv);
 
 				allTagsDiv.click();
 			}
