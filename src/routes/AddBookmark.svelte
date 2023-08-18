@@ -281,13 +281,10 @@
 				console.log($currentTagID);
 				const allTagsDiv = document.getElementById('allTagsDiv') as HTMLDivElement | null;
 
-				console.log(allTagsDiv);
-
 				if (allTagsDiv === null) {
-					processingBookmark.set = false;
+					processingBookmark.set(false);
+					return;
 				}
-
-				console.log(allTagsDiv);
 
 				allTagsDiv.click();
 			}
