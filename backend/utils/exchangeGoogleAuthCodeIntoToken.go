@@ -51,7 +51,7 @@ func ExchangeGoogleAuthCodeForToken(authCode string, ctx context.Context) (*Goog
 	var user *GoogleUser
 
 	if err := json.NewDecoder(response.Body).Decode(&user); err != nil {
-		log.Fatal("could not decode response")
+		log.Printf("could not decode response body: %v", err)
 	}
 
 	return user, nil

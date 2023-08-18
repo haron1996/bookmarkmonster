@@ -10,15 +10,16 @@ import (
 
 type Querier interface {
 	AddBookmark(ctx context.Context, arg AddBookmarkParams) (Bookmark, error)
-	BookmarkTag(ctx context.Context, arg BookmarkTagParams) (BookmarkTag, error)
 	CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (Userr, error)
 	GetAllUserTags(ctx context.Context, userID string) ([]Tag, error)
 	GetBookmarkByID(ctx context.Context, id string) (Bookmark, error)
+	GetBookmarkByIdAndUserId(ctx context.Context, arg GetBookmarkByIdAndUserIdParams) (Bookmark, error)
 	GetUserBookmarks(ctx context.Context, userID string) ([]Bookmark, error)
 	GetUserBookmarksByTagID(ctx context.Context, tagID string) ([]BookmarkTag, error)
 	GetUserByEmailAndID(ctx context.Context, arg GetUserByEmailAndIDParams) (Userr, error)
 	SearchTagsContainingTagNameAndUserID(ctx context.Context, arg SearchTagsContainingTagNameAndUserIDParams) ([]Tag, error)
+	TagBookmark(ctx context.Context, arg TagBookmarkParams) (BookmarkTag, error)
 	UpdateUserLastLoginAndRefreshToken(ctx context.Context, arg UpdateUserLastLoginAndRefreshTokenParams) (Userr, error)
 }
 

@@ -3,7 +3,6 @@ package api
 import (
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -19,7 +18,6 @@ import (
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgconn"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
 	"github.com/kwandapchumba/bookmarkmonster/mw"
 	token "github.com/kwandapchumba/bookmarkmonster/token"
@@ -27,8 +25,7 @@ import (
 )
 
 type addBookmarkRequest struct {
-	Bookmark string     `json:"bookmark"`
-	Tags     []sqlc.Tag `json:"tags"`
+	Bookmark string `json:"bookmark"`
 }
 
 func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
@@ -130,20 +127,14 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("response statuscode is: %v", resp.StatusCode)
-
 	if resp.StatusCode != 200 {
 		log.Println("favicon location empty")
 		faviconLocationEmpty = true
 		bookmarkFaviconURL = ""
 	}
 
-	log.Printf("bookmark favicon location is empty: %v", faviconLocationEmpty)
-
 	if !faviconLocationEmpty {
 		faviconLocation := resp.Header.Get("content-location")
-
-		log.Printf("favicon location is: %v", faviconLocation)
 
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{
@@ -304,28 +295,30 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// tag bookmark
-	for _, tag := range req.Tags {
-		params := sqlc.BookmarkTagParams{
-			BookmarkID: bookmark.ID,
-			TagID:      tag.ID,
-		}
+	// log.Println("still processing")
 
-		_, err := q.BookmarkTag(ctx, params)
-		if err != nil {
-			var pgErr *pgconn.PgError
-			switch {
-			case errors.As(err, &pgErr):
-				log.Printf("could not create bookmark: %v", pgErr)
-				utils.Response(w, "something went wrong", http.StatusInternalServerError)
-				return
-			default:
-				log.Printf("could not create bookmark: %v", err)
-				utils.Response(w, "something went wrong", http.StatusInternalServerError)
-				return
-			}
-		}
-	}
+	// // tag bookmark
+	// for _, tag := range req.Tags {
+	// 	params := sqlc.BookmarkTagParams{
+	// 		BookmarkID: bookmark.ID,
+	// 		TagID:      tag.ID,
+	// 	}
+
+	// 	_, err := q.BookmarkTag(ctx, params)
+	// 	if err != nil {
+	// 		var pgErr *pgconn.PgError
+	// 		switch {
+	// 		case errors.As(err, &pgErr):
+	// 			log.Printf("could not create bookmark: %v", pgErr)
+	// 			utils.Response(w, "something went wrong", http.StatusInternalServerError)
+	// 			return
+	// 		default:
+	// 			log.Printf("could not create bookmark: %v", err)
+	// 			utils.Response(w, "something went wrong", http.StatusInternalServerError)
+	// 			return
+	// 		}
+	// 	}
+	// }
 
 	utils.JsonResponse(w, bookmark)
 }

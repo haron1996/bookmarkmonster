@@ -1,3 +1,4 @@
 *.env
-~/.config/google-chrome/*
+~/.config/google-chrome
 *.json
+~/.config/chromium
