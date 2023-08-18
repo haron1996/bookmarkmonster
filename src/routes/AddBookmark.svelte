@@ -221,8 +221,6 @@
 
 		if (bookmark === '') return;
 
-		console.log('processing');
-
 		processingBookmark.set(true);
 
 		hideAddBookmarkComponent();
