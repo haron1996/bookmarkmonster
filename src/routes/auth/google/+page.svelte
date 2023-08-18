@@ -38,6 +38,8 @@
 			// 	: goto('http://localhost:5173/dashboard');
 
 			goto('https://bookmarkmonster.xyz/dashboard');
+
+			//goto('http://localhost:5173/dashboard');
 		}
 	};
 </script>

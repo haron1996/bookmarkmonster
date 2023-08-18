@@ -3,6 +3,7 @@
 		apiHost,
 		bookmarks,
 		currentTagID,
+		lastAddedBookmark,
 		processingBookmark,
 		session,
 		sideBarWidth,
@@ -19,6 +20,8 @@
 	import GlobePNG from '$lib/images/globe.png';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
+	import TagAddedBookmark from '../TagAddedBookmark.svelte';
+	import { showTagCreatedBookmarkForm } from '../../utils/showTagCreatedBookmarkForm';
 
 	let sideBarWidthFromStore: number;
 
@@ -181,7 +184,7 @@
 
 			newURL.searchParams.set('tag', clickedTag.dataset.name);
 
-			window.history.pushState({}, '', newURL);
+			window.history.replaceState({}, '', newURL);
 		}
 	};
 
@@ -231,14 +234,26 @@
 		}
 	}
 
+	function handleWindPopstate() {
+		window.history.forward();
+		return;
+	}
+
 	$: sideBarWidthFromStore = $sideBarWidth;
 
 	$: $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
+
+	$: $lastAddedBookmark,
+		$lastAddedBookmark && $lastAddedBookmark.id !== undefined
+			? showTagCreatedBookmarkForm()
+			: () => {};
 </script>
 
 <svelte:head>
 	<title>BookmarkMonster | Dashboard</title>
 </svelte:head>
+
+<svelte:window on:popstate|preventDefault={handleWindPopstate} />
 
 <div class="app">
 	<div class="sidebar">
@@ -304,9 +319,8 @@
 			>
 				{#if $processingBookmark}
 					<div class="loader" />
-					<span>adding bookmark...</span>
 				{:else}
-					<span>add bookmark</span>
+					<i class="las la-plus" />
 				{/if}
 			</button>
 		</div>
@@ -338,9 +352,9 @@
 						</div>
 						<div class="favicon-and-domain">
 							{#if favicon === ''}
-								<img src={GlobePNG} alt="bookmark favicon" />
+								<img src={GlobePNG} alt="bookmark favicon" draggable="false" />
 							{:else}
-								<img src={favicon} alt="bookmark favicon" />
+								<img src={favicon} alt="bookmark favicon" draggable="false" />
 							{/if}
 							<span>{host}</span>
 						</div>
@@ -364,6 +378,9 @@
 
 	<!-- duplicate tag alert -->
 	<DuplicateTagAlert />
+
+	<!-- tag created bookmark -->
+	<TagAddedBookmark />
 </div>
 
 <style lang="scss">
@@ -516,21 +533,27 @@
 
 				button {
 					padding: 0.5em;
-					border: 0.1rem solid rgb(47, 88, 205);
 					outline: none;
-					border-radius: 0.3rem;
+					border-radius: 0.6rem;
 					display: flex;
 					align-items: center;
 					cursor: pointer;
 					gap: 1em;
 					background-color: rgb(0, 121, 255);
 					margin-right: 0em;
+					border: none;
+					box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 
-					span {
-						font-size: 1.3rem;
-						color: rgb(255, 255, 255);
-						text-transform: capitalize;
-						font-family: 'Arial CE', sans-serif;
+					// span {
+					// 	font-size: 1.3rem;
+					// 	color: rgb(255, 255, 255);
+					// 	text-transform: capitalize;
+					// 	font-family: 'Arial CE', sans-serif;
+					// }
+
+					i {
+						color: rgb(253, 253, 253);
+						font-size: 2rem;
 					}
 
 					&:hover {
@@ -582,7 +605,8 @@
 				gap: 1em;
 
 				.bookmark {
-					height: 30rem;
+					// height: 30rem;
+					// width: 30rem;
 					width: 30rem;
 					border: 0.1rem solid rgb(0, 0, 0, 0.1);
 					display: flex;
@@ -629,7 +653,6 @@
 								font-size: 1.3rem;
 								line-height: 1.6;
 								color: rgb(24, 23, 40);
-								font-weight: 600;
 								font-family: 'Arial CE', sans-serif;
 
 								&:hover {

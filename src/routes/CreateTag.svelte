@@ -65,7 +65,7 @@
 			body: JSON.stringify({ name: tagName })
 		});
 
-		if (response.status === 200) {
+		if (response.ok) {
 			const result = await response.json();
 
 			if (result.message) {
@@ -98,11 +98,11 @@
 
 <div class="container" id="createTag">
 	<div class="top">
-		<h6>Create Tag</h6>
+		<p>New tag</p>
 		<i class="las la-times" on:click|stopPropagation={hideOverlay} role="none" />
 	</div>
 	<div class="input-and-submit-button">
-		<div class="input">
+		<form>
 			<input
 				type="text"
 				name="tag"
@@ -134,15 +134,15 @@
 					<span>Entertainment</span>
 				</div>
 			</div>
-		</div>
-		<div class="buttons">
-			<button class="cancel" on:click|stopPropagation={hideOverlay}>
-				<span>Cancel</span>
-			</button>
-			<button type="submit" on:click|stopPropagation={createTag}>
-				<span>Create</span>
-			</button>
-		</div>
+			<div class="buttons">
+				<button type="submit" on:click|stopPropagation={createTag}>
+					<span>Create</span>
+				</button>
+				<button class="cancel" on:click|stopPropagation={hideOverlay}>
+					<span>Cancel</span>
+				</button>
+			</div>
+		</form>
 	</div>
 </div>
 
@@ -174,7 +174,7 @@
 			min-height: 7vh;
 			padding: 1em;
 
-			h6 {
+			p {
 				font-size: 1.5rem;
 				font-family: 'Arial CE', sans-serif;
 			}
@@ -192,27 +192,27 @@
 			gap: 2em;
 			padding: 1em;
 
-			.input {
+			form {
 				width: 100%;
 				min-height: 3.5rem;
 				border-radius: 0.3rem;
 				position: relative;
+				display: flex;
+				flex-direction: column;
+				gap: 2em;
 
 				input[type='text'] {
 					width: 100%;
-					min-height: 3.5rem;
+					min-height: 4rem;
 					padding: 0.5em;
 					border: 0.1rem solid rgb(0, 0, 0, 0.1);
 					font-size: 1.3rem;
 					font-family: 'Arial CE', sans-serif;
 					border-radius: inherit;
+					outline: none;
 
-					&:placeholder-shown {
-						font-family: 'Arial CE', sans-serif;
-					}
-
-					&::placeholder {
-						font-family: 'Arial CE', sans-serif;
+					&:focus {
+						border-color: rgb(0, 121, 255);
 					}
 				}
 
@@ -259,46 +259,46 @@
 						}
 					}
 				}
-			}
 
-			.buttons {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				gap: 0.5em;
+				.buttons {
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					gap: 0.5em;
 
-				button {
-					border: none;
-					min-width: 7rem;
-					min-height: 3.5rem;
-					padding: 0.5em;
-					cursor: pointer;
-					border-radius: 0.3rem;
+					button {
+						border: none;
+						min-width: 7rem;
+						min-height: 4rem;
+						padding: 0.5em;
+						cursor: pointer;
+						border-radius: 0.3rem;
 
-					span {
-						font-size: 1.3rem;
-						font-family: 'Arial CE', sans-serif;
-					}
-				}
-
-				button.cancel {
-					width: 50%;
-
-					&:hover {
-						background-color: rgb(252, 174, 174);
-					}
-				}
-
-				button[type='submit'] {
-					width: 50%;
-					background-color: rgb(0, 121, 255);
-
-					span {
-						color: rgb(255, 255, 255);
+						span {
+							font-size: 1.3rem;
+							font-family: 'Arial CE', sans-serif;
+						}
 					}
 
-					&:hover {
-						background-color: rgb(78, 79, 235);
+					button.cancel {
+						width: 50%;
+
+						&:hover {
+							background-color: rgb(252, 174, 174);
+						}
+					}
+
+					button[type='submit'] {
+						width: 50%;
+						background-color: rgb(0, 121, 255);
+
+						span {
+							color: rgb(255, 255, 255);
+						}
+
+						&:hover {
+							background-color: rgb(6, 143, 255);
+						}
 					}
 				}
 			}
