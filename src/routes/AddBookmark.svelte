@@ -273,9 +273,7 @@
 
 					const b: Bookmark[] = result[0];
 
-					// bookmarks.set(result[0]);
-
-					bookmarks.update((bookmarks) => [...b, ...bookmarks]);
+					bookmarks.set(result[0]);
 				};
 
 				await getUserBookmarks();
