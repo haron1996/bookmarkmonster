@@ -42,6 +42,54 @@
 	<meta name="description" content="Free online bookmark manager" />
 	<!-- Hotjar Tracking Code for BookmarkMonster -->
 	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
 	<script>
 		(function (h, o, t, j, a, r) {
 			h.hj =
@@ -122,6 +170,11 @@
 			object-fit: fill;
 			object-position: center;
 			border-radius: 0.5rem;
+
+			@media only screen and (max-width: 425px) {
+				width: 99%;
+				max-inline-size: 99%;
+			}
 		}
 
 		.offer {
@@ -145,6 +198,19 @@
 				color: #020202;
 				max-width: 50%;
 			}
+
+			@media only screen and (max-width: 425px) {
+				width: 95%;
+
+				h1 {
+					font-weight: 500;
+					font-size: 2rem;
+				}
+
+				p {
+					max-width: 75%;
+				}
+			}
 		}
 
 		.buttons {
@@ -152,6 +218,7 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
+			justify-content: center;
 			gap: 1em;
 
 			.magic-code {
@@ -199,6 +266,10 @@
 				&:focus-within {
 					border-color: rgb(6, 143, 255);
 				}
+
+				@media only screen and (max-width: 425px) {
+					width: 100%;
+				}
 			}
 
 			.or {
@@ -234,7 +305,19 @@
 				&:hover {
 					background-color: rgb(6, 143, 255);
 				}
+
+				@media only screen and (max-width: 425px) {
+					width: 100%;
+				}
+			}
+
+			@media only screen and (max-width: 425px) {
+				width: 98%;
 			}
 		}
+
+		// @media only screen and (max-width: 320px) {
+
+		// }
 	}
 </style>

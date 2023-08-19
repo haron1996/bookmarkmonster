@@ -46,7 +46,11 @@
 			height: 4.5rem;
 			width: 4.5rem;
 			object-fit: contain;
-			margin-left: 1em;
+			margin-left: 0.5em;
+
+			@media only screen and (max-width: 425px) {
+				margin-left: 0.1em;
+			}
 		}
 
 		button.google {
@@ -78,6 +82,10 @@
 
 			&:hover {
 				background-color: rgb(6, 143, 255);
+			}
+
+			@media only screen and (max-width: 425px) {
+				margin-right: 0.1em;
 			}
 		}
 	}
