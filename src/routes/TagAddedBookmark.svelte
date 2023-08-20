@@ -143,7 +143,8 @@
 			credentials: 'include',
 			headers: {
 				'Content-Type': 'application/json',
-				authorization: `Bearer${$session.AccessToken}`
+				authorization: `Bearer${$session.AccessToken}`,
+				'Access-Control-Allow-Origin': '*'
 			},
 			redirect: 'follow',
 			referrerPolicy: 'no-referrer',
