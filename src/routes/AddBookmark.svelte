@@ -420,6 +420,10 @@
 		transform: translateX(200%);
 		transition: all ease 300ms;
 
+		@media only screen and (max-width: 425px) {
+			width: 99vw;
+		}
+
 		.top {
 			display: flex;
 			align-items: center;

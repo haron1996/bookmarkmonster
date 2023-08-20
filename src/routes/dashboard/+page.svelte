@@ -24,6 +24,7 @@
 	import { showTagCreatedBookmarkForm } from '../../utils/showTagCreatedBookmarkForm';
 
 	let sideBarWidthFromStore: number;
+	let sidebarVisible: boolean = false;
 
 	afterNavigate(async () => {
 		loadUserSession();
@@ -239,6 +240,14 @@
 		return;
 	}
 
+	function toggleSideBar() {
+		const sideBar = document.getElementById('sideBar') as HTMLDivElement | null;
+
+		if (sideBar === null) return;
+
+		sidebarVisible = !sidebarVisible;
+	}
+
 	$: sideBarWidthFromStore = $sideBarWidth;
 
 	$: $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
@@ -251,8 +260,7 @@
 
 <svelte:head>
 	<title>BookmarkMonster | Dashboard</title>
-	<!-- Hotjar Tracking Code for BookmarkMonster -->
-	<!-- Hotjar Tracking Code for BookmarkMonster -->
+
 	<script>
 		(function (h, o, t, j, a, r) {
 			h.hj =
@@ -273,7 +281,7 @@
 <svelte:window on:popstate|preventDefault={handleWindPopstate} />
 
 <div class="app">
-	<div class="sidebar">
+	<div class="sidebar" id="sideBar" class:toggleSidebar={sidebarVisible}>
 		<div class="profile">
 			{#if $session && $session.User && $session.User.picture && $session.User.name && $session.User.email}
 				<img src={$session.User.picture} alt="profile" />
@@ -321,8 +329,18 @@
 			</div>
 		</div>
 	</div>
-	<div class="main">
+	<div
+		class="main"
+		id="main"
+		on:click={() => {
+			if (sidebarVisible) {
+				sidebarVisible = false;
+			}
+		}}
+		role="none"
+	>
 		<div class="search-or-add">
+			<i class="las la-bars" role="none" on:click|stopPropagation={toggleSideBar} />
 			<input
 				type="search"
 				name="search"
@@ -416,6 +434,7 @@
 			display: flex;
 			flex-direction: column;
 			border-right: 0.1rem solid rgb(0, 0, 0, 0.1);
+			transition: all ease 0.5s;
 
 			.profile {
 				width: 100%;
@@ -517,12 +536,29 @@
 					background-color: rgb(238, 238, 238);
 				}
 			}
+
+			@media only screen and (max-width: 768px) {
+				position: fixed;
+				top: 0;
+				left: 0;
+				transform: translateX(-200%);
+				//width: 100vw;
+			}
+		}
+
+		.toggleSidebar {
+			transform: translateX(0);
+			box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 		}
 
 		.main {
 			width: calc(100vw - 27.5rem);
 			height: 100%;
 			background-color: rgb(255, 255, 255);
+
+			@media only screen and (max-width: 768px) {
+				width: 100vw;
+			}
 
 			.search-or-add {
 				display: flex;
@@ -532,6 +568,16 @@
 				align-items: center;
 				justify-content: space-between;
 				padding: 0.5em;
+
+				i.la-bars {
+					cursor: pointer;
+
+					font-size: 3rem;
+
+					@media only screen and (min-width: 769px) {
+						display: none;
+					}
+				}
 
 				input[type='search'] {
 					width: 50%;
@@ -545,6 +591,10 @@
 
 					&:hover {
 						border-color: rgb(255, 137, 137);
+					}
+
+					@media only screen and (max-width: 425px) {
+						width: 70%;
 					}
 				}
 

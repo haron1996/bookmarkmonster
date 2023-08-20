@@ -90,6 +90,39 @@
 	<!-- Hotjar Tracking Code for BookmarkMonster -->
 	<!-- Hotjar Tracking Code for BookmarkMonster -->
 	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
+	<!-- Hotjar Tracking Code for BookmarkMonster -->
 	<script>
 		(function (h, o, t, j, a, r) {
 			h.hj =
@@ -118,7 +151,7 @@
 	/>
 	<div class="offer">
 		<h1>Free online bookmark manager</h1>
-		<p>Save and tag websites so you can refer to it later.</p>
+		<p>Save and tag websites so you can visit later.</p>
 	</div>
 	<div class="buttons">
 		<button class="google" on:click|stopPropagation={getGoogleLoginUrl}>
@@ -175,6 +208,11 @@
 				width: 99%;
 				max-inline-size: 99%;
 			}
+
+			@media only screen and (min-width: 426px) and (max-width: 768px) {
+				width: 90%;
+				max-inline-size: 90%;
+			}
 		}
 
 		.offer {
@@ -199,7 +237,7 @@
 				max-width: 50%;
 			}
 
-			@media only screen and (max-width: 425px) {
+			@media only screen and (max-width: 768px) {
 				width: 95%;
 
 				h1 {
@@ -268,7 +306,11 @@
 				}
 
 				@media only screen and (max-width: 425px) {
-					width: 100%;
+					width: 99%;
+				}
+
+				@media only screen and (min-width: 426px) and (max-width: 768px) {
+					width: 85%;
 				}
 			}
 
@@ -307,12 +349,16 @@
 				}
 
 				@media only screen and (max-width: 425px) {
-					width: 100%;
+					width: 98%;
+				}
+
+				@media only screen and (min-width: 426px) and (max-width: 768px) {
+					width: 85%;
 				}
 			}
 
-			@media only screen and (max-width: 425px) {
-				width: 98%;
+			@media only screen and (max-width: 768px) {
+				width: 100%;
 			}
 		}
 

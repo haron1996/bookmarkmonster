@@ -30,8 +30,8 @@ func ConnectDB() *pgxpool.Pool {
 
 	pool.Config().MaxConnIdleTime = 1 * time.Minute
 	pool.Config().MaxConnLifetime = 5 * time.Minute
-	pool.Config().MinConns = 150
-	pool.Config().MaxConns = 100000
+	pool.Config().MinConns = 50
+	pool.Config().MaxConns = 150
 	pool.Config().MaxConnLifetimeJitter = 1 * time.Minute
 
 	return pool
