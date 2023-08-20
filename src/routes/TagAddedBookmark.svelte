@@ -136,32 +136,35 @@
 
 		//selectTag();
 
-		const response = await fetch(`${$apiHost}/authenticated/bookmarks/tagBookmark`, {
-			method: 'POST',
-			mode: 'cors',
-			cache: 'no-cache',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json',
-				authorization: `Bearer${$session.AccessToken}`,
-				'Access-Control-Allow-Origin': '*'
-			},
-			redirect: 'follow',
-			referrerPolicy: 'no-referrer',
-			body: JSON.stringify({ bookmark_id: $lastAddedBookmark.id, tags: selectedTags })
-		});
+		try {
+			const response = await fetch(`${$apiHost}/authenticated/bookmarks/tagBookmark`, {
+				method: 'POST',
+				mode: 'cors',
+				cache: 'no-cache',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json',
+					authorization: `Bearer${$session.AccessToken}`
+				},
+				redirect: 'follow',
+				referrerPolicy: 'no-referrer',
+				body: JSON.stringify({ bookmark_id: $lastAddedBookmark.id, tags: selectedTags })
+			});
 
-		if (response.ok) {
-			const result = await response.json();
+			if (response.ok) {
+				const result = await response.json();
 
-			if (result.message === 'bookmark tagged successfully') {
-				tagName = '';
-				matchedTagsFromDB = [];
-				selectedTags = [];
-				hideTagCreatedBookmarkForm();
+				if (result.message === 'bookmark tagged successfully') {
+					tagName = '';
+					matchedTagsFromDB = [];
+					selectedTags = [];
+					hideTagCreatedBookmarkForm();
+				}
+			} else {
+				console.log(response.status);
 			}
-		} else {
-			console.log(response.status);
+		} catch (error) {
+			console.log(error);
 		}
 	};
 </script>
