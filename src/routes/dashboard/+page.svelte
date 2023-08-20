@@ -248,6 +248,24 @@
 		sidebarVisible = !sidebarVisible;
 	}
 
+	function toggleUserMenu() {
+		const userMenu = document.getElementById('userMenu') as HTMLDivElement | null;
+
+		if (userMenu === null) return;
+
+		userMenu.classList.toggle('toggleUserMenu');
+	}
+
+	function logUserOut() {
+		const session = localStorage.getItem('session') as string | null;
+
+		if (session === null) return;
+
+		localStorage.removeItem('session');
+
+		window.location.reload();
+	}
+
 	$: sideBarWidthFromStore = $sideBarWidth;
 
 	$: $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
@@ -282,7 +300,7 @@
 
 <div class="app">
 	<div class="sidebar" id="sideBar" class:toggleSidebar={sidebarVisible}>
-		<div class="profile">
+		<div class="profile" role="none" on:click={toggleUserMenu}>
 			{#if $session && $session.User && $session.User.picture && $session.User.name && $session.User.email}
 				<img src={$session.User.picture} alt="profile" />
 				<div class="name-and-email">
@@ -290,6 +308,52 @@
 					<span>{$session.User.email}</span>
 				</div>
 			{/if}
+			<div class="userMenu" id="userMenu">
+				<div role="none" on:click|stopPropagation={logUserOut}>
+					<svg
+						width="24px"
+						height="24px"
+						stroke-width="1.5"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+						color="#000000"
+						><path
+							d="M12 12h7m0 0l-3 3m3-3l-3-3M19 6V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2v-1"
+							stroke="#000000"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+					<span>Log Out</span>
+				</div>
+				<div style="display: none;">
+					<svg
+						width="24px"
+						height="24px"
+						stroke-width="1.5"
+						viewBox="0 0 24 24"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+						color="#000000"
+						><path
+							d="M12 15a3 3 0 100-6 3 3 0 000 6z"
+							stroke="#000000"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/><path
+							d="M19.622 10.395l-1.097-2.65L20 6l-2-2-1.735 1.483-2.707-1.113L12.935 2h-1.954l-.632 2.401-2.645 1.115L6 4 4 6l1.453 1.789-1.08 2.657L2 11v2l2.401.655L5.516 16.3 4 18l2 2 1.791-1.46 2.606 1.072L11 22h2l.604-2.387 2.651-1.098C16.697 18.831 18 20 18 20l2-2-1.484-1.75 1.098-2.652 2.386-.62V11l-2.378-.605z"
+							stroke="#000000"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+					<span>Settings</span>
+				</div>
+			</div>
 		</div>
 
 		<div class="tags" id="userTags">
@@ -437,13 +501,18 @@
 			transition: all ease 0.5s;
 
 			.profile {
-				width: 100%;
 				height: 10%;
 				background-color: rgb(255, 255, 255);
 				display: flex;
 				align-items: center;
 				gap: 0.5em;
+				width: 100%;
 				padding: 0.5em;
+				cursor: pointer;
+				transition: 0.3s;
+				border-radius: 0.3rem;
+				position: relative;
+				border-bottom: 0.1rem solid transparent;
 
 				img {
 					width: 3.5rem;
@@ -475,6 +544,53 @@
 						text-overflow: ellipsis;
 						font-family: 'Arial CE', sans-serif;
 					}
+				}
+
+				.userMenu {
+					position: absolute;
+					top: 100%;
+					left: 0;
+					right: 0;
+					width: inherit;
+					min-height: max-content;
+					z-index: 1;
+					border-radius: 0.3rem;
+					display: flex;
+					flex-direction: column;
+					background-color: rgb(255, 255, 255);
+					min-height: calc(100vh - 10%);
+					transition: all ease 0.3s;
+					border-top: 0.1rem solid rgb(0, 0, 0, 0.1);
+					box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+					transform: translateX(-200%);
+
+					div {
+						min-height: 4rem;
+						display: flex;
+						align-items: center;
+						gap: 1em;
+						padding: 0.5em;
+						background-color: inherit;
+						border-bottom: 0.1rem solid rgb(0, 0, 0, 0.1);
+
+						svg {
+							height: 2rem;
+							width: 2rem;
+						}
+
+						span {
+							font-size: 1.3rem;
+							font-family: 'Segoe UI', sans-serif;
+						}
+
+						&:hover {
+							background-color: rgb(96, 1, 255, 0.1);
+						}
+					}
+				}
+
+				&:hover {
+					border-bottom-color: rgb(0, 0, 0, 0.1);
 				}
 			}
 
@@ -562,8 +678,8 @@
 
 			.search-or-add {
 				display: flex;
-				height: 7vh;
-				border-bottom: 0.1rem solid rgb(0, 0, 0, 0.1);
+				min-height: 7vh;
+				//border-bottom: 0.1rem solid rgb(0, 0, 0, 0.1);
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
@@ -588,6 +704,7 @@
 					font-size: 1.3rem;
 					font-family: 'Arial CE', sans-serif;
 					pointer-events: none;
+					min-height: 3.5rem;
 
 					&:hover {
 						border-color: rgb(255, 137, 137);
@@ -669,11 +786,10 @@
 				display: flex;
 				flex-wrap: wrap;
 				align-content: flex-start;
+				align-items: stretch;
 				gap: 1em;
 
 				.bookmark {
-					// height: 30rem;
-					// width: 30rem;
 					width: 30rem;
 					border: 0.1rem solid rgb(0, 0, 0, 0.1);
 					display: flex;
@@ -682,6 +798,10 @@
 					gap: 1em;
 					box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 					padding: 0.5em;
+					outline: 0.2rem solid transparent;
+					transition: all ease 0.5s;
+					word-break: break-word;
+					flex-grow: 1;
 
 					.thumbnail {
 						height: 70%;
@@ -689,12 +809,14 @@
 						display: flex;
 						align-items: center;
 						justify-content: center;
+						border-radius: 0.3rem;
 
 						img {
 							height: 100%;
 							width: 100%;
 							max-inline-size: 100%;
 							object-fit: fill;
+							border-radius: inherit;
 						}
 					}
 
@@ -757,7 +879,10 @@
 					}
 
 					&:hover {
-						box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+						outline-color: rgb(96, 1, 255);
+						background-color: rgb(96, 1, 255, 0.2);
+						box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.1), 0px 8px 8px 1px rgba(0, 0, 0, 0.07),
+							0px 3px 8px 2px rgba(0, 0, 0, 0.08), 0px 0px 0px 2px;
 					}
 				}
 			}
@@ -773,5 +898,9 @@
 		span {
 			color: red !important;
 		}
+	}
+
+	:global(.toggleUserMenu) {
+		transform: translateX(0) !important;
 	}
 </style>
