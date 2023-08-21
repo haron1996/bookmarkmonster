@@ -54,5 +54,9 @@ func Router() *chi.Mux {
 		})
 	})
 
+	r.Route("/admin", func(r chi.Router) {
+		r.Get("/users/{code}", h.GetAllUsers)
+	})
+
 	return r
 }

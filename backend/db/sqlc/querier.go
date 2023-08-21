@@ -18,6 +18,7 @@ type Querier interface {
 	GetUserBookmarks(ctx context.Context, userID string) ([]Bookmark, error)
 	GetUserBookmarksByTagID(ctx context.Context, tagID string) ([]BookmarkTag, error)
 	GetUserByEmailAndID(ctx context.Context, arg GetUserByEmailAndIDParams) (Userr, error)
+	GetUsers(ctx context.Context) ([]Userr, error)
 	SearchTagsContainingTagNameAndUserID(ctx context.Context, arg SearchTagsContainingTagNameAndUserIDParams) ([]Tag, error)
 	TagBookmark(ctx context.Context, arg TagBookmarkParams) (BookmarkTag, error)
 	UpdateUserLastLoginAndRefreshToken(ctx context.Context, arg UpdateUserLastLoginAndRefreshTokenParams) (Userr, error)

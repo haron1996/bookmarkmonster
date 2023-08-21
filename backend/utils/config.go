@@ -23,6 +23,7 @@ type Config struct {
 	VultrSecretKey         string        `mapstructure:"vultrSecretKey"`
 	VultrHostname          string        `mapstructure:"vultrHostname"`
 	VultrRegion            string        `mapstructure:"vultrRegion"`
+	AdminCode              string        `mapstructure:"adminCode"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

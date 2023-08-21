@@ -278,22 +278,6 @@
 
 <svelte:head>
 	<title>BookmarkMonster | Dashboard</title>
-
-	<script>
-		(function (h, o, t, j, a, r) {
-			h.hj =
-				h.hj ||
-				function () {
-					(h.hj.q = h.hj.q || []).push(arguments);
-				};
-			h._hjSettings = { hjid: 3619057, hjsv: 6 };
-			a = o.getElementsByTagName('head')[0];
-			r = o.createElement('script');
-			r.async = 1;
-			r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-			a.appendChild(r);
-		})(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
-	</script>
 </svelte:head>
 
 <svelte:window on:popstate|preventDefault={handleWindPopstate} />
@@ -790,9 +774,8 @@
 				gap: 1em;
 
 				.bookmark {
-					width: 30rem;
-					max-width: 50rem;
-					border: 0.1rem solid rgb(0, 0, 0, 0.1);
+					max-width: 35rem;
+					border: 0.1rem solid rgb(96, 1, 255);
 					display: flex;
 					flex-direction: column;
 					border-radius: 0.6rem;
