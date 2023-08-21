@@ -791,6 +791,7 @@
 
 				.bookmark {
 					width: 30rem;
+					max-width: 50rem;
 					border: 0.1rem solid rgb(0, 0, 0, 0.1);
 					display: flex;
 					flex-direction: column;

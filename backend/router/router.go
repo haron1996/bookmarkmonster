@@ -13,8 +13,8 @@ func Router() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"https://bookmarkmonster.xyz"}, // Use this to allow specific origin hosts
-		//AllowedOrigins:   []string{"http://localhost:5173"},
+		//AllowedOrigins: []string{"https://bookmarkmonster.xyz"}, // Use this to allow specific origin hosts
+		AllowedOrigins:   []string{"http://localhost:5173"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"},
 		AllowedHeaders:   []string{"User-Agent", "Content-Type", "Accept", "Accept-Encoding", "Accept-Language", "Cache-Control", "Connection", "DNT", "Host", "Origin", "Pragma", "Referer", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
