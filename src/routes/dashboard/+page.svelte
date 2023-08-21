@@ -771,6 +771,8 @@
 				flex-wrap: wrap;
 				align-content: flex-start;
 				align-items: stretch;
+				justify-content: flex-start;
+				flex-flow: row wrap;
 				gap: 1em;
 
 				.bookmark {
@@ -778,7 +780,7 @@
 					border: 0.1rem solid rgb(96, 1, 255);
 					display: flex;
 					flex-direction: column;
-					border-radius: 0.6rem;
+					border-radius: 0.3rem;
 					gap: 1em;
 					box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 					padding: 0.5em;
