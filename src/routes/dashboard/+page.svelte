@@ -788,8 +788,12 @@
 					word-break: break-word;
 					flex-grow: 1;
 
-					@media only screen and (max-width: 768px) {
+					@media only screen and (max-width: 568px) {
 						max-width: 50rem;
+					}
+
+					@media only screen and (min-width: 728px) and (max-width: 425px) {
+						max-width: 30rem;
 					}
 
 					.thumbnail {
