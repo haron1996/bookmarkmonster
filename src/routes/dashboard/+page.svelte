@@ -771,7 +771,6 @@
 				flex-wrap: wrap;
 				align-content: flex-start;
 				align-items: stretch;
-				justify-content: flex-start;
 				flex-flow: row wrap;
 				gap: 1em;
 
@@ -788,6 +787,10 @@
 					transition: all ease 0.5s;
 					word-break: break-word;
 					flex-grow: 1;
+
+					@media only screen and (max-width: 768px) {
+						max-width: 50rem;
+					}
 
 					.thumbnail {
 						height: 70%;
