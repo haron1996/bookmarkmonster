@@ -111,6 +111,17 @@
 
 	const getUserBookmarks = async () => {
 		if (browser) {
+			const allTags = document.querySelectorAll('.tag') as NodeListOf<HTMLDivElement> | null;
+
+			if (allTags === null) return;
+
+			allTags.forEach((tag) => {
+				tag.classList.remove('active-tag');
+
+				if (tag.classList.contains('all-tags')) {
+					tag.classList.add('active-tag');
+				}
+			});
 			const response = await fetch(`${$apiHost}/authenticated/bookmarks`, {
 				method: 'GET',
 				mode: 'cors',
@@ -196,6 +207,19 @@
 
 	async function getUserBookmarksByTagID() {
 		if (browser) {
+			const allTags = document.querySelectorAll('.tag') as NodeListOf<HTMLDivElement> | null;
+
+			if (allTags === null) return;
+
+			allTags.forEach((tag) => {
+				tag.classList.remove('active-tag');
+
+				if (tag.dataset.id) {
+					if (tag.dataset.id === $currentTagID) {
+						tag.classList.add('active-tag');
+					}
+				}
+			});
 			if ($session.AccessToken) {
 				const response = await fetch(`${$apiHost}/authenticated/bookmarks/${$currentTagID}`, {
 					method: 'GET',
@@ -291,7 +315,7 @@
 
 	$: sideBarWidthFromStore = $sideBarWidth;
 
-	$: $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
+	$: $currentTagID, $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
 
 	$: $lastAddedBookmark,
 		$lastAddedBookmark && $lastAddedBookmark.id !== undefined

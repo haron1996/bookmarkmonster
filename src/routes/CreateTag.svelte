@@ -138,7 +138,7 @@
 				<button type="submit" on:click|stopPropagation={createTag}>
 					<span>Create</span>
 				</button>
-				<button class="cancel" on:click|stopPropagation={hideOverlay}>
+				<button class="cancel" on:click|stopPropagation|preventDefault={hideOverlay}>
 					<span>Cancel</span>
 				</button>
 			</div>
