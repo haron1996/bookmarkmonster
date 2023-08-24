@@ -51,7 +51,7 @@
 
 	function checkUrlTagAndFetchAppropriateBookmarks() {
 		const currentTagNameinURL: string | null = $page.url.searchParams.get('tag');
-		if (currentTagNameinURL === null) {
+		if (currentTagNameinURL === null || currentTagNameinURL === '') {
 			// not tag search param found
 			const newURL: URL = new URL($page.url.href);
 
