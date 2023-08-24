@@ -5,6 +5,7 @@
 		currentTagID,
 		lastAddedBookmark,
 		processingBookmark,
+		query,
 		session,
 		sideBarWidth,
 		tags
@@ -110,16 +111,6 @@
 
 	const getUserBookmarks = async () => {
 		if (browser) {
-			const sessionString = localStorage.getItem('session') as string | null;
-
-			if (sessionString === null) {
-				goto(`${$page.url.origin}`);
-				console.log('session is empty');
-				return;
-			}
-
-			session.set(JSON.parse(sessionString));
-
 			const response = await fetch(`${$apiHost}/authenticated/bookmarks`, {
 				method: 'GET',
 				mode: 'cors',
@@ -266,6 +257,38 @@
 		window.location.reload();
 	}
 
+	const handleInputOnSearchInput = async () => {
+		const response = await fetch(`${$apiHost}/authenticated/bookmarks/search/${$query}`, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${$session.AccessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer'
+		});
+
+		const result = await response.json();
+
+		bookmarks.set(result[0]);
+	};
+
+	const getBookmarksOfCurrentTagID = async () => {
+		$currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
+	};
+
+	function handleKeyDownOnSearchInput(e: KeyboardEvent) {
+		if (e.code === 'Space') {
+			if ($query === '') {
+				e.preventDefault();
+				return;
+			}
+		}
+	}
+
 	$: sideBarWidthFromStore = $sideBarWidth;
 
 	$: $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
@@ -274,6 +297,8 @@
 		$lastAddedBookmark && $lastAddedBookmark.id !== undefined
 			? showTagCreatedBookmarkForm()
 			: () => {};
+
+	$: $query, $query === '' ? getBookmarksOfCurrentTagID() : handleInputOnSearchInput();
 </script>
 
 <svelte:head>
@@ -393,8 +418,10 @@
 				type="search"
 				name="search"
 				id="search"
-				placeholder="Type to start searching (coming soon)"
+				placeholder="Type to search"
 				autocomplete="off"
+				bind:value={$query}
+				on:keydown={handleKeyDownOnSearchInput}
 			/>
 			<button
 				on:click|stopPropagation={showCreateBookmarkComponent}
@@ -611,7 +638,7 @@
 				height: 5%;
 				border-top: 0.1rem solid rgb(0, 0, 0, 0.1);
 				cursor: pointer;
-				background-color: rgb(255, 255, 255);
+				background-color: rgb(78, 79, 235);
 
 				.new-tag {
 					height: 100%;
@@ -624,16 +651,18 @@
 
 					i {
 						font-size: 2rem;
+						color: rgb(255, 255, 255);
 					}
 
 					span {
 						font-size: 1.3rem;
 						font-family: 'Arial CE', sans-serif;
+						color: rgb(255, 255, 255);
 					}
 				}
 
 				&:hover {
-					background-color: rgb(238, 238, 238);
+					background-color: rgb(6, 143, 255);
 				}
 			}
 
@@ -683,15 +712,14 @@
 					width: 50%;
 					padding: 0.5em;
 					border: 0.1rem solid rgb(0, 0, 0, 0.1);
-					outline: none;
+					outline: 0.2rem solid transparent;
 					border-radius: 0.3rem;
 					font-size: 1.3rem;
 					font-family: 'Arial CE', sans-serif;
-					pointer-events: none;
 					min-height: 3.5rem;
 
-					&:hover {
-						border-color: rgb(255, 137, 137);
+					&:focus {
+						outline-color: rgb(96, 1, 255);
 					}
 
 					@media only screen and (max-width: 425px) {
@@ -707,7 +735,7 @@
 					align-items: center;
 					cursor: pointer;
 					gap: 1em;
-					background-color: rgb(0, 121, 255);
+					background-color: rgb(78, 79, 235);
 					margin-right: 0em;
 					border: none;
 					box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;

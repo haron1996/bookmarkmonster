@@ -20,3 +20,5 @@ export const lastAddedBookmark = writable<Bookmark>({});
 export const processingBookmark = writable<boolean>(false);
 
 export const currentTagID = writable<string>('');
+
+export const query = writable<string>('')
