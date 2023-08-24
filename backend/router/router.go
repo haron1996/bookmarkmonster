@@ -49,6 +49,7 @@ func Router() *chi.Mux {
 		r.Route("/bookmarks", func(r chi.Router) {
 			r.Get("/", h.GetUserBookmarks)
 			r.Get("/{tagid}", h.GetUserBookmarksByTagID)
+			r.Get("/search/{title}", h.SearchBookmarks)
 			r.Post("/add", h.AddBookmark)
 			r.Post("/tagBookmark", h.TagBookmark)
 		})
