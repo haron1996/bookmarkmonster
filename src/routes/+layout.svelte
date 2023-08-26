@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Error from './Error.svelte';
 	import Header from './Header.svelte';
 	import './styles.css';
 </script>
@@ -11,6 +12,8 @@
 	</main>
 
 	<footer />
+
+	<Error />
 </div>
 
 <style lang="scss" global>

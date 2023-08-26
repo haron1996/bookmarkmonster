@@ -10,6 +10,8 @@ CREATE TABLE tag (
     deleted timestamptz,
     unique(user_id, name)
 );
+
+alter table tag add constraint unique_tag_name unique (name);
 -- +goose StatementBegin
 SELECT 'up SQL query';
 

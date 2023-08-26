@@ -1,17 +1,18 @@
 <script lang="ts">
 	import type { Tag } from '../types/tag';
-	import { apiHost, lastAddedBookmark, session, tags } from '../stores/stores';
+	import { apiHost, lastAddedBookmark, matchedTagsFromDB, session, tags } from '../stores/stores';
 	import GlobePNG from '$lib/images/globe.png';
 	import { hideTagCreatedBookmarkForm } from '../utils/hideTagCreatedBookmarkForm';
+	import { hideTagBookmarkComp } from '../utils/hideTagBookmarkComp';
 
 	let tagName: string = '';
-	let matchedTagsFromDB: Tag[] = [];
+	//let matchedTagsFromDB: Tag[] = [];
 	let selectedTags: Tag[] = [];
 	let taggingBookmark: boolean = false;
 
 	const getMatchingTags = async () => {
 		if (tagName === '') {
-			matchedTagsFromDB = [];
+			matchedTagsFromDB.set([]);
 			return;
 		}
 
@@ -32,7 +33,7 @@
 
 		const tgs: Tag[] = result[0];
 
-		matchedTagsFromDB = tgs;
+		matchedTagsFromDB.set(tgs);
 	};
 
 	function handleKeyDownOnTagsInput(e: KeyboardEvent) {
@@ -52,14 +53,14 @@
 	function handleTagInputEmptied() {}
 
 	async function selectTag() {
-		const matchedTagsContainsTagName: boolean = matchedTagsFromDB
+		const matchedTagsContainsTagName: boolean = $matchedTagsFromDB
 			.map((tag) => {
 				return tag.name;
 			})
 			.includes(tagName);
 
 		if (matchedTagsContainsTagName) {
-			const matchingTag: Tag = matchedTagsFromDB.filter((tag) => tag.name === tagName)[0];
+			const matchingTag: Tag = $matchedTagsFromDB.filter((tag) => tag.name === tagName)[0];
 
 			const selectedTagsIncludeMatchingTag: boolean = selectedTags
 				.map((st) => {
@@ -69,7 +70,8 @@
 
 			if (selectedTagsIncludeMatchingTag) {
 				tagName = '';
-				matchedTagsFromDB = [];
+
+				matchedTagsFromDB.set([]);
 			} else {
 				selectedTags = [matchingTag, ...selectedTags];
 			}
@@ -102,7 +104,7 @@
 
 		tagName = '';
 
-		matchedTagsFromDB = [];
+		matchedTagsFromDB.set([]);
 	}
 
 	function handleClickOnMatchedTag(e: MouseEvent) {
@@ -138,7 +140,7 @@
 
 		try {
 			const response = await fetch(`${$apiHost}/authenticated/bookmarks/tagBookmark`, {
-				method: 'POST',
+				method: 'PATCH',
 				mode: 'cors',
 				cache: 'no-cache',
 				credentials: 'include',
@@ -154,12 +156,19 @@
 			if (response.ok) {
 				const result = await response.json();
 
-				if (result.message === 'bookmark tagged successfully') {
-					tagName = '';
-					matchedTagsFromDB = [];
-					selectedTags = [];
-					hideTagCreatedBookmarkForm();
-				}
+				console.log(result);
+
+				tagName = '';
+				matchedTagsFromDB.set([]);
+				selectedTags = [];
+				hideTagCreatedBookmarkForm();
+
+				// if (result.message === 'bookmark tagged successfully') {
+				// 	tagName = '';
+				// 	matchedTagsFromDB.set([]);
+				// 	selectedTags = [];
+				// 	hideTagCreatedBookmarkForm();
+				// }
 			} else {
 				console.log(response.status);
 			}
@@ -170,7 +179,7 @@
 </script>
 
 <div class="wrapper" id="tagCreatedBookmarkWrapper">
-	<div class="card">
+	<div class="card" role="none">
 		<p>Tag your created bookmark:</p>
 		{#if $lastAddedBookmark.id !== undefined}
 			<div
@@ -233,7 +242,7 @@
 					on:emptied={handleTagInputEmptied}
 				/>
 				<div class="matchedTags">
-					{#each matchedTagsFromDB as { name, id, user_id, added, updated }}
+					{#each $matchedTagsFromDB as { name, id, user_id, added, updated }}
 						<div
 							class="tag"
 							data-name={name}

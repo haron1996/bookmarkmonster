@@ -21,4 +21,16 @@ export const processingBookmark = writable<boolean>(false);
 
 export const currentTagID = writable<string>('');
 
-export const query = writable<string>('')
+export const query = writable<string>('');
+
+export const selectedBookmarks = writable<Bookmark[]>([]);
+
+export const matchedTagsFromDB = writable<Tag[]>([]);
+
+export const bookmarkTags = writable<Tag[]>([]);
+
+export const tagName = writable<string>('');
+
+export const error = writable<string>('');
+
+export const ctrlKeyActive = writable<boolean>(false);

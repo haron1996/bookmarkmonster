@@ -28,8 +28,8 @@ func ConnectDB() *pgxpool.Pool {
 		log.Panicf("ping unsuccessful: %v", err)
 	}
 
-	pool.Config().MaxConnIdleTime = 1 * time.Minute
-	pool.Config().MaxConnLifetime = 5 * time.Minute
+	pool.Config().MaxConnIdleTime = 5 * time.Second
+	pool.Config().MaxConnLifetime = 30 * time.Second
 	pool.Config().MinConns = 50
 	pool.Config().MaxConns = 150
 	pool.Config().MaxConnLifetimeJitter = 1 * time.Minute

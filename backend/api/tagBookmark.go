@@ -35,10 +35,6 @@ func (h *BaseHandler) TagBookmark(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// const pLoad mw.ContextKey = "payload"
-
-	// payload := ctx.Value(pLoad).(*token.PayLoad)
-
 	q := sqlc.New(h.pool)
 
 	for _, tag := range req.Tags {
@@ -54,5 +50,5 @@ func (h *BaseHandler) TagBookmark(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	utils.Response(w, "bookmark tagged successfully", http.StatusOK)
+	utils.JsonResponse(w, req.Tags[0])
 }

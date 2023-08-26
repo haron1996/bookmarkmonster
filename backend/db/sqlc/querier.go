@@ -12,16 +12,21 @@ type Querier interface {
 	AddBookmark(ctx context.Context, arg AddBookmarkParams) (Bookmark, error)
 	CreateTag(ctx context.Context, arg CreateTagParams) (Tag, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (Userr, error)
+	DeleteTagFromBookmark(ctx context.Context, arg DeleteTagFromBookmarkParams) error
 	GetAllUserTags(ctx context.Context, userID string) ([]Tag, error)
 	GetBookmarkByID(ctx context.Context, id string) (Bookmark, error)
 	GetBookmarkByIdAndUserId(ctx context.Context, arg GetBookmarkByIdAndUserIdParams) (Bookmark, error)
+	GetBookmarkTags(ctx context.Context, bookmarkID string) ([]string, error)
+	GetTag(ctx context.Context, id string) (Tag, error)
 	GetUserBookmarks(ctx context.Context, userID string) ([]Bookmark, error)
 	GetUserBookmarksByTagID(ctx context.Context, tagID string) ([]BookmarkTag, error)
 	GetUserByEmailAndID(ctx context.Context, arg GetUserByEmailAndIDParams) (Userr, error)
 	GetUsers(ctx context.Context) ([]Userr, error)
+	RenameBookmark(ctx context.Context, arg RenameBookmarkParams) (Bookmark, error)
 	SearchTagsContainingTagNameAndUserID(ctx context.Context, arg SearchTagsContainingTagNameAndUserIDParams) ([]Tag, error)
 	SearchUserBookmarks(ctx context.Context, arg SearchUserBookmarksParams) ([]Bookmark, error)
 	TagBookmark(ctx context.Context, arg TagBookmarkParams) (BookmarkTag, error)
+	TrashBookmark(ctx context.Context, arg TrashBookmarkParams) (Bookmark, error)
 	UpdateUserLastLoginAndRefreshToken(ctx context.Context, arg UpdateUserLastLoginAndRefreshTokenParams) (Userr, error)
 }
 

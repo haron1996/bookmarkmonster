@@ -2,10 +2,12 @@
 	import {
 		apiHost,
 		bookmarks,
+		ctrlKeyActive,
 		currentTagID,
 		lastAddedBookmark,
 		processingBookmark,
 		query,
+		selectedBookmarks,
 		session,
 		sideBarWidth,
 		tags
@@ -23,6 +25,13 @@
 	import { browser } from '$app/environment';
 	import TagAddedBookmark from '../TagAddedBookmark.svelte';
 	import { showTagCreatedBookmarkForm } from '../../utils/showTagCreatedBookmarkForm';
+	import ActionBar from '../ActionBar.svelte';
+	import RenameBookmark from '../RenameBookmark.svelte';
+	import DeleteBookmarkConfirmation from '../DeleteBookmarkConfirmation.svelte';
+	import TagBookmark from '../TagBookmark.svelte';
+	import BookmarkDetails from '../BookmarkDetails.svelte';
+	import { selectBookmark } from '../../utils/selectBookmark';
+	import { showBookmarkDetails } from '../../utils/showBookmarkDetails';
 
 	let sideBarWidthFromStore: number;
 	let sidebarVisible: boolean = false;
@@ -313,6 +322,32 @@
 		}
 	}
 
+	function handleWindowKeyDown(e: KeyboardEvent) {
+		if (e.ctrlKey) {
+			e.preventDefault();
+			ctrlKeyActive.set(true);
+		}
+	}
+
+	function handleWindowKeyUp(e: KeyboardEvent) {
+		if (e.code === 'ControlLeft' || e.code === 'ControlRight') {
+			e.preventDefault();
+			ctrlKeyActive.set(false);
+		}
+	}
+
+	function unselectBookmarkNodes() {
+		const bookmarkNodes = document.querySelectorAll(
+			'.bookmark'
+		) as NodeListOf<HTMLDivElement> | null;
+
+		if (bookmarkNodes === null) return;
+
+		bookmarkNodes.forEach((bn) => {
+			bn.classList.remove('bookmarkSelected');
+		});
+	}
+
 	$: sideBarWidthFromStore = $sideBarWidth;
 
 	$: $currentTagID, $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
@@ -323,13 +358,21 @@
 			: () => {};
 
 	$: $query, $query === '' ? getBookmarksOfCurrentTagID() : handleInputOnSearchInput();
+
+	// $: $ctrlKeyActive, console.log($ctrlKeyActive);
+
+	//$: $selectedBookmarks, console.log($selectedBookmarks, $selectedBookmarks.length);
 </script>
 
 <svelte:head>
 	<title>BookmarkMonster | Dashboard</title>
 </svelte:head>
 
-<svelte:window on:popstate|preventDefault={handleWindPopstate} />
+<svelte:window
+	on:popstate|preventDefault={handleWindPopstate}
+	on:keydown={handleWindowKeyDown}
+	on:keyup={handleWindowKeyUp}
+/>
 
 <div class="app">
 	<div class="sidebar" id="sideBar" class:toggleSidebar={sidebarVisible}>
@@ -433,6 +476,10 @@
 			if (sidebarVisible) {
 				sidebarVisible = false;
 			}
+
+			selectedBookmarks.set([]);
+
+			unselectBookmarkNodes();
 		}}
 		role="none"
 	>
@@ -459,6 +506,9 @@
 			</button>
 		</div>
 		<div class="bookmarks">
+			<div class="newBookmark" on:click={showCreateBookmarkComponent} role="none">
+				<i class="las la-plus" />
+			</div>
 			{#each $bookmarks as { id, bookmark, title, thumbnail, notes, user_id, host, updated, favicon, added, deleted }}
 				<div
 					class="bookmark"
@@ -472,6 +522,8 @@
 					data-updated={updated}
 					data-added={added}
 					data-deleted={deleted}
+					on:click|stopPropagation={selectBookmark}
+					role="none"
 				>
 					<div class="thumbnail">
 						<img src={thumbnail} alt="bookmark thumbnail" loading="lazy" draggable="false" />
@@ -484,13 +536,16 @@
 								on:click|preventDefault|stopPropagation={openBookmark}>{title}</a
 							>
 						</div>
-						<div class="favicon-and-domain">
-							{#if favicon === ''}
-								<img src={GlobePNG} alt="bookmark favicon" draggable="false" />
-							{:else}
-								<img src={favicon} alt="bookmark favicon" draggable="false" />
-							{/if}
-							<span>{host}</span>
+						<div class="bottom">
+							<div class="favicon-and-domain">
+								{#if favicon === ''}
+									<img src={GlobePNG} alt="bookmark favicon" draggable="false" />
+								{:else}
+									<img src={favicon} alt="bookmark favicon" draggable="false" />
+								{/if}
+								<span>{host}</span>
+							</div>
+							<i class="las la-info" role="none" on:click={showBookmarkDetails} />
 						</div>
 					</div>
 				</div>
@@ -515,6 +570,21 @@
 
 	<!-- tag created bookmark -->
 	<TagAddedBookmark />
+
+	<!-- actions bar -->
+	<ActionBar />
+
+	<!-- rename bookmark -->
+	<RenameBookmark />
+
+	<!-- delete bookmark confirmation popup -->
+	<DeleteBookmarkConfirmation />
+
+	<!-- tag bookmark -->
+	<TagBookmark />
+
+	<!-- bookmark detils -->
+	<BookmarkDetails />
 </div>
 
 <style lang="scss">
@@ -752,32 +822,14 @@
 				}
 
 				button {
-					padding: 0.5em;
-					outline: none;
-					border-radius: 0.6rem;
-					display: flex;
-					align-items: center;
-					cursor: pointer;
-					gap: 1em;
-					background-color: rgb(78, 79, 235);
-					margin-right: 0em;
 					border: none;
-					box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-
-					// span {
-					// 	font-size: 1.3rem;
-					// 	color: rgb(255, 255, 255);
-					// 	text-transform: capitalize;
-					// 	font-family: 'Arial CE', sans-serif;
-					// }
+					outline: none;
+					background-color: inherit;
 
 					i {
-						color: rgb(253, 253, 253);
-						font-size: 2rem;
-					}
-
-					&:hover {
-						background-color: rgb(6, 143, 255);
+						font-size: 3rem;
+						color: rgb(96, 1, 255);
+						cursor: pointer;
 					}
 				}
 
@@ -789,8 +841,8 @@
 					border: 0.2rem solid #f3f3f3;
 					border-radius: 50%;
 					border-top: 0.2rem solid #3498db;
-					width: 1.8rem;
-					height: 1.8rem;
+					width: 2rem;
+					height: 2rem;
 					-webkit-animation: spin 2s linear infinite; /* Safari */
 					animation: spin 0.5s linear infinite;
 
@@ -826,16 +878,49 @@
 				flex-flow: row wrap;
 				gap: 1em;
 
+				.newBookmark {
+					width: 35rem;
+					height: 35rem;
+					border: 0.3rem solid rgb(96, 1, 255);
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					transition: all ease 0.5s;
+					border-radius: 0.3rem;
+					cursor: pointer;
+
+					i {
+						font-size: 4rem;
+						color: rgb(96, 1, 255);
+					}
+
+					@media only screen and (max-width: 568px) {
+						width: 50rem;
+						// height: 50rem;
+					}
+
+					@media only screen and (min-width: 728px) and (max-width: 425px) {
+						width: 30rem;
+						// height: 30rem;
+					}
+
+					&:hover {
+						border-color: rgb(96, 1, 255);
+						background-color: rgb(240, 240, 240);
+					}
+				}
+
 				.bookmark {
 					max-width: 35rem;
-					border: 0.1rem solid rgb(96, 1, 255);
+					height: 35rem;
 					display: flex;
 					flex-direction: column;
 					border-radius: 0.3rem;
 					gap: 1em;
 					box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 					padding: 0.5em;
-					outline: 0.2rem solid transparent;
+					border: 0.1rem solid #001c30;
+					outline: 0.2rem solid #001c30;
 					transition: all ease 0.5s;
 					word-break: break-word;
 					flex-grow: 1;
@@ -896,29 +981,41 @@
 							}
 						}
 
-						.favicon-and-domain {
-							width: 100%;
-							height: 50%;
+						.bottom {
 							display: flex;
 							align-items: center;
-							gap: 1em;
-							//justify-content: space-between;
+							justify-content: space-between;
+							height: 50%;
+							width: 100%;
 
-							img {
-								height: 2rem;
-								width: 2rem;
-								object-fit: cover;
-								border-radius: 100vh;
+							.favicon-and-domain {
+								width: 100%;
+								display: flex;
+								align-items: center;
+								gap: 1em;
+								//justify-content: space-between;
+
+								img {
+									height: 2rem;
+									width: 2rem;
+									object-fit: cover;
+									border-radius: 100vh;
+								}
+
+								span {
+									color: rgb(24, 23, 40);
+									font-size: 1.3rem;
+									white-space: nowrap;
+									overflow: hidden;
+									text-overflow: ellipsis;
+									max-width: 90%;
+									font-family: 'Arial CE', sans-serif;
+								}
 							}
 
-							span {
-								color: rgb(24, 23, 40);
-								font-size: 1.3rem;
-								white-space: nowrap;
-								overflow: hidden;
-								text-overflow: ellipsis;
-								max-width: 90%;
-								font-family: 'Arial CE', sans-serif;
+							i {
+								font-size: 2rem;
+								cursor: pointer;
 							}
 						}
 					}
@@ -928,6 +1025,7 @@
 						background-color: rgb(96, 1, 255, 0.2);
 						box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.1), 0px 8px 8px 1px rgba(0, 0, 0, 0.07),
 							0px 3px 8px 2px rgba(0, 0, 0, 0.08), 0px 0px 0px 2px;
+						border-color: rgb(96, 1, 255);
 					}
 				}
 			}
@@ -947,5 +1045,13 @@
 
 	:global(.toggleUserMenu) {
 		transform: translateX(0) !important;
+	}
+
+	:global(.bookmarkSelected) {
+		outline-color: rgb(96, 1, 255) !important;
+		background-color: rgb(96, 1, 255, 0.2) !important;
+		box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.1), 0px 8px 8px 1px rgba(0, 0, 0, 0.07),
+			0px 3px 8px 2px rgba(0, 0, 0, 0.08), 0px 0px 0px 2px !important;
+		border-color: rgb(96, 1, 255) !important;
 	}
 </style>

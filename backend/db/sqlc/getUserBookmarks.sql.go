@@ -10,7 +10,7 @@ import (
 )
 
 const getUserBookmarks = `-- name: GetUserBookmarks :many
-select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted from bookmark where user_id = $1 order by (added) desc
+select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted from bookmark where user_id = $1 and deleted is null order by (added) desc
 `
 
 func (q *Queries) GetUserBookmarks(ctx context.Context, userID string) ([]Bookmark, error) {
