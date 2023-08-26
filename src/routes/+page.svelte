@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import heroSrc from '$lib/images/dashboard.png';
+	import hero from '$lib/images/dashboard.png';
 	import googleLogoSrc from '$lib/images/google-logo.png';
 	import { apiHost, session } from '../stores/stores';
 
@@ -44,7 +44,7 @@
 
 <section>
 	<img
-		src={heroSrc}
+		src={hero}
 		alt="hero"
 		class="hero"
 		id="hero"
