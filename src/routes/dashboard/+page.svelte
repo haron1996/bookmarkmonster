@@ -324,14 +324,12 @@
 
 	function handleWindowKeyDown(e: KeyboardEvent) {
 		if (e.ctrlKey) {
-			e.preventDefault();
 			ctrlKeyActive.set(true);
 		}
 	}
 
 	function handleWindowKeyUp(e: KeyboardEvent) {
 		if (e.code === 'ControlLeft' || e.code === 'ControlRight') {
-			e.preventDefault();
 			ctrlKeyActive.set(false);
 		}
 	}
