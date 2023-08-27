@@ -25,6 +25,8 @@ export const query = writable<string>('');
 
 export const selectedBookmarks = writable<Bookmark[]>([]);
 
+export const selectedTags = writable<Tag[]>([]);
+
 export const matchedTagsFromDB = writable<Tag[]>([]);
 
 export const bookmarkTags = writable<Tag[]>([]);

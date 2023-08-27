@@ -23,6 +23,7 @@ type Querier interface {
 	GetUserByEmailAndID(ctx context.Context, arg GetUserByEmailAndIDParams) (Userr, error)
 	GetUsers(ctx context.Context) ([]Userr, error)
 	RenameBookmark(ctx context.Context, arg RenameBookmarkParams) (Bookmark, error)
+	RenameTag(ctx context.Context, arg RenameTagParams) (Tag, error)
 	SearchTagsContainingTagNameAndUserID(ctx context.Context, arg SearchTagsContainingTagNameAndUserIDParams) ([]Tag, error)
 	SearchUserBookmarks(ctx context.Context, arg SearchUserBookmarksParams) ([]Bookmark, error)
 	TagBookmark(ctx context.Context, arg TagBookmarkParams) (BookmarkTag, error)

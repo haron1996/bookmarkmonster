@@ -1,32 +1,49 @@
-<script>
+<script lang="ts">
 	import { selectedBookmarks } from '../stores/stores';
 	import { openTrashBookmarkConfirmation } from '../utils/openTrashBookmarkConfirmation';
 	import { showBookmarkDetails } from '../utils/showBookmarkDetails';
 	import { showRenameBookmark } from '../utils/showRenameBookmark';
 	import { showTagBookmarkComp } from '../utils/showTagBookmarkComp';
+	import { unselectBookmarkNodes } from '../utils/unselectBookmarkNodes';
+
+	function clearSelectedBookmarks() {
+		selectedBookmarks.set([]);
+
+		unselectBookmarkNodes();
+	}
 </script>
 
 {#if $selectedBookmarks.length >= 1}
 	<div class="actionBar" id="actionBar">
-		<i
-			class="las la-keyboard"
-			class:disabled={$selectedBookmarks.length > 1}
-			on:click={showRenameBookmark}
-			role="none"
-		/>
-		<i
-			class="las la-hashtag"
-			class:disabled={$selectedBookmarks.length > 1}
-			on:click={showTagBookmarkComp}
-			role="none"
-		/>
-		<i
-			class="las la-info"
-			class:disabled={$selectedBookmarks.length > 1}
-			on:click={showBookmarkDetails}
-			role="none"
-		/>
-		<i class="las la-trash" on:click={openTrashBookmarkConfirmation} role="none" />
+		<div class="left">
+			<div class="selectCount">
+				{#if $selectedBookmarks.length >= 1}
+					<span>{$selectedBookmarks.length} selected</span>
+					<i class="lar la-trash-alt" role="none" on:click={clearSelectedBookmarks} />
+				{/if}
+			</div>
+		</div>
+		<div class="actions">
+			<i
+				class="las la-keyboard"
+				class:disabled={$selectedBookmarks.length > 1}
+				on:click={showRenameBookmark}
+				role="none"
+			/>
+			<i
+				class="las la-hashtag"
+				class:disabled={$selectedBookmarks.length > 1}
+				on:click={showTagBookmarkComp}
+				role="none"
+			/>
+			<i
+				class="las la-info"
+				class:disabled={$selectedBookmarks.length > 1}
+				on:click={showBookmarkDetails}
+				role="none"
+			/>
+			<i class="lar la-trash-alt" on:click={openTrashBookmarkConfirmation} role="none" />
+		</div>
 	</div>
 {/if}
 
@@ -41,29 +58,66 @@
 		min-height: 7vh;
 		display: flex;
 		align-items: center;
-		justify-content: flex-end;
+		justify-content: space-between;
 		padding: 0 1em 0 1em;
-		gap: 1em;
 
-		i {
-			font-size: 2.4rem;
-			cursor: pointer;
-			border-radius: 0.5rem;
-			height: 3rem;
-			width: 3rem;
+		.left {
+			min-height: inherit;
+			min-width: max-content;
 			display: flex;
 			align-items: center;
-			justify-content: center;
 
-			&:hover {
-				color: rgb(96, 1, 255);
-				background-color: rgb(250, 250, 250);
+			.selectCount {
+				padding: 0.5em 1em;
+				display: flex;
+				align-items: center;
+				gap: 1em;
+				border-radius: 0.3rem;
+				background-color: rgb(255, 255, 255);
+				border: 0.1rem solid rgb(2, 84, 100);
+
+				span {
+					font-size: 1.3rem;
+					font-family: 'Arial CE', sans-serif;
+				}
+
+				i {
+					font-size: 2rem;
+					color: #f45050;
+					cursor: pointer;
+					transform: scale(1);
+					transition: all ease 0.2s;
+
+					&:hover {
+						transform: scale(1.1);
+					}
+				}
 			}
 		}
 
-		.disabled {
-			opacity: 0.5;
-			pointer-events: none;
+		.actions {
+			display: flex;
+			align-items: center;
+			gap: 1em;
+			min-height: inherit;
+			min-width: max-content;
+
+			i {
+				font-size: 2rem;
+				cursor: pointer;
+				transform: scale(1);
+				transition: all ease 0.2s;
+
+				&:hover {
+					color: rgb(2, 84, 100);
+					transform: scale(1.1);
+				}
+			}
+
+			.disabled {
+				opacity: 0.5;
+				pointer-events: none;
+			}
 		}
 
 		@media only screen and (max-width: 768px) {

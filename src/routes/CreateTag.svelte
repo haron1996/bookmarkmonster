@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Tag } from '../types/tag';
-	import { apiHost, session, tags } from '../stores/stores';
+	import { apiHost, error, session, tags } from '../stores/stores';
 	import { hideOverlay } from '../utils/hideOverlay';
 	import { showTagCreatedAlert } from '../utils/showTagCreatedAlert';
 	import { hideTagCreatedAlert } from '../utils/hideTagCreatedAlert';
@@ -43,7 +43,7 @@
 				})
 				.includes(tagName)
 		) {
-			console.log('tag already exists');
+			error.set('tag already exists');
 			tagName = '';
 
 			hideOverlay();
@@ -74,11 +74,7 @@
 			}
 
 			if (result.message === 'duplicate tag') {
-				showDuplicateTagAlert();
-
-				setTimeout(() => {
-					hideDuplicateTagAlert();
-				}, 3000);
+				error.set('tag already exists');
 
 				return;
 			}

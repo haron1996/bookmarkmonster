@@ -35,8 +35,9 @@ func (h *BaseHandler) GetAllUserTags(w http.ResponseWriter, r *http.Request) {
 			return
 
 		case errors.Is(err, pgx.ErrNoRows):
-			log.Println(err)
-			utils.Response(w, "user tags not found", http.StatusNoContent)
+			log.Printf("no user tags: %v", err)
+			var emptyTagSlice []sqlc.Tag
+			utils.JsonResponse(w, emptyTagSlice)
 			return
 
 		default:

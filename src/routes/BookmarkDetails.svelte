@@ -17,24 +17,6 @@
 	let processing: boolean = false;
 	let tagid: string = '';
 
-	// function selectElementContents() {
-	// 	const el = document.getElementById('addTag') as HTMLDivElement | null;
-
-	// 	if (el === null) return;
-
-	// 	var range: Range = document.createRange();
-
-	// 	range.selectNodeContents(el);
-
-	// 	var sel: Selection | null = window.getSelection();
-
-	// 	if (sel === null) return;
-
-	// 	sel.removeAllRanges();
-
-	// 	sel.addRange(range);
-	// }
-
 	function handleContentEditableBlur(e: FocusEvent) {
 		const target = e.currentTarget as HTMLElement;
 
@@ -456,6 +438,15 @@
 				span {
 					font-size: 1.3rem;
 					font-family: 'Arial CE', sans-serif;
+					display: -webkit-box;
+					-webkit-line-clamp: 1;
+					-webkit-box-orient: vertical;
+					overflow: hidden;
+					text-overflow: ellipsis;
+
+					&:hover {
+						display: block;
+					}
 				}
 			}
 
@@ -505,7 +496,7 @@
 							background-color: #dde6ed;
 							min-height: max-content;
 							overflow-y: auto;
-							max-width: 40rem;
+							max-height: 20rem;
 							box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 
 							.tag {

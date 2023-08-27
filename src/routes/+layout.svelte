@@ -1,7 +1,7 @@
 <script lang="ts">
+	import 'animate.css';
 	import Error from './Error.svelte';
 	import Header from './Header.svelte';
-	import './styles.css';
 </script>
 
 <div class="app">

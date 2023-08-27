@@ -8,6 +8,7 @@
 		processingBookmark,
 		query,
 		selectedBookmarks,
+		selectedTags,
 		session,
 		sideBarWidth,
 		tags
@@ -32,6 +33,9 @@
 	import BookmarkDetails from '../BookmarkDetails.svelte';
 	import { selectBookmark } from '../../utils/selectBookmark';
 	import { showBookmarkDetails } from '../../utils/showBookmarkDetails';
+	import TagContextMenu from '../TagMenu.svelte';
+	import TagMenu from '../TagMenu.svelte';
+	import type { Tag } from '../../types/tag';
 
 	let sideBarWidthFromStore: number;
 	let sidebarVisible: boolean = false;
@@ -151,6 +155,8 @@
 	};
 
 	const handleClickOnTag = (e: MouseEvent) => {
+		closeTagMenu();
+
 		const clickedEl = e.target as HTMLElement;
 
 		const clickedTag = clickedEl.closest('.tag') as HTMLSpanElement | null;
@@ -346,6 +352,50 @@
 		});
 	}
 
+	function handleClickOnBookmarkInfoIcon(e: MouseEvent) {
+		selectBookmark(e);
+		showBookmarkDetails();
+	}
+
+	function openTagMenu(e: MouseEvent) {
+		const target = e.currentTarget as HTMLElement;
+
+		const tag = target.closest('.tag') as HTMLDivElement | null;
+
+		if (tag === null) return;
+
+		const t: Tag = {
+			id: tag.dataset.id,
+			name: tag.dataset.name
+		};
+
+		selectedTags.set([]);
+
+		selectedTags.update((values) => [t, ...values]);
+
+		const menu = document.getElementById('tagMenu') as HTMLElement | null;
+
+		if (menu === null) return;
+
+		menu.style.display = 'flex';
+
+		menu.style.top = `${e.clientY}px`;
+
+		menu.style.left = `${e.clientX}px`;
+	}
+
+	function closeTagMenu() {
+		const menu = document.getElementById('tagMenu') as HTMLElement | null;
+
+		if (menu === null) return;
+
+		menu.style.display = 'none';
+	}
+
+	// function handleClickOnTagMenuIcon(e: MouseEvent) {
+	// 	openTagMenu(e);
+	// }
+
 	$: sideBarWidthFromStore = $sideBarWidth;
 
 	$: $currentTagID, $currentTagID === 'all-tags' ? getUserBookmarks() : getUserBookmarksByTagID();
@@ -373,7 +423,13 @@
 />
 
 <div class="app">
-	<div class="sidebar" id="sideBar" class:toggleSidebar={sidebarVisible}>
+	<div
+		class="sidebar"
+		id="sideBar"
+		class:toggleSidebar={sidebarVisible}
+		on:click={closeTagMenu}
+		role="none"
+	>
 		<div class="profile" role="none" on:click={toggleUserMenu}>
 			{#if $session && $session.User && $session.User.picture && $session.User.name && $session.User.email}
 				<img src={$session.User.picture} alt="profile" />
@@ -431,18 +487,18 @@
 		</div>
 
 		<div class="tags" id="userTags">
+			<div
+				class="tag active-tag all-tags"
+				id="allTagsDiv"
+				on:click|stopPropagation={handleClickOnTag}
+				data-id="all-tags"
+				data-name="all-tags"
+				role="none"
+			>
+				<i class="las la-hashtag" />
+				<span>all tags</span>
+			</div>
 			{#if $tags.length > 0}
-				<div
-					class="tag active-tag all-tags"
-					id="allTagsDiv"
-					on:click|stopPropagation={handleClickOnTag}
-					data-id="all-tags"
-					data-name="all-tags"
-					role="none"
-				>
-					<i class="las la-hashtag" />
-					<span>all tags</span>
-				</div>
 				{#each $tags as { id, name, user_id, added, updated, deleted }}
 					<div
 						class="tag"
@@ -455,7 +511,14 @@
 						data-name={name}
 					>
 						<i class="las la-hashtag" />
-						<span>{name}</span>
+						<span class="tagName" id="tagName">{name}</span>
+						<i
+							class="las la-ellipsis-h"
+							role="none"
+							on:pointerover={openTagMenu}
+							on:pointerout={closeTagMenu}
+							on:click|stopPropagation={openTagMenu}
+						/>
 					</div>
 				{/each}
 			{/if}
@@ -505,7 +568,7 @@
 		</div>
 		<div class="bookmarks">
 			<div class="newBookmark" on:click={showCreateBookmarkComponent} role="none">
-				<i class="las la-plus" />
+				<i class="las la-plus animate__animated animate__pulse animate__infinite infinite" />
 			</div>
 			{#each $bookmarks as { id, bookmark, title, thumbnail, notes, user_id, host, updated, favicon, added, deleted }}
 				<div
@@ -543,7 +606,7 @@
 								{/if}
 								<span>{host}</span>
 							</div>
-							<i class="las la-info" role="none" on:click={showBookmarkDetails} />
+							<i class="las la-info" role="none" on:click={handleClickOnBookmarkInfoIcon} />
 						</div>
 					</div>
 				</div>
@@ -583,6 +646,9 @@
 
 	<!-- bookmark detils -->
 	<BookmarkDetails />
+
+	<!-- tag context menu -->
+	<TagMenu />
 </div>
 
 <style lang="scss">
@@ -714,23 +780,35 @@
 					display: flex;
 					align-items: center;
 
-					i {
-						font-size: 2rem;
+					i.la-hashtag {
+						background-color: #78c1f3;
+						color: rgb(255, 255, 255);
+						font-size: 1.8rem;
+					}
+
+					i.la-ellipsis-h {
+						font-size: 1.5rem;
+						border-radius: 50%;
+						background-color: #f8f6f4;
 					}
 
 					span {
 						font-size: 1.3rem;
 						font-family: 'Arial CE', sans-serif;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						outline: none;
 					}
 				}
 			}
 
 			.create-tag {
 				width: 100%;
-				height: 5%;
+				min-height: 5%;
 				border-top: 0.1rem solid rgb(0, 0, 0, 0.1);
 				cursor: pointer;
-				background-color: rgb(78, 79, 235);
+				background-color: #025464;
 
 				.new-tag {
 					height: 100%;
@@ -751,10 +829,6 @@
 						font-family: 'Arial CE', sans-serif;
 						color: rgb(255, 255, 255);
 					}
-				}
-
-				&:hover {
-					background-color: rgb(6, 143, 255);
 				}
 			}
 
@@ -803,7 +877,7 @@
 				input[type='search'] {
 					width: 50%;
 					padding: 0.5em;
-					border: 0.1rem solid rgb(0, 0, 0, 0.1);
+					border: 0.1rem solid rgb(2, 84, 100, 0.1);
 					outline: 0.2rem solid transparent;
 					border-radius: 0.3rem;
 					font-size: 1.3rem;
@@ -811,7 +885,7 @@
 					min-height: 3.5rem;
 
 					&:focus {
-						outline-color: rgb(96, 1, 255);
+						outline-color: #025464;
 					}
 
 					@media only screen and (max-width: 425px) {
@@ -826,7 +900,7 @@
 
 					i {
 						font-size: 3rem;
-						color: rgb(96, 1, 255);
+						color: #025464;
 						cursor: pointer;
 					}
 				}
@@ -879,7 +953,7 @@
 				.newBookmark {
 					width: 35rem;
 					height: 35rem;
-					border: 0.3rem solid rgb(96, 1, 255);
+					border: 0.3rem solid #025464;
 					display: flex;
 					align-items: center;
 					justify-content: center;
@@ -889,21 +963,24 @@
 
 					i {
 						font-size: 4rem;
-						color: rgb(96, 1, 255);
+						color: #025464;
 					}
 
-					@media only screen and (max-width: 568px) {
-						width: 50rem;
-						// height: 50rem;
-					}
+					// @media only screen and (max-width: 568px) {
+					// 	width: 50rem;
+					// 	// height: 50rem;
+					// }
 
-					@media only screen and (min-width: 728px) and (max-width: 425px) {
-						width: 30rem;
-						// height: 30rem;
+					// @media only screen and (min-width: 728px) and (max-width: 425px) {
+					// 	width: 30rem;
+					// 	// height: 30rem;
+					// }
+
+					@media only screen and (max-width: 727px) {
+						display: none;
 					}
 
 					&:hover {
-						border-color: rgb(96, 1, 255);
 						background-color: rgb(240, 240, 240);
 					}
 				}
@@ -917,8 +994,8 @@
 					gap: 1em;
 					box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 					padding: 0.5em;
-					border: 0.1rem solid #001c30;
-					outline: 0.2rem solid #001c30;
+					border: 0.1rem solid #025464;
+					outline: 0.2rem solid #025464;
 					transition: all ease 0.5s;
 					word-break: break-word;
 					flex-grow: 1;
@@ -1019,11 +1096,9 @@
 					}
 
 					&:hover {
-						outline-color: rgb(96, 1, 255);
-						background-color: rgb(96, 1, 255, 0.2);
+						background-color: #aebdca;
 						box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.1), 0px 8px 8px 1px rgba(0, 0, 0, 0.07),
 							0px 3px 8px 2px rgba(0, 0, 0, 0.08), 0px 0px 0px 2px;
-						border-color: rgb(96, 1, 255);
 					}
 				}
 			}
@@ -1032,9 +1107,9 @@
 
 	// GLOBAL STYLES
 	:global(.active-tag) {
-		i {
-			color: red !important;
-		}
+		// i {
+		// 	color: red !important;
+		// }
 
 		span {
 			color: red !important;
@@ -1046,10 +1121,8 @@
 	}
 
 	:global(.bookmarkSelected) {
-		outline-color: rgb(96, 1, 255) !important;
-		background-color: rgb(96, 1, 255, 0.2) !important;
+		background-color: #7895b2 !important;
 		box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.1), 0px 8px 8px 1px rgba(0, 0, 0, 0.07),
 			0px 3px 8px 2px rgba(0, 0, 0, 0.08), 0px 0px 0px 2px !important;
-		border-color: rgb(96, 1, 255) !important;
 	}
 </style>

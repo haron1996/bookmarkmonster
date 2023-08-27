@@ -395,7 +395,7 @@
 					width: inherit;
 					top: 100%;
 					min-height: max-content;
-					max-height: 35vh;
+					max-height: 20rem;
 					overflow-y: auto;
 					box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 					z-index: 3;
