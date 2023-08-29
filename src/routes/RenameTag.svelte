@@ -97,27 +97,28 @@
 </script>
 
 <div class="wrapper" id="renameTag" role="none" on:click={closeRenameTagModal}>
-	<form
-		role="none"
-		on:click|stopPropagation={() => {}}
-		on:submit|preventDefault|stopPropagation={handleFornSubmit}
-	>
-		<div class="heading">
-			<div class="left">
-				<p>Rename Tag</p>
-				<div class="tagNameToUpdate">
-					<i class="las la-hashtag" />
-					<span>copywriting</span>
+	{#if $selectedTags.length >= 1}
+		<form
+			role="none"
+			on:click|stopPropagation={() => {}}
+			on:submit|preventDefault|stopPropagation={handleFornSubmit}
+		>
+			<div class="heading">
+				<div class="left">
+					<p>Rename Tag</p>
+					<div class="tagNameToUpdate">
+						<i class="las la-hashtag" />
+						<span>{$selectedTags[0].name}</span>
+					</div>
 				</div>
+				<i class="las la-times" role="none" on:click|stopPropagation={closeRenameTagModal} />
 			</div>
-			<i class="las la-times" role="none" on:click|stopPropagation={closeRenameTagModal} />
-		</div>
-		<div class="inputContainer">
-			<div class="input">
-				<div class="icon">
-					<i class="las la-hashtag" />
-				</div>
-				{#if $selectedTags.length >= 1}
+			<div class="inputContainer">
+				<div class="input">
+					<div class="icon">
+						<i class="las la-hashtag" />
+					</div>
+
 					<input
 						type="text"
 						name="tag"
@@ -129,21 +130,21 @@
 						on:input={fetchUserMatchingTags}
 						on:keydown={handleInputKeyDown}
 					/>
-				{/if}
+				</div>
+				<div class="matchingTags" id="matchingTags">
+					{#each $matchedTagsFromDB as { added, deleted, id, name, updated, user_id }}
+						<div class="tag" role="none" on:click={handleClickOnMatchedTagFromDB}>
+							<i class="las la-hashtag" />
+							<span>{name}</span>
+						</div>
+					{/each}
+				</div>
 			</div>
-			<div class="matchingTags" id="matchingTags">
-				{#each $matchedTagsFromDB as { added, deleted, id, name, updated, user_id }}
-					<div class="tag" role="none" on:click={handleClickOnMatchedTagFromDB}>
-						<i class="las la-hashtag" />
-						<span>{name}</span>
-					</div>
-				{/each}
-			</div>
-		</div>
-		<button type="submit" on:click|preventDefault|stopPropagation={handleFornSubmit}>
-			<span>Rename tag</span>
-		</button>
-	</form>
+			<button type="submit" on:click|preventDefault|stopPropagation={handleFornSubmit}>
+				<span>Rename tag</span>
+			</button>
+		</form>
+	{/if}
 </div>
 
 <style lang="scss">
