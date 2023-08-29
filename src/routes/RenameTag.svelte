@@ -93,7 +93,7 @@
 		closeRenameTagModal();
 	}
 
-	$: $selectedTags, $selectedTags.length >= 1 ? fetchUserMatchingTags() : () => {};
+	//$: $selectedTags, $selectedTags.length >= 1 ? fetchUserMatchingTags() : () => {};
 </script>
 
 <div class="wrapper" id="renameTag" role="none" on:click={closeRenameTagModal}>
