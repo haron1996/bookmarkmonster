@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
-	"github.com/jackc/pgx/v5/pgtype"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
 	"github.com/kwandapchumba/bookmarkmonster/utils"
 )
@@ -41,7 +39,7 @@ func (h *BaseHandler) TrashBookmark(w http.ResponseWriter, r *http.Request) {
 	var bookmarks []sqlc.Bookmark
 
 	for _, b := range req.Bookmarks {
-		bookmark, err := q.TrashBookmark(ctx, sqlc.TrashBookmarkParams{Deleted: pgtype.Timestamptz{Time: time.Now().UTC(), Valid: true}, ID: b.ID})
+		bookmark, err := q.TrashBookmark(ctx, b.ID)
 		if err != nil {
 			log.Printf("could not trash bookmark: %v", err)
 			utils.Response(w, "something went wrong", http.StatusInternalServerError)

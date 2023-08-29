@@ -7,21 +7,14 @@ package db
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const trashBookmark = `-- name: TrashBookmark :one
-update bookmark set deleted = $1 where id = $2 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted
+update bookmark set deleted = now() where id = $1 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted
 `
 
-type TrashBookmarkParams struct {
-	Deleted pgtype.Timestamptz `json:"deleted"`
-	ID      string             `json:"id"`
-}
-
-func (q *Queries) TrashBookmark(ctx context.Context, arg TrashBookmarkParams) (Bookmark, error) {
-	row := q.db.QueryRow(ctx, trashBookmark, arg.Deleted, arg.ID)
+func (q *Queries) TrashBookmark(ctx context.Context, id string) (Bookmark, error) {
+	row := q.db.QueryRow(ctx, trashBookmark, id)
 	var i Bookmark
 	err := row.Scan(
 		&i.ID,
