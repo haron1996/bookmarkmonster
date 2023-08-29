@@ -44,6 +44,9 @@ func Router() *chi.Mux {
 			r.Get("/", h.GetAllUserTags)
 			r.Get("/{tagName}", h.SearchUserTags)
 			r.Post("/create-tag", h.CreateTag)
+			r.Patch("/renameTag", h.RenameTag)
+			r.Patch("/trashTag", h.TrashTag)
+			r.Patch("/restoreTag", h.RestoreTag)
 		})
 
 		r.Route("/bookmarks", func(r chi.Router) {

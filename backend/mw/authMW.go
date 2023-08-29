@@ -23,8 +23,8 @@ func AuthenticateRequest() func(next http.Handler) http.Handler {
 
 			payload, err := getAndVerifyToken(r)
 			if err != nil {
-				log.Println(err)
-				utils.Response(w, err.Error(), http.StatusUnauthorized)
+				log.Printf("could not verify token: %v", err)
+				utils.Response(w, "token is no longer valid", http.StatusUnauthorized)
 				return
 			}
 
@@ -33,12 +33,12 @@ func AuthenticateRequest() func(next http.Handler) http.Handler {
 				account, err := db.GetUser(ctx, payload.UserEmail, payload.UserID)
 				if err != nil {
 					log.Println(err)
-					utils.Response(w, errors.New("unauthorized").Error(), http.StatusUnauthorized)
+					utils.Response(w, "user does not exist", http.StatusUnauthorized)
 					return
 				}
 
 				if payload.IssuedAt.Unix() != account.LastLogin.Time.Unix() {
-					err := errors.New("invalid token")
+					err := errors.New("token is no longer valid")
 					log.Println(err)
 					utils.Response(w, err.Error(), http.StatusUnauthorized)
 					return

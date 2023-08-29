@@ -33,9 +33,10 @@
 	import BookmarkDetails from '../BookmarkDetails.svelte';
 	import { selectBookmark } from '../../utils/selectBookmark';
 	import { showBookmarkDetails } from '../../utils/showBookmarkDetails';
-	import TagContextMenu from '../TagMenu.svelte';
 	import TagMenu from '../TagMenu.svelte';
 	import type { Tag } from '../../types/tag';
+	import RenameTag from '../RenameTag.svelte';
+	import TagDeleted from '../TagDeleted.svelte';
 
 	let sideBarWidthFromStore: number;
 	let sidebarVisible: boolean = false;
@@ -45,8 +46,6 @@
 
 		await getUserTags();
 
-		//await getUserBookmarks();
-
 		checkUrlTagAndFetchAppropriateBookmarks();
 	});
 
@@ -54,8 +53,7 @@
 		const sessionString = localStorage.getItem('session') as string | null;
 
 		if (sessionString === null) {
-			goto(`${$page.url.origin}`);
-			console.log('session is empty');
+			window.location.replace(`${$page.url.origin}`);
 			return;
 		}
 
@@ -117,6 +115,15 @@
 			});
 
 			const result = await response.json();
+
+			if (
+				result.message === 'token is no longer valid' ||
+				result.message === 'user does not exist'
+			) {
+				localStorage.removeItem('session');
+				window.location.replace($page.url.origin);
+				return;
+			}
 
 			tags.set(result[0]);
 		}
@@ -488,7 +495,7 @@
 
 		<div class="tags" id="userTags">
 			<div
-				class="tag active-tag all-tags"
+				class="tag active-tag all-tags sideBarTag"
 				id="allTagsDiv"
 				on:click|stopPropagation={handleClickOnTag}
 				data-id="all-tags"
@@ -501,7 +508,7 @@
 			{#if $tags.length > 0}
 				{#each $tags as { id, name, user_id, added, updated, deleted }}
 					<div
-						class="tag"
+						class="tag sideBarTag"
 						id="tag"
 						on:click|stopPropagation={handleClickOnTag}
 						on:keyup
@@ -649,6 +656,12 @@
 
 	<!-- tag context menu -->
 	<TagMenu />
+
+	<!-- rename tag -->
+	<RenameTag />
+
+	<!-- tag deleted -->
+	<TagDeleted />
 </div>
 
 <style lang="scss">
@@ -783,7 +796,7 @@
 					i.la-hashtag {
 						background-color: #78c1f3;
 						color: rgb(255, 255, 255);
-						font-size: 1.8rem;
+						font-size: 1.5rem;
 					}
 
 					i.la-ellipsis-h {
@@ -949,6 +962,7 @@
 				align-items: stretch;
 				flex-flow: row wrap;
 				gap: 1em;
+				transition: height ease 0.5s;
 
 				.newBookmark {
 					width: 35rem;

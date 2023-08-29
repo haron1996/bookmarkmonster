@@ -28,6 +28,7 @@
 		color: red;
 		transform: translateY(-200%);
 		opacity: 0;
+		border-radius: 0.3rem;
 
 		i {
 			font-size: 2rem;

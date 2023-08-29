@@ -1,6 +1,15 @@
 <script lang="ts">
-	import { selectedTags } from '../stores/stores';
+	import {
+		apiHost,
+		deletedTag,
+		indexOfDeletedTag,
+		selectedTags,
+		session,
+		tags
+	} from '../stores/stores';
 	import { closeTagMenu } from '../utils/closeTagMenu';
+	import { openRenameTagModal } from '../utils/openRenameTagModal';
+	import type { Tag } from '../types/tag';
 
 	function handleTagMenuMouseOver() {
 		const menu = document.getElementById('tagMenu') as HTMLElement | null;
@@ -19,17 +28,9 @@
 	}
 
 	function handleClickOnRenameTag() {
-		const bookmarkNodes = document.querySelectorAll('.tag') as NodeListOf<HTMLDivElement> | null;
-		if (bookmarkNodes === null) return;
-		bookmarkNodes.forEach((bm) => {
-			if (bm.dataset.id === $selectedTags[0].id) {
-				const span = bm.childNodes[2] as HTMLSpanElement;
-				span.contentEditable = 'true';
-				selectCurrentTagName(span);
-			}
-		});
-
 		closeTagMenu();
+
+		openRenameTagModal();
 	}
 
 	function selectCurrentTagName(span: HTMLSpanElement) {
@@ -45,6 +46,40 @@
 
 		selection.addRange(range);
 	}
+
+	async function handleClickOnDeleteTag() {
+		const index: number = $tags.findIndex((value) => {
+			return value.id === $selectedTags[0].id;
+		});
+
+		indexOfDeletedTag.set(index);
+
+		const response = await fetch(`${$apiHost}/authenticated/tags/trashTag`, {
+			method: 'PATCH',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${$session.AccessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({ tag: $selectedTags[0] })
+		});
+
+		const result = await response.json();
+
+		const dt: Tag = result[0];
+
+		deletedTag.set(dt);
+
+		$tags = $tags.filter((value) => {
+			return value.id !== dt.id;
+		});
+
+		closeTagMenu();
+	}
 </script>
 
 <div
@@ -59,7 +94,7 @@
 		<i class="las la-pen" />
 		<span>Rename</span>
 	</div>
-	<div class="remove">
+	<div class="remove" role="none" on:click={handleClickOnDeleteTag}>
 		<i class="las la-trash-alt" />
 		<span>Delete</span>
 	</div>

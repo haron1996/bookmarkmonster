@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Tag } from '../types/tag';
-	import { apiHost, error, session, tags } from '../stores/stores';
+	import { apiHost, error, matchedTagsFromDB, session, tags, tagName } from '../stores/stores';
 	import { hideOverlay } from '../utils/hideOverlay';
 	import { showTagCreatedAlert } from '../utils/showTagCreatedAlert';
 	import { hideTagCreatedAlert } from '../utils/hideTagCreatedAlert';
@@ -10,10 +10,8 @@
 
 	let tag: Tag = {};
 
-	let tagName: string = '';
-
 	const showSuggestedTags = () => {
-		if (tagName != '') return;
+		if ($tagName != '') return;
 
 		const suggestedTags = document.getElementById('suggestedTags') as HTMLDivElement | null;
 
@@ -31,23 +29,19 @@
 	};
 
 	const createTag = async () => {
-		if (tagName === '') {
-			console.log('tag name required');
+		if ($tagName === '') {
+			error.set('tag name required');
 			return;
 		}
 
-		if (
-			$tags
-				.map((t) => {
-					return t.name;
-				})
-				.includes(tagName)
-		) {
-			error.set('tag already exists');
-			tagName = '';
+		const t = $matchedTagsFromDB.filter((value) => {
+			return value.name === $tagName;
+		});
 
-			hideOverlay();
-
+		if (t[0]) {
+			error.set('tag name already exists');
+			tagName.set('');
+			matchedTagsFromDB.set([]);
 			return;
 		}
 
@@ -62,7 +56,7 @@
 			},
 			redirect: 'follow',
 			referrerPolicy: 'no-referrer',
-			body: JSON.stringify({ name: tagName })
+			body: JSON.stringify({ name: $tagName })
 		});
 
 		if (response.ok) {
@@ -86,10 +80,66 @@
 			console.log(response.status, response.statusText);
 		}
 
-		tagName = '';
+		tagName.set('');
 
 		hideOverlay();
+
+		matchedTagsFromDB.set([]);
 	};
+
+	async function fetchUserMatchingTags() {
+		if ($tagName === '') {
+			matchedTagsFromDB.set([]);
+			return;
+		}
+
+		const response = await fetch(`${$apiHost}/authenticated/tags/${$tagName}`, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${$session.AccessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer'
+		});
+
+		const result = await response.json();
+
+		const tgs: Tag[] = result[0];
+
+		matchedTagsFromDB.set(tgs);
+	}
+
+	function handleInputKeyDown(e: KeyboardEvent) {
+		if (e.code === 'Space') {
+			if ($tagName === '') {
+				e.preventDefault();
+				return;
+			}
+		}
+	}
+
+	function handleClickOnMatchedTagFromDB(e: MouseEvent) {
+		const target = e.currentTarget as HTMLElement;
+
+		const tag = target.closest('.tag') as HTMLDivElement | null;
+
+		if (tag === null) return;
+
+		const t = $matchedTagsFromDB.filter((value) => {
+			return value.name === tag.innerText;
+		});
+
+		if (t[0]) {
+			error.set('tag name already exists');
+			tagName.set('');
+			matchedTagsFromDB.set([]);
+			return;
+		}
+	}
 </script>
 
 <div class="container" id="createTag">
@@ -99,19 +149,35 @@
 	</div>
 	<div class="input-and-submit-button">
 		<form>
-			<input
-				type="text"
-				name="tag"
-				id="tag"
-				placeholder="AI"
-				autocomplete="off"
-				spellcheck="false"
-				bind:value={tagName}
-				on:focus|stopPropagation={showSuggestedTags}
-				on:blur|stopPropagation={hideSuggestedTags}
-				on:paste|stopPropagation={hideSuggestedTags}
-				on:input|stopPropagation={hideSuggestedTags}
-			/>
+			<div class="inputContainer">
+				<div class="input">
+					<div class="icon">
+						<i class="las la-hashtag" />
+					</div>
+					<input
+						type="text"
+						name="tag"
+						id="tag"
+						placeholder="eg AI"
+						autocomplete="off"
+						spellcheck="false"
+						bind:value={$tagName}
+						on:input={fetchUserMatchingTags}
+						on:focus|stopPropagation={showSuggestedTags}
+						on:blur|stopPropagation={hideSuggestedTags}
+						on:paste|stopPropagation={hideSuggestedTags}
+						on:keydown={handleInputKeyDown}
+					/>
+				</div>
+				<div class="matchingTags" id="matchingTags">
+					{#each $matchedTagsFromDB as { added, deleted, id, name, updated, user_id }}
+						<div class="tag" role="none" on:click={handleClickOnMatchedTagFromDB}>
+							<i class="las la-hashtag" />
+							<span>{name}</span>
+						</div>
+					{/each}
+				</div>
+			</div>
 			<div class="suggestedTags" id="suggestedTags">
 				<div class="suggested-tag">
 					<i class="las la-hashtag" />
@@ -131,8 +197,8 @@
 				</div>
 			</div>
 			<div class="buttons">
-				<button type="submit" on:click|stopPropagation={createTag}>
-					<span>Create</span>
+				<button type="submit" on:click|stopPropagation|preventDefault={createTag}>
+					<span>Create tag</span>
 				</button>
 				<button class="cancel" on:click|stopPropagation|preventDefault={hideOverlay}>
 					<span>Cancel</span>
@@ -146,16 +212,14 @@
 	.container {
 		z-index: 2;
 		position: fixed;
-		top: 1%;
-		left: 0.5%;
+		top: 0;
+		left: 0;
 		width: 27.5rem;
-		height: 98vh;
-		max-height: 98vh;
+		height: 100vh;
 		background-color: rgb(245, 245, 245);
 		display: flex;
 		flex-direction: column;
 		transform: translateX(0);
-		border-radius: 0.5rem;
 		border: 0.1rem solid rgb(0, 0, 0, 0.1);
 		box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 		gap: 1em;
@@ -167,8 +231,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			min-height: 7vh;
-			padding: 1em;
+			padding: 0.5em;
 
 			p {
 				font-size: 1.5rem;
@@ -186,7 +249,7 @@
 			display: flex;
 			flex-direction: column;
 			gap: 2em;
-			padding: 1em;
+			padding: 0.1em;
 
 			form {
 				width: 100%;
@@ -197,18 +260,78 @@
 				flex-direction: column;
 				gap: 2em;
 
-				input[type='text'] {
+				.inputContainer {
+					display: flex;
+					flex-direction: column;
 					width: 100%;
-					min-height: 4rem;
-					padding: 0.5em;
-					border: 0.1rem solid rgb(0, 0, 0, 0.1);
-					font-size: 1.3rem;
-					font-family: 'Arial CE', sans-serif;
-					border-radius: inherit;
-					outline: none;
+					position: relative;
 
-					&:focus {
-						border-color: rgb(0, 121, 255);
+					.input {
+						display: flex;
+						align-items: center;
+						border: 0.1rem solid rgb(2, 84, 100, 0.1);
+						background-color: rgb(255, 255, 255);
+						height: 3rem;
+						border-radius: 0.2rem;
+
+						.icon {
+							min-width: 10%;
+							height: 100%;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+
+							i {
+								background-color: rgb(120, 193, 243);
+								font-size: 1.5rem;
+								color: rgb(255, 255, 255);
+							}
+						}
+
+						input[type='text'] {
+							border: none;
+							font-size: 1.3rem;
+							font-family: 'Arial CE', sans-serif;
+							outline: none;
+							width: 90%;
+							height: 100%;
+							padding: 0 0.2em;
+						}
+					}
+
+					.matchingTags {
+						position: absolute;
+						top: 100%;
+						left: 0;
+						right: 0;
+						width: inherit;
+						min-height: max-content;
+						max-height: 20rem;
+						overflow-y: auto;
+						background-color: rgb(255, 255, 255);
+						box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
+							rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+
+						.tag {
+							min-height: 4rem;
+							display: flex;
+							align-items: center;
+							gap: 1em;
+							padding: 0.3em;
+							border-bottom: 0.1rem solid rgb(2, 84, 100, 0.1);
+							cursor: pointer;
+
+							i {
+								background-color: rgb(120, 193, 243);
+								font-size: 1.5rem;
+								color: rgb(255, 255, 255);
+							}
+
+							span {
+								font-size: 1.3rem;
+								font-family: 'Arial CE', sans-serif;
+							}
+						}
 					}
 				}
 
@@ -264,11 +387,10 @@
 
 					button {
 						border: none;
-						min-width: 7rem;
-						min-height: 4rem;
-						padding: 0.5em;
+						min-width: max-content;
+						padding: 0.7em;
 						cursor: pointer;
-						border-radius: 0.3rem;
+						border-radius: 0.2rem;
 
 						span {
 							font-size: 1.3rem;
@@ -277,23 +399,15 @@
 					}
 
 					button.cancel {
-						width: 50%;
-
-						&:hover {
-							background-color: rgb(252, 174, 174);
-						}
+						display: none;
 					}
 
 					button[type='submit'] {
-						width: 50%;
-						background-color: rgb(0, 121, 255);
+						width: 100%;
+						background-color: #025464;
 
 						span {
 							color: rgb(255, 255, 255);
-						}
-
-						&:hover {
-							background-color: rgb(6, 143, 255);
 						}
 					}
 				}

@@ -10,7 +10,7 @@ import (
 )
 
 const getAllUserTags = `-- name: GetAllUserTags :many
-select id, name, user_id, added, updated, deleted from tag where user_id = $1 order by (added) desc
+select id, name, user_id, added, updated, deleted from tag where user_id = $1 AND deleted is null order by (added) desc
 `
 
 func (q *Queries) GetAllUserTags(ctx context.Context, userID string) ([]Tag, error) {

@@ -5,6 +5,7 @@
 		apiHost,
 		bookmarks,
 		currentTagID,
+		error,
 		lastAddedBookmark,
 		processingBookmark,
 		session,
@@ -97,7 +98,10 @@
 	};
 
 	const handleTagFormSubmit = async () => {
-		if (tagName === '') return;
+		if (tagName === '') {
+			error.set('tag name must not be empty');
+			return;
+		}
 
 		if (matchingTags.length > 0) {
 			matchingTags.forEach((tag) => {
@@ -219,7 +223,10 @@
 		// 	return;
 		// }
 
-		if (bookmark === '') return;
+		if (bookmark === '') {
+			error.set('url must not be empty');
+			return;
+		}
 
 		processingBookmark.set(true);
 
@@ -344,7 +351,7 @@
 
 		<div class="buttons">
 			<button type="submit">
-				<span>Save</span>
+				<span>Add bookmark</span>
 			</button>
 			<button class="cancel" on:click|stopPropagation={hideAddBookmarkComponent}>
 				<span>Cancel</span>
@@ -404,19 +411,16 @@
 	.container {
 		z-index: 2;
 		position: fixed;
-		top: 1%;
-		right: 0.5%;
+		top: 0;
+		right: 0;
 		width: 40rem;
-		height: 98vh;
-		max-height: 98vh;
+		height: 100vh;
 		overflow-y: auto;
 		background-color: rgb(245, 245, 245);
 		display: flex;
 		flex-direction: column;
-		padding: 1em;
 		gap: 1em;
 		box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-		border-radius: 0.5rem;
 		transform: translateX(200%);
 		transition: all ease 300ms;
 
@@ -428,7 +432,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			min-height: 7vh;
+			padding: 1em;
 
 			p {
 				font-size: 1.5rem;
@@ -448,21 +452,17 @@
 			display: flex;
 			flex-direction: column;
 			gap: 2em;
+			padding: 1em;
 
 			input[type='text'] {
 				width: 100%;
-				min-height: 4rem;
-				padding: 0.5em;
+				padding: 0.7em;
 				font-family: 'Arial CE', sans-serif;
 				font-size: 1.3rem;
 				border: 0.1rem solid rgb(0, 0, 0, 0.1);
 				border-radius: inherit;
 				border-radius: 0.3rem;
 				outline: none;
-
-				&:focus {
-					border-color: rgb(0, 121, 255);
-				}
 			}
 
 			#defaultURLs {
@@ -520,16 +520,15 @@
 			gap: 1em;
 
 			button {
-				width: 7rem;
-				min-height: 4rem;
 				min-width: max-content;
-				padding: 0.5em;
+				padding: 0.7em;
 				cursor: pointer;
 				display: flex;
 				align-items: center;
 				justify-content: center;
 				border: none;
 				border-radius: 0.3rem;
+				background-color: rgb(238, 238, 238);
 
 				span {
 					font-family: 'Arial CE', sans-serif;
@@ -538,22 +537,15 @@
 			}
 
 			button.cancel {
-				width: 50%;
-				&:hover {
-					background-color: rgb(252, 174, 174);
-				}
+				display: none;
 			}
 
 			button[type='submit'] {
-				width: 50%;
-				background-color: rgb(0, 121, 255);
+				background-color: #025464;
+				width: 100%;
 
 				span {
 					color: rgb(255, 255, 255);
-				}
-
-				&:hover {
-					background-color: rgb(6, 143, 255);
 				}
 			}
 		}

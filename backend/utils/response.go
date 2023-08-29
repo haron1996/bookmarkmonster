@@ -13,13 +13,13 @@ func Response(w http.ResponseWriter, message string, httpStatusCode int) {
 	resp["message"] = message
 	jsonResponse, err := json.Marshal(resp)
 	if err != nil {
-		log.Println(err)
+		log.Printf("could not marshal response")
 		return
 	}
 	w.Write(jsonResponse)
 }
 
-func JsonResponse(w http.ResponseWriter, res ...interface{}) {
+func JsonResponse(w http.ResponseWriter, res ...any) {
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(res)

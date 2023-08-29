@@ -13,7 +13,7 @@
 		const sessionString = localStorage.getItem('session') as string | null;
 
 		if (sessionString != null) {
-			goto(`${$page.url.origin}/dashboard`);
+			window.location.replace(`${$page.url.origin}/dashboard`);
 			return;
 		}
 	};

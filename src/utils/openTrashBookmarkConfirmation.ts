@@ -1,5 +1,3 @@
-import { getBookmarkTags } from './getBookmarkTags';
-
 export async function openTrashBookmarkConfirmation() {
 	const el = document.getElementById('trashBookmarkConfirmation') as HTMLDivElement | null;
 

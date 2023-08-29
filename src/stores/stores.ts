@@ -36,3 +36,7 @@ export const tagName = writable<string>('');
 export const error = writable<string>('');
 
 export const ctrlKeyActive = writable<boolean>(false);
+
+export const deletedTag = writable<Tag>({});
+
+export const indexOfDeletedTag = writable<number | null>();

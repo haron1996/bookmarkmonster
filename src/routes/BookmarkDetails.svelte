@@ -264,6 +264,15 @@
 
 		bookmarks.set($bookmarks);
 	}
+
+	function handleInputKeyDown(e: KeyboardEvent) {
+		if (e.code === 'Space') {
+			if ($tagName === '') {
+				e.preventDefault();
+				return;
+			}
+		}
+	}
 </script>
 
 <div
@@ -340,6 +349,7 @@
 							autocomplete="off"
 							bind:value={$tagName}
 							on:input={fetchMatchingTags}
+							on:keydown={handleInputKeyDown}
 						/>
 						<div class="matchingTags">
 							{#each $matchedTagsFromDB as { added, deleted, id, name, updated, user_id }}
