@@ -56,8 +56,7 @@ func (h *BaseHandler) GetUserBookmarksByTagID(w http.ResponseWriter, r *http.Req
 				return
 			case errors.Is(err, pgx.ErrNoRows):
 				log.Println("bookmark by id not found")
-				utils.Response(w, "bookmark by id not found", http.StatusNoContent)
-				return
+				continue
 			default:
 				log.Printf("could not get bookmarks by tag id: %v", err)
 				utils.Response(w, "something went wrong", http.StatusInternalServerError)

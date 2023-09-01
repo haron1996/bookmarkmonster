@@ -24,68 +24,88 @@
 </script>
 
 <header>
-	<img src={logo} alt="logo" class="logo" draggable="false" />
+	<div class="innerContainer">
+		<a class="logo" href="/"><img src={logo} alt="logo" draggable="false" /></a>
 
-	<!-- <nav /> -->
+		<nav>
+			<a href="#features">Features</a>
+			<a href="#pricing">Pricing</a>
+			<a href="/signin">Sign in</a>
+		</nav>
 
-	<button class="google" on:click={getGoogleLoginUrl}>
-		<img src={googleLogoSrc} alt="google logo" class="google-logo" draggable="false" />
-		<span>Continue with Google</span>
-	</button>
+		<a class="btn" href="/signup">Get my free account</a>
+	</div>
 </header>
 
 <style lang="scss">
 	header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
 		min-height: 7vh;
-		border-bottom: 0.1rem solid rgb(0, 0, 0, 0.1);
+		display: flex;
+		align-content: center;
+		justify-content: center;
+		background-color: #e6fffd;
+		padding: 1em;
 
-		img {
-			height: 4.5rem;
-			width: 4.5rem;
-			object-fit: contain;
-			margin-left: 0.5em;
-
-			@media only screen and (max-width: 425px) {
-				margin-left: 0.1em;
-			}
-		}
-
-		button.google {
+		.innerContainer {
+			width: 60%;
 			display: flex;
 			align-items: center;
-			justify-content: center;
-			min-width: max-content;
-			background-color: rgb(0, 121, 255);
-			border: none;
-			cursor: pointer;
-			height: 3.5rem;
-			width: 15%;
-			gap: 0.5em;
-			border-radius: 0.3rem;
-			margin-right: 0.5em;
-			padding: 0 0.5em;
+			justify-content: space-between;
 
-			img.google-logo {
-				height: 2rem;
-				width: 2rem;
-				object-fit: contain;
+			a.logo {
+				height: 4rem;
+				width: 4rem;
+
+				img {
+					object-fit: contain;
+					max-inline-size: 100%;
+				}
 			}
 
-			span {
-				font-family: 'Arial CE', sans-serif;
+			nav {
+				min-width: max-content;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 1em;
+
+				a {
+					color: #025464;
+					font-size: 1.3rem;
+					font-weight: 600;
+					text-decoration-color: transparent;
+					transition: all ease 300ms;
+					font-family: 'Roboto', sans-serif;
+
+					&:hover {
+						color: #0079ff;
+						text-decoration-color: #0079ff;
+					}
+				}
+
+				@media only screen and (max-width: 600px) {
+					display: none;
+				}
+			}
+
+			a.btn {
+				min-width: max-content;
+				padding: 0.5em 1em;
+				background-color: #0079ff;
 				font-size: 1.3rem;
-				color: rgb(255, 255, 255);
+				font-family: 'Poppins', sans-serif;
+				color: white;
+				text-decoration: none;
+				border-radius: 0.3rem;
+				font-weight: 600;
 			}
 
-			&:hover {
-				background-color: rgb(6, 143, 255);
+			@media only screen and (max-width: 768px) {
+				width: 100%;
 			}
 
-			@media only screen and (max-width: 425px) {
-				margin-right: 0.1em;
+			@media only screen and (min-width: 601px) and (max-width: 992px) {
+				width: 90%;
 			}
 		}
 	}

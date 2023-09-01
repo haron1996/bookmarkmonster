@@ -10,7 +10,7 @@ import (
 )
 
 const getBookmarkByID = `-- name: GetBookmarkByID :one
-select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted from bookmark where id = $1 limit 1
+select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted from bookmark where id = $1 and deleted is null limit 1
 `
 
 func (q *Queries) GetBookmarkByID(ctx context.Context, id string) (Bookmark, error) {
