@@ -18,6 +18,8 @@ import (
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/launcher"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
 	"github.com/kwandapchumba/bookmarkmonster/mw"
 	token "github.com/kwandapchumba/bookmarkmonster/token"
@@ -28,7 +30,7 @@ type addBookmarkRequest struct {
 	Bookmark string `json:"bookmark"`
 }
 
-func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
+func AddBookmark(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	jsonDecoder := json.NewDecoder(r.Body)
@@ -276,15 +278,24 @@ func (h *BaseHandler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 
 	payload := ctx.Value(pLoad).(*token.PayLoad)
 
-	q := sqlc.New(h.pool)
+	pool, err := pgxpool.New(ctx, config.DBString)
+	if err != nil {
+		log.Printf("could not create new pool: %v", err)
+		utils.Response(w, "something went wrong", 500)
+		return
+	}
+
+	defer pool.Close()
+
+	q := sqlc.New(pool)
 
 	params := sqlc.AddBookmarkParams{
 		ID:        uuid.New().String(),
 		Title:     pageTitle,
 		Bookmark:  urlToOpen,
 		Host:      host,
-		Favicon:   bookmarkFaviconURL,
-		Thumbnail: bookmarkScreenshotURL,
+		Favicon:   pgtype.Text{String: bookmarkFaviconURL, Valid: true},
+		Thumbnail: pgtype.Text{String: bookmarkScreenshotURL, Valid: true},
 		UserID:    payload.UserID,
 	}
 

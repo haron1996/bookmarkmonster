@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
 	"github.com/kwandapchumba/bookmarkmonster/token"
 	"github.com/kwandapchumba/bookmarkmonster/utils"
@@ -35,7 +36,7 @@ func newAuthenticatedUser(user *sqlc.Userr, accessToken, refreshToken string) *a
 	}
 }
 
-func (h *BaseHandler) RegisterGoogleUser(w http.ResponseWriter, r *http.Request) {
+func RegisterGoogleUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	jsonDecoder := json.NewDecoder(r.Body)
@@ -63,16 +64,32 @@ func (h *BaseHandler) RegisterGoogleUser(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	q := sqlc.New(h.pool)
-
-	getUserParams := sqlc.GetUserByEmailAndIDParams{
-		Email: googleUser.Email,
-		ID:    googleUser.Id,
+	config, err := utils.LoadConfig(".")
+	if err != nil {
+		log.Println(err)
+		utils.Response(w, "something went wrong", http.StatusInternalServerError)
+		return
 	}
+
+	pool, err := pgxpool.New(ctx, config.DBString)
+	if err != nil {
+		log.Printf("could not create new pool: %v", err)
+		utils.Response(w, "something went wrong", 500)
+		return
+	}
+
+	defer pool.Close()
+
+	q := sqlc.New(pool)
+
+	// getUserParams := sqlc.GetUserByEmailAndIDParams{
+	// 	Email: googleUser.Email,
+	// 	ID:    googleUser.Id,
+	// }
 
 	var pgErr *pgconn.PgError
 
-	userByGoogleEmailAndID, err := q.GetUserByEmailAndID(ctx, getUserParams)
+	userByGoogleEmailAndID, err := q.GetUserByEmail(ctx, googleUser.Email)
 	if err != nil {
 		if errors.As(err, &pgErr) {
 			log.Println(err)
@@ -89,7 +106,7 @@ func (h *BaseHandler) RegisterGoogleUser(w http.ResponseWriter, r *http.Request)
 
 			profilePicUrl, err := vultr.UploadUserProfilePic(file)
 			if err != nil {
-				log.Println(err)
+				log.Printf("could not upload google user profile pic: %v", err)
 				utils.Response(w, "something went wrong", http.StatusInternalServerError)
 				return
 			}
@@ -98,8 +115,9 @@ func (h *BaseHandler) RegisterGoogleUser(w http.ResponseWriter, r *http.Request)
 				ID:            googleUser.Id,
 				Email:         googleUser.Email,
 				Name:          googleUser.Name,
-				EmailVerified: googleUser.EmailVerified,
+				EmailVerified: true,
 				Picture:       pgtype.Text{String: profilePicUrl, Valid: true},
+				SignupMode:    sqlc.SignupModeGoogle,
 			}
 
 			user, err := q.CreateUser(ctx, createUserParams)
@@ -163,11 +181,11 @@ func (h *BaseHandler) RegisterGoogleUser(w http.ResponseWriter, r *http.Request)
 	}
 
 	// login user
-	loginUser(userByGoogleEmailAndID, w, ctx, q)
+	loginUser(userByGoogleEmailAndID, w, ctx, q, pool)
 }
 
 // utility to login user
-func loginUser(user sqlc.Userr, w http.ResponseWriter, ctx context.Context, q *sqlc.Queries) {
+func loginUser(user sqlc.Userr, w http.ResponseWriter, ctx context.Context, q *sqlc.Queries, db sqlc.DBTX) {
 	config, err := utils.LoadConfig(".")
 	if err != nil {
 		log.Println(err)

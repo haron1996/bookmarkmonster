@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
 	"github.com/kwandapchumba/bookmarkmonster/utils"
 )
@@ -14,7 +15,7 @@ type tagBookmarkRequest struct {
 	Tags       []sqlc.Tag `json:"tags"`
 }
 
-func (h *BaseHandler) TagBookmark(w http.ResponseWriter, r *http.Request) {
+func TagBookmark(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	jsonDecoder := json.NewDecoder(r.Body)
@@ -35,7 +36,23 @@ func (h *BaseHandler) TagBookmark(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	q := sqlc.New(h.pool)
+	config, err := utils.LoadConfig(".")
+	if err != nil {
+		log.Println(err)
+		utils.Response(w, "something went wrong", http.StatusInternalServerError)
+		return
+	}
+
+	pool, err := pgxpool.New(ctx, config.DBString)
+	if err != nil {
+		log.Printf("could not create new pool: %v", err)
+		utils.Response(w, "something went wrong", 500)
+		return
+	}
+
+	defer pool.Close()
+
+	q := sqlc.New(pool)
 
 	for _, tag := range req.Tags {
 		tagBookmarkParams := sqlc.TagBookmarkParams{

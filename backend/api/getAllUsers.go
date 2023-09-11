@@ -5,11 +5,15 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
 	"github.com/kwandapchumba/bookmarkmonster/utils"
 )
 
-func (h *BaseHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
 	code := chi.URLParam(r, "code")
 
 	config, err := utils.LoadConfig(".")
@@ -23,7 +27,16 @@ func (h *BaseHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := sqlc.New(h.pool).GetUsers(r.Context())
+	pool, err := pgxpool.New(ctx, config.DBString)
+	if err != nil {
+		log.Printf("could not create new pool: %v", err)
+		utils.Response(w, "something went wrong", 500)
+		return
+	}
+
+	defer pool.Close()
+
+	users, err := sqlc.New(pool).GetUsers(r.Context())
 	if err != nil {
 		log.Println(err)
 		utils.Response(w, "something went wrong", http.StatusInternalServerError)

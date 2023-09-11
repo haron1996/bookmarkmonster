@@ -5,7 +5,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/kwandapchumba/bookmarkmonster/api"
-	connection "github.com/kwandapchumba/bookmarkmonster/db"
 	"github.com/kwandapchumba/bookmarkmonster/mw"
 )
 
@@ -30,39 +29,60 @@ func Router() *chi.Mux {
 	r.Use(middleware.RedirectSlashes)
 	r.Use(middleware.RealIP)
 
-	h := api.NewBaseHandler(connection.ConnectDB())
+	// h := api.NewBaseHandler(connection.ConnectDB())
 
 	r.Route("/auth", func(r chi.Router) {
-		r.Get("/get-google-login-url", h.GetGoogleAuthUrl)
-		r.Post("/register-google-user", h.RegisterGoogleUser)
+		r.Get("/get-google-login-url", api.GetGoogleAuthUrl)
+		r.Post("/register-google-user", api.RegisterGoogleUser)
+		r.Post("/requestEmailVerificationCode", api.RequestEmailVerification)
+		r.Post("/resendEmailConfirmationLink", api.ResendConfirmationLink)
+		r.Post("/createUser", api.CreateUser)
+		r.Post("/logUserIn", api.LogUserIn)
 	})
 
 	r.Route("/authenticated", func(r chi.Router) {
 		r.Use(mw.AuthenticateRequest())
 		r.Route("/tags", func(r chi.Router) {
-			r.Get("/", h.GetAllUserTags)
-			r.Get("/{tagName}", h.SearchUserTags)
-			r.Post("/create-tag", h.CreateTag)
-			r.Patch("/renameTag", h.RenameTag)
-			r.Patch("/trashTag", h.TrashTag)
-			r.Patch("/restoreTag", h.RestoreTag)
+			r.Get("/", api.GetAllUserTags)
+			r.Get("/{tagName}", api.SearchUserTags)
+			r.Post("/create-tag", api.CreateTag)
+			r.Patch("/renameTag", api.RenameTag)
+			r.Patch("/trashTag", api.TrashTag)
+			r.Patch("/restoreTag", api.RestoreTag)
 		})
 
 		r.Route("/bookmarks", func(r chi.Router) {
-			r.Get("/", h.GetUserBookmarks)
-			r.Get("/{tagid}", h.GetUserBookmarksByTagID)
-			r.Get("/search/{title}", h.SearchBookmarks)
-			r.Get("/bookmarkTags/{bookmarkid}", h.GetBookmarkTags)
-			r.Post("/add", h.AddBookmark)
-			r.Patch("/tagBookmark", h.TagBookmark)
-			r.Patch("/renameBookmark", h.RenameBookmark)
-			r.Patch("/trashBookmarks", h.TrashBookmark)
-			r.Delete("/deleteTagFromBookmark", h.DeleteTagFromBookmark)
+			r.Get("/", api.GetUserBookmarks)
+			r.Get("/{tagid}", api.GetUserBookmarksByTagID)
+			r.Get("/search/{title}", api.SearchBookmarks)
+			r.Get("/bookmarkTags/{bookmarkid}", api.GetBookmarkTags)
+			r.Post("/add", api.AddBookmark)
+			r.Patch("/tagBookmark", api.TagBookmark)
+			r.Patch("/renameBookmark", api.RenameBookmark)
+			r.Patch("/trashBookmarks", api.TrashBookmark)
+			r.Delete("/deleteTagFromBookmark", api.DeleteTagFromBookmark)
+
+			// lates
+			r.Post("/createBookmark", api.CreateRootBookmark)
+			r.Get("/getRootBookmarks", api.GetRootBookmarks)
+			r.Get("/getBookmarksInTrash", api.GetBookmarksInTrash)
+			r.Patch("/updateBookmark", api.UpdateBookmark)
+		})
+
+		r.Route("/collections", func(r chi.Router) {
+			r.Post("/createCollection", api.CreateFolder)
+			r.Get("/getUserRootCollections", api.GetUserRootFolders)
+			r.Get("/getUserFoldersInRecycleBin", api.GetFoldersInTrash)
+			r.Get("/getCollectionPath/{folderID}", api.GetFolderPath)
+			r.Get("/getFolderBookmarks/{folderID}", api.GetFolderBookmarks)
+			r.Get("/getFolderSubfolders/{folderID}", api.GetFolderSubfolders)
+			r.Get("/getFolderPath/{folderID}", api.GetFolderPath)
+			r.Patch("/updateCollection", api.UpdateFolder)
 		})
 	})
 
 	r.Route("/admin", func(r chi.Router) {
-		r.Get("/users/{code}", h.GetAllUsers)
+		r.Get("/users/{code}", api.GetAllUsers)
 	})
 
 	return r

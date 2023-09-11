@@ -7,11 +7,26 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
+	"github.com/kwandapchumba/bookmarkmonster/utils"
 )
 
 func GetUser(ctx context.Context, email, id string) (*sqlc.Userr, error) {
-	q := sqlc.New(ConnectDB())
+
+	config, err := utils.LoadConfig(".")
+	if err != nil {
+		return nil, fmt.Errorf("could not load config: %v", err)
+	}
+
+	pool, err := pgxpool.New(ctx, config.DBString)
+	if err != nil {
+		return nil, fmt.Errorf("could not create new pool: %v", err)
+	}
+
+	defer pool.Close()
+
+	q := sqlc.New(pool)
 
 	getUserParams := sqlc.GetUserByEmailAndIDParams{
 		Email: email,

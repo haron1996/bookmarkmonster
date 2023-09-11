@@ -6,13 +6,15 @@ CREATE TABLE bookmark (
     title text not null,
     bookmark text not null,
     host text not null,
-    favicon text not null,
-    thumbnail text not null,
+    favicon text,
+    thumbnail text,
     notes text,
     user_id text not null references userr(id) on delete cascade,
     added timestamptz not null default current_timestamp,
     updated timestamptz,
-    deleted timestamptz
+    deleted timestamptz,
+    folder_id text references folder(folder_id) on delete cascade,
+    beautified timestamptz
 );
 -- +goose StatementBegin
 SELECT 'up SQL query';

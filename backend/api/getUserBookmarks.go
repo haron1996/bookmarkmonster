@@ -7,13 +7,14 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
 	"github.com/kwandapchumba/bookmarkmonster/mw"
 	token "github.com/kwandapchumba/bookmarkmonster/token"
 	"github.com/kwandapchumba/bookmarkmonster/utils"
 )
 
-func (h *BaseHandler) GetUserBookmarks(w http.ResponseWriter, r *http.Request) {
+func GetUserBookmarks(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	const pLoad mw.ContextKey = "payload"
@@ -22,7 +23,23 @@ func (h *BaseHandler) GetUserBookmarks(w http.ResponseWriter, r *http.Request) {
 
 	userid := payload.UserID
 
-	q := sqlc.New(h.pool)
+	config, err := utils.LoadConfig(".")
+	if err != nil {
+		log.Println(err)
+		utils.Response(w, "something went wrong", http.StatusInternalServerError)
+		return
+	}
+
+	pool, err := pgxpool.New(ctx, config.DBString)
+	if err != nil {
+		log.Printf("could not create new pool: %v", err)
+		utils.Response(w, "something went wrong", 500)
+		return
+	}
+
+	defer pool.Close()
+
+	q := sqlc.New(pool)
 
 	bookmarks, err := q.GetUserBookmarks(ctx, userid)
 	if err != nil {

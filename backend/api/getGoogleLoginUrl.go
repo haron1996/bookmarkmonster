@@ -7,7 +7,7 @@ import (
 	"github.com/kwandapchumba/bookmarkmonster/utils"
 )
 
-func (h *BaseHandler) GetGoogleAuthUrl(w http.ResponseWriter, r *http.Request) {
+func GetGoogleAuthUrl(w http.ResponseWriter, r *http.Request) {
 
 	authUrl, err := utils.GenerateGoogleAuthUrl()
 	if err != nil {
