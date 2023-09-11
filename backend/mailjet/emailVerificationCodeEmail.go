@@ -27,7 +27,7 @@ func (m EmailVerificationMail) SendEmailVificationMail() error {
 
 	client := mailjet.NewMailjetClient(config.MailJetApiKey, config.MailJetSecretKey)
 
-	link := fmt.Sprintf("http://localhost:5173/signup/verifyEmailAddress?token=%s", m.Code)
+	link := fmt.Sprintf("https://beta.bookmarkmonster.xyz/signup/verifyEmailAddress?token=%s", m.Code)
 
 	body := fmt.Sprintf(`
 	<p>Hey</p>

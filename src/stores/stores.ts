@@ -72,3 +72,5 @@ export const showUpdateBookmark = writable<boolean>(false);
 export const updatingBookmark = writable<boolean>(false);
 
 export const showAddNewBookmark = writable<boolean>(false);
+
+export const recentUserBookmarks = writable<Bookmark[]>([]);

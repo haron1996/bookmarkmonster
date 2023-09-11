@@ -12,7 +12,7 @@ func Router() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173", "https://bookmarkmonster.xyz"},
+		AllowedOrigins:   []string{"http://localhost:5173", "https://bookmarkmonster.xyz", "https://*.bookmarkmonster.xyz"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"},
 		AllowedHeaders:   []string{"User-Agent", "Content-Type", "Accept", "Accept-Encoding", "Accept-Language", "Cache-Control", "Connection", "DNT", "Host", "Origin", "Pragma", "Referer", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
@@ -61,6 +61,7 @@ func Router() *chi.Mux {
 			r.Patch("/renameBookmark", api.RenameBookmark)
 			r.Patch("/trashBookmarks", api.TrashBookmark)
 			r.Delete("/deleteTagFromBookmark", api.DeleteTagFromBookmark)
+			r.Get("/getUserRecentBookmarks", api.GetUserRecentBookmarks)
 
 			// lates
 			r.Post("/createBookmark", api.CreateRootBookmark)

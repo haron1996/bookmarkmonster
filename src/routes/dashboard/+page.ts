@@ -3,7 +3,10 @@
 import { browser } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
 import { session } from '../../stores/stores';
+import type { Bookmark } from '../../types/bookmark';
+import { getUserRecentBookmarks } from '../../utils/getUserRecentBookmarks';
 export const prerender = true;
+let recentUserBookmarks: Bookmark[] = [];
 
 function getUserSession(url: any) {
 	if (browser) {
@@ -20,5 +23,9 @@ function getUserSession(url: any) {
 export async function load({ fetch, params, url, route }: any) {
 	getUserSession(url);
 
-	return {};
+	if (browser) {
+		recentUserBookmarks = await getUserRecentBookmarks(fetch);
+	}
+
+	return { recentUserBookmarks };
 }
