@@ -105,7 +105,7 @@
 		display: flex;
 		flex-direction: column;
 		position: absolute;
-		z-index: 2;
+		z-index: 6;
 		background-color: rgb(248, 246, 244);
 		min-width: 20rem;
 		border-radius: 0.1rem;

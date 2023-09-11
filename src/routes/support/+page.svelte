@@ -1,3 +1,6 @@
+<script lang="ts">
+</script>
+
 <section>
 	<div class="heading">
 		<h1>Friendly folks, standing by.</h1>

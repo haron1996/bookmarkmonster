@@ -1,5 +1,10 @@
 <script lang="ts">
 	import { error } from '../stores/stores';
+
+	$: $error,
+		setTimeout(() => {
+			error.set('');
+		}, 5000);
 </script>
 
 <div class="error" id="error" class:showError={$error !== ''}>
@@ -24,7 +29,7 @@
 		gap: 1em;
 		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 		border-radius: 0.3rem;
-		transition: all ease 0.5s;
+		transition: all ease-in 0.5s;
 		color: red;
 		transform: translateY(-200%);
 		opacity: 0;

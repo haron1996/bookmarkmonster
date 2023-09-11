@@ -1,3 +1,88 @@
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { apiHost } from '../../stores/stores';
+
+	let email: string = '';
+	let password: string = '';
+	let passwordShown: boolean = false;
+	let signingInWithEmail: boolean = false;
+	let signingInWithGoogle: boolean = false;
+
+	function showPassword() {
+		const input = document.getElementById('password') as HTMLInputElement | null;
+
+		if (input === null) return;
+
+		input.type === 'password' ? (input.type = 'text') : (input.type = 'password');
+
+		passwordShown = !passwordShown;
+	}
+
+	const getGoogleLoginUrl = async () => {
+		signingInWithGoogle = true;
+
+		const response = await fetch(`${$apiHost}/auth/get-google-login-url`, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer'
+		});
+
+		const result = await response.json();
+
+		window.open(result, '_self');
+	};
+
+	async function logUserIn() {
+		signingInWithEmail = true;
+
+		if (email === '' || password === '') {
+			alert('email and password required');
+			signingInWithEmail = false;
+			return;
+		}
+
+		const response = await fetch(`${$apiHost}/auth/logUserIn`, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({
+				email: email,
+				password: password
+			})
+		});
+
+		const result = await response.json();
+
+		const msg = result.message;
+
+		if (msg) {
+			alert(msg);
+			signingInWithEmail = false;
+			return;
+		}
+
+		const session = result[0];
+
+		localStorage.setItem('session', JSON.stringify(session));
+
+		signingInWithEmail = false;
+
+		goto('/dashboard');
+	}
+</script>
+
 <section>
 	<form>
 		<div class="top">
@@ -6,27 +91,55 @@
 		<div class="inputs">
 			<div class="email">
 				<label for="email">Email address</label>
-				<input type="email" name="email" id="email" autocomplete="email" />
+				<input type="email" name="email" id="email" autocomplete="email" bind:value={email} />
 			</div>
 			<div class="password">
 				<label for="password">Password</label>
 				<div class="passwordInput">
-					<input type="password" name="password" id="password" autocomplete="on" />
-					<div class="showPassword">
+					<input
+						type="password"
+						name="password"
+						id="password"
+						autocomplete="on"
+						bind:value={password}
+					/>
+					<div class="showPassword" on:click={showPassword} role="none" class:passwordShown>
 						<i class="las la-eye" />
 						<span>Show</span>
 					</div>
 				</div>
 			</div>
 		</div>
-		<button type="submit">
+		<button
+			type="submit"
+			class:btnDisabled={email === '' || password === '' || signingInWithEmail}
+			on:click|preventDefault={logUserIn}
+		>
 			<i class="las la-sign-in-alt" />
 			<span>Sign in</span>
+			{#if signingInWithEmail || email === '' || password === ''}
+				<div
+					class="buttonBlocked"
+					on:click|preventDefault|stopPropagation={() => {
+						alert('blocked');
+					}}
+					role="none"
+				/>
+			{/if}
 		</button>
 		<h2><span>or</span></h2>
-		<button class="google">
+		<button class="google" on:click|preventDefault={getGoogleLoginUrl}>
 			<i class="lab la-google-plus" />
 			<span>Sign in with Google</span>
+			{#if signingInWithGoogle}
+				<div
+					class="buttonBlocked"
+					on:click|preventDefault|stopPropagation={() => {
+						alert('blocked');
+					}}
+					role="none"
+				/>
+			{/if}
 		</button>
 		<span>Don't have an account yet? <a href="/signup">Sign up</a></span>
 	</form>
@@ -39,6 +152,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		background-image: url('../../lib/images/loginBackground.jpg');
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
 
 		form {
 			width: 50rem;
@@ -49,6 +166,7 @@
 			padding: 3em;
 			box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 			border-radius: 0.5rem;
+			background-color: aliceblue;
 
 			.top {
 				display: flex;
@@ -136,6 +254,7 @@
 							gap: 0.7em;
 							cursor: pointer;
 							padding: 0 0.2em;
+							background-color: #e8f0fe;
 
 							i {
 								font-size: 1.6rem;
@@ -149,6 +268,10 @@
 									display: none;
 								}
 							}
+						}
+
+						.passwordShown {
+							color: #0079ff;
 						}
 					}
 				}
@@ -166,6 +289,7 @@
 				transition: all ease 300ms;
 				border-radius: 0.3rem;
 				gap: 1em;
+				position: relative;
 
 				i {
 					font-size: 2rem;
@@ -191,9 +315,19 @@
 					}
 				}
 
-				&:hover {
-					transform: translateY(-5%);
+				.buttonBlocked {
+					position: absolute;
+					left: 0;
+					top: 0%;
+					height: inherit;
+					width: inherit;
+					background-color: transparent;
+					cursor: not-allowed;
 				}
+			}
+
+			.btnDisabled {
+				opacity: 0.5;
 			}
 
 			h2 {
@@ -204,7 +338,7 @@
 				margin: 10px 0 20px;
 
 				span {
-					background: #fff;
+					background: aliceblue;
 					padding: 0 10px;
 					font-size: 1.3rem;
 					text-transform: uppercase;

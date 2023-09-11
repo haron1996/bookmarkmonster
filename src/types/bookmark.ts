@@ -1,5 +1,5 @@
 export interface Bookmark {
-	added?: Date;
+	added?: string | null;
 	bookmark?: string;
 	deleted?: string | null;
 	favicon?: string;
@@ -8,6 +8,6 @@ export interface Bookmark {
 	notes?: string | null;
 	thumbnail?: string;
 	title?: string;
-	updated?: Date;
+	updated?: string;
 	user_id?: string;
 }

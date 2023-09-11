@@ -15,7 +15,7 @@
 		justify-content: center;
 		align-items: center;
 		min-height: max-content;
-		padding: 1em 0;
+		padding: 2em;
 		gap: 1em;
 		background-color: #e6fffd;
 		flex-flow: row wrap;

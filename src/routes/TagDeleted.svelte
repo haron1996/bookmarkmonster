@@ -77,7 +77,7 @@
 		margin-right: auto;
 		margin-left: auto;
 		max-width: max-content;
-		z-index: 2;
+		z-index: 6;
 		padding: 1.5em;
 		display: flex;
 		align-items: center;

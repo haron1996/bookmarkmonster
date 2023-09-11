@@ -313,16 +313,17 @@
 			<div class="detail">
 				<p>Added</p>
 				<span
-					>{$selectedBookmarks[0].added?.getDate()} / {$selectedBookmarks[0].added?.getMonth()} / {$selectedBookmarks[0].added?.getFullYear()}</span
+					>{$selectedBookmarks[0].added} / {$selectedBookmarks[0].added} / {$selectedBookmarks[0]
+						.added}</span
 				>
 			</div>
 			<div class="detail">
 				<p>Updated</p>
 				{#if $selectedBookmarks[0].updated}
 					<span
-						>{$selectedBookmarks[0].updated?.getDate()} / {$selectedBookmarks[0].updated?.getMonth()}
+						>{$selectedBookmarks[0].updated} / {$selectedBookmarks[0].updated}
 						/
-						{$selectedBookmarks[0].updated?.getFullYear()}</span
+						{$selectedBookmarks[0].updated}</span
 					>
 				{/if}
 			</div>

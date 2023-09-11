@@ -1,43 +1,8 @@
 <script lang="ts">
-	import { afterNavigate, goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import hero from '$lib/images/dashboard.png';
-	import googleLogoSrc from '$lib/images/google-logo.png';
-	import { apiHost, session } from '../stores/stores';
 	import Footer from './Footer.svelte';
 	import Header from './Header.svelte';
 	import signature from '$lib/images/signature.png';
-
-	afterNavigate(() => {
-		loadUserSession();
-	});
-
-	const loadUserSession = () => {
-		const sessionString = localStorage.getItem('session') as string | null;
-
-		if (sessionString != null) {
-			window.location.replace(`${$page.url.origin}/dashboard`);
-			return;
-		}
-	};
-
-	const getGoogleLoginUrl = async () => {
-		const response = await fetch(`${$apiHost}/auth/get-google-login-url`, {
-			method: 'GET',
-			mode: 'cors',
-			cache: 'no-cache',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			redirect: 'follow',
-			referrerPolicy: 'no-referrer'
-		});
-
-		const result = await response.json();
-
-		window.open(result, '_self');
-	};
 </script>
 
 <svelte:head>
@@ -190,7 +155,9 @@
 				We are committed to building a product you actually want to use. Any feature that you want
 				added? Send us a request. We'll prioritize the most request ones
 			</span>
-			<span class="status requestFeature">Request feature</span>
+			<span class="status requestFeature">
+				<a href="/support">Request feature</a>
+			</span>
 		</div>
 	</div>
 </section>
@@ -482,16 +449,17 @@
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
 			align-items: center;
-			gap: 1em;
+			gap: 3em;
 			width: 80%;
 
 			.featurePlusBenefit {
-				box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
 				display: flex;
 				flex-direction: column;
 				min-height: max-content;
 				padding: 1em;
 				gap: 1em;
+				box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset,
+					rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
 
 				i {
 					font-size: 2.5rem;
@@ -524,15 +492,20 @@
 					}
 
 					&.requestFeature {
-						background-color: #0079ff;
+						background-color: #ffd24c;
 						cursor: pointer;
-						color: rgb(255, 255, 255);
+
+						a {
+							color: #0079ff;
+							text-decoration: none;
+							color: #1e1919;
+						}
 					}
 				}
 
 				&.requestFeature {
-					border: 0.2rem solid #0079ff;
-					box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
+					border: 0.2rem solid #ffd24c;
+					box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 6px;
 				}
 			}
 

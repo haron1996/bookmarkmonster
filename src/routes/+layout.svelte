@@ -16,7 +16,7 @@
 </div>
 
 <style lang="scss" global>
-	@import url('https://fonts.googleapis.com/css2?family=Lora:wght@700&family=Poppins:wght@100;200;300;400;500;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap');
+	@import url('https://fonts.googleapis.com/css2?family=Lora:wght@700&family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:wght@100;200;300;400;500;700;800;900&family=Roboto:wght@300;400;500;700;900&display=swap');
 	@import url('https://fonts.cdnfonts.com/css/google-sans');
 	@import url('https://fonts.cdnfonts.com/css/arial');
 	@import url('https://fonts.cdnfonts.com/css/segoe-ui-4');

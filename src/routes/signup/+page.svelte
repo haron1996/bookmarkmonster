@@ -1,3 +1,86 @@
+<script lang="ts">
+	import { json } from '@sveltejs/kit';
+	import { apiHost, processingBookmark } from '../../stores/stores';
+	import { goto } from '$app/navigation';
+
+	let email: string = '';
+	let password: string = '';
+	let requestingEmailVerificationToken: boolean = false;
+	let requestingGoogleAuthLink: boolean = false;
+	let passwordShown: boolean = false;
+
+	const getGoogleLoginUrl = async () => {
+		requestingGoogleAuthLink = true;
+
+		const response = await fetch(`${$apiHost}/auth/get-google-login-url`, {
+			method: 'GET',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer'
+		});
+
+		const result = await response.json();
+
+		window.open(result, '_self');
+	};
+
+	async function requestEmailVerification() {
+		if (email === '' || password === '') {
+			alert('email and password required');
+			return;
+		}
+
+		requestingEmailVerificationToken = true;
+
+		const response = await fetch(`${$apiHost}/auth/requestEmailVerificationCode`, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({
+				email: email,
+				password: password
+			})
+		});
+
+		const result = await response.json();
+
+		const msg = result.message;
+
+		if (msg) {
+			alert(msg);
+			requestingEmailVerificationToken = false;
+			return;
+		}
+
+		localStorage.setItem('emailVerificationDetails', JSON.stringify(result[0]));
+
+		requestingEmailVerificationToken = false;
+
+		goto('/signup/emailSent');
+	}
+
+	function showPassword() {
+		const input = document.getElementById('password') as HTMLInputElement | null;
+
+		if (input === null) return;
+
+		input.type === 'password' ? (input.type = 'text') : (input.type = 'password');
+
+		passwordShown = !passwordShown;
+	}
+</script>
+
 <section>
 	<div class="innerWrapper">
 		<div class="features">
@@ -53,7 +136,7 @@
 				</div>
 			</div>
 		</div>
-		<form>
+		<form on:submit={requestEmailVerification}>
 			<div class="top">
 				<h1>Get your FREE account</h1>
 				<p>No credit card required.</p>
@@ -61,27 +144,59 @@
 			<div class="inputs">
 				<div class="email">
 					<label for="email">Email address</label>
-					<input type="email" name="email" id="email" autocomplete="email" />
+					<input type="email" name="email" id="email" autocomplete="email" bind:value={email} />
 				</div>
 				<div class="password">
 					<label for="password">Password</label>
 					<div class="passwordInput">
-						<input type="password" name="password" id="password" autocomplete="on" />
-						<div class="showPassword">
+						<input
+							type="password"
+							name="password"
+							id="password"
+							autocomplete="on"
+							bind:value={password}
+						/>
+						<div class="showPassword" on:click={showPassword} role="none" class:passwordShown>
 							<i class="las la-eye" />
 							<span>Show</span>
 						</div>
 					</div>
 				</div>
 			</div>
-			<button type="submit">
+			<button
+				type="submit"
+				on:click|preventDefault={requestEmailVerification}
+				class:btnDisabled={requestingEmailVerificationToken || email === '' || password === ''}
+			>
 				<i class="las la-envelope" />
 				<span>Sign up with email</span>
+				{#if requestingEmailVerificationToken || email === '' || password === ''}
+					<div
+						class="buttonBlocked"
+						on:click|preventDefault|stopPropagation={() => {
+							alert('blocked');
+						}}
+						role="none"
+					/>
+				{/if}
 			</button>
 			<h2><span>or</span></h2>
-			<button class="google">
+			<button
+				class="google"
+				on:click|preventDefault={getGoogleLoginUrl}
+				class:btnDisabled={requestingGoogleAuthLink}
+			>
 				<i class="lab la-google-plus" />
 				<span>Sign up with Google</span>
+				{#if requestingGoogleAuthLink}
+					<div
+						class="buttonBlocked"
+						on:click|preventDefault|stopPropagation={() => {
+							alert('blocked');
+						}}
+						role="none"
+					/>
+				{/if}
 			</button>
 			<span>Already have an account? <a href="/signin">Sign in</a></span>
 		</form>
@@ -182,6 +297,7 @@
 				padding: 2em;
 				box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 				border-radius: 0.5rem;
+				background-color: aliceblue;
 
 				.top {
 					display: flex;
@@ -282,6 +398,7 @@
 								gap: 0.7em;
 								cursor: pointer;
 								padding: 0 0.2em;
+								background-color: #e8f0fe;
 
 								i {
 									font-size: 1.6rem;
@@ -297,6 +414,10 @@
 										display: none;
 									}
 								}
+							}
+
+							.passwordShown {
+								color: #0079ff;
 							}
 						}
 					}
@@ -315,6 +436,7 @@
 					transition: all ease 300ms;
 					border-radius: 0.3rem;
 					gap: 1em;
+					position: relative;
 
 					i {
 						font-size: 2rem;
@@ -339,9 +461,21 @@
 						}
 					}
 
-					&:hover {
-						transform: translateY(-5%);
+					.buttonBlocked {
+						position: absolute;
+						top: 0;
+						left: 0;
+						bottom: 0;
+						right: 0;
+						height: inherit;
+						width: inherit;
+						cursor: not-allowed;
+						background-color: transparent;
 					}
+				}
+
+				.btnDisabled {
+					opacity: 0.5;
 				}
 
 				h2 {
@@ -352,11 +486,12 @@
 					margin: 10px 0 20px;
 
 					span {
-						background: #fff;
+						background: aliceblue;
 						padding: 0 10px;
 						font-size: 1.3rem;
 						text-transform: uppercase;
 						color: #4d4d4d;
+						font-family: 'Roboto', sans-serif;
 					}
 				}
 

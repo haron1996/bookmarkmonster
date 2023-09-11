@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 	import { apiHost } from '../../../stores/stores';
 
 	let code: string | null;
@@ -33,11 +32,7 @@
 
 			localStorage.setItem('session', JSON.stringify(session));
 
-			if ($page.url.origin === 'http://localhost:5173') {
-				goto('http://localhost:5173/dashboard');
-			} else {
-				goto('https://bookmarkmonster.xyz/dashboard');
-			}
+			goto('/dashboard');
 		}
 	};
 </script>
