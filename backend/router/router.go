@@ -84,6 +84,13 @@ func Router() *chi.Mux {
 
 	r.Route("/admin", func(r chi.Router) {
 		r.Get("/users/{code}", api.GetAllUsers)
+		r.Get("/getWaitList/{code}", api.GetWaitList)
+		r.Get("/readSupportMessages/{code}", api.ReadSupportMessages)
+	})
+
+	r.Route("/care", func(r chi.Router) {
+		r.Post("/joinWaitlist", api.JoinWaitList)
+		r.Post("/contactSupport", api.ContactSupport)
 	})
 
 	return r

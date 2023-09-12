@@ -1,28 +1,81 @@
 <script lang="ts">
+	import { apiHost } from '../../stores/stores';
+
+	let title: string = '';
+	let comment: string = '';
+	let email: string = '';
+
+	async function contactSupport() {
+		if (email === '' || title === '' || comment === '') {
+			alert('all fields are required');
+			return;
+		}
+
+		const response = await fetch(`${$apiHost}/care/contactSupport`, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({
+				email: email,
+				title: title,
+				comment: comment
+			})
+		});
+
+		const result = await response.json();
+
+		console.log(result[0]);
+	}
 </script>
 
 <section>
 	<div class="heading">
 		<h1>Friendly folks, standing by.</h1>
-		<p>There's no stupid question. Anything you want to ask, we are ready to answer.</p>
+		<p>There's no stupid question. Anything you want to ask, we are here to answer.</p>
 	</div>
 	<form>
 		<div class="title formItem">
 			<p data-id="required">What do you need help with?</p>
 			<span>This helps make sure you get the right answer fast.</span>
-			<input type="text" name="title" id="title" spellcheck="false" autocomplete="off" />
+			<input
+				type="text"
+				name="title"
+				id="title"
+				spellcheck="false"
+				autocomplete="off"
+				bind:value={title}
+			/>
 		</div>
 		<div class="description formItem">
 			<p data-id="required">What's your question, comment, or issue?</p>
 			<span>Share all the details. The more we know, the better we can help you.</span>
-			<textarea name="description" id="description" autocomplete="off" spellcheck="false" />
+			<textarea
+				name="description"
+				id="description"
+				autocomplete="off"
+				spellcheck="false"
+				bind:value={comment}
+			/>
 		</div>
 		<div class="title formItem">
 			<p data-id="required">What's your email address?</p>
 			<span>This is where we’ll get back to you. Double check that it’s right.</span>
-			<input type="email" name="title" id="title" spellcheck="false" autocomplete="off" />
+			<input
+				type="email"
+				name="title"
+				id="title"
+				spellcheck="false"
+				autocomplete="email"
+				bind:value={email}
+			/>
 		</div>
-		<button>Send support request</button>
+		<button on:click|preventDefault={contactSupport}>Send support request</button>
 	</form>
 </section>
 

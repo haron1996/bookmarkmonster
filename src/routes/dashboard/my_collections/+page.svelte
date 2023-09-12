@@ -21,6 +21,7 @@
 	import TopBar from '../../TopBar.svelte';
 	import ActionBarV2 from '../../ActionBarV2.svelte';
 	import PlainBookmark from '../../PlainBookmark.svelte';
+	import nodata from '$lib/images/no-data.jpg';
 
 	let root: string = 'My collections';
 
@@ -60,6 +61,10 @@
 	$: $folders, sortFoldersByName($folders);
 	$: $bookmarks, sortBookmarksByTitle($bookmarks);
 </script>
+
+<svelte:head>
+	<title>My collections | Bookmarkmonster</title>
+</svelte:head>
 
 <CreateBookmark />
 
@@ -104,6 +109,7 @@
 	<div class="myBookmarks">
 		{#if $loadingItems}
 			<div class="loadingItems">
+				<p>Loading...</p>
 				<div class="loader" />
 			</div>
 		{:else if !$loadingItems && $allItems.length >= 1}
@@ -111,7 +117,8 @@
 			<PlainBookmark />
 		{:else if !$loadingItems && $allItems.length < 1}
 			<div class="noItems">
-				<span>No collections</span>
+				<img src={nodata} alt="no data" />
+				<p>You have no collections yet</p>
 			</div>
 		{/if}
 	</div>
@@ -176,6 +183,61 @@
 			align-content: start;
 			gap: 1em;
 			padding: 1em;
+
+			.loadingItems {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				gap: 1em;
+
+				p {
+					font-size: 1.3rem;
+					font-family: 'Arial CE', sans-serif;
+				}
+
+				.loader {
+					border: 2px solid #f3f3f3; /* Light grey */
+					border-top: 2px solid #3498db; /* Blue */
+					border-radius: 50%;
+					width: 3rem;
+					height: 3rem;
+					animation: spin 0.5s linear infinite;
+
+					@keyframes spin {
+						0% {
+							transform: rotate(0deg);
+						}
+						100% {
+							transform: rotate(360deg);
+						}
+					}
+				}
+			}
+
+			.noItems {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+
+				img {
+					// max-inline-size: 100%;
+					// object-fit: contain;
+					width: 50%;
+					height: 50%;
+					object-fit: contain;
+				}
+
+				p {
+					font-size: 1.3rem;
+					font-family: 'Arial CE', sans-serif;
+				}
+			}
 		}
 	}
 </style>

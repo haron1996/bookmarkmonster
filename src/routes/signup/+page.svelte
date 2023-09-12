@@ -85,7 +85,7 @@
 	<div class="innerWrapper">
 		<div class="features">
 			<div class="title">
-				<h1>Join 100+ happy beta users</h1>
+				<h1>Join 1000+ happy beta users</h1>
 				<p>Quick and core features that help you unleash your bookmarking powers</p>
 			</div>
 			<p>Free plan includes</p>
@@ -198,7 +198,7 @@
 					/>
 				{/if}
 			</button>
-			<span>Already have an account? <a href="/signin">Sign in</a></span>
+			<span>Already have an account? <a href="/signin">Log In</a></span>
 		</form>
 	</div>
 </section>

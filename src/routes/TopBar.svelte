@@ -129,6 +129,7 @@
 		justify-content: space-between;
 		min-height: 8vh;
 		z-index: 1;
+		background-color: white;
 
 		i.la-bars {
 			font-size: 3rem;

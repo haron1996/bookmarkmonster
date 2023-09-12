@@ -79,6 +79,8 @@
 
 		signingInWithEmail = false;
 
+		alert('Log In successful');
+
 		goto('/dashboard');
 	}
 </script>
@@ -116,7 +118,7 @@
 			on:click|preventDefault={logUserIn}
 		>
 			<i class="las la-sign-in-alt" />
-			<span>Sign in</span>
+			<span>Log In</span>
 			{#if signingInWithEmail || email === '' || password === ''}
 				<div
 					class="buttonBlocked"

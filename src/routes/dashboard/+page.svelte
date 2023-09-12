@@ -25,12 +25,15 @@
 
 <div class="dashboard">
 	<div class="top">
-		<p>Hey,</p>
-		{#if $session.User?.name}
-			<p>{$session.User.name}</p>
-		{:else}
-			<div class="loader" />
-		{/if}
+		<div class="salutation">
+			<p>Hey,</p>
+			{#if $session.User?.name}
+				<p>{$session.User.name}</p>
+			{:else}
+				<div class="loader" />
+			{/if}
+		</div>
+		<span>Here's your brief bookmarking overview</span>
 	</div>
 	<div class="cards">
 		<div class="recentlyAdded card">
@@ -47,7 +50,7 @@
 						<a target="_blank" href={bookmark}>{title}</a>
 					{/each}
 				{:else if !$loadingItems && $recentUserBookmarks.length < 1}
-					<span>No bookmarks yet</span>
+					<span>Your recent bookmarks will appear here</span>
 				{/if}
 			</li>
 		</div>
@@ -91,33 +94,71 @@
 		.top {
 			height: 10vh;
 			width: 100%;
-			display: flex;
-			align-items: center;
+			// display: flex;
+			// align-items: center;
 			padding: 1em;
-			gap: 0.3em;
+			gap: 1em;
+			display: flex;
+			flex-direction: column;
 
-			p {
-				font-family: 'Product Sans Medium', sans-serif;
-				font-size: 2rem;
-				color: #495464;
-			}
+			.salutation {
+				display: flex;
+				align-items: center;
+				gap: 0.3em;
 
-			.loader {
-				border: 2px solid #f3f3f3; /* Light grey */
-				border-top: 2px solid #3498db; /* Blue */
-				border-radius: 50%;
-				width: 2rem;
-				height: 2rem;
-				animation: spin 0.5s linear infinite;
+				p {
+					font-family: 'Product Sans Medium', sans-serif;
+					font-size: 2rem;
+					color: #495464;
+				}
 
-				@keyframes spin {
-					0% {
-						transform: rotate(0deg);
-					}
-					100% {
-						transform: rotate(360deg);
+				.loader {
+					border: 2px solid #f3f3f3; /* Light grey */
+					border-top: 2px solid #3498db; /* Blue */
+					border-radius: 50%;
+					width: 2rem;
+					height: 2rem;
+					animation: spin 0.5s linear infinite;
+
+					@keyframes spin {
+						0% {
+							transform: rotate(0deg);
+						}
+						100% {
+							transform: rotate(360deg);
+						}
 					}
 				}
+			}
+
+			// p {
+			// 	font-family: 'Product Sans Medium', sans-serif;
+			// 	font-size: 2rem;
+			// 	color: #495464;
+			// }
+
+			// .loader {
+			// 	border: 2px solid #f3f3f3; /* Light grey */
+			// 	border-top: 2px solid #3498db; /* Blue */
+			// 	border-radius: 50%;
+			// 	width: 2rem;
+			// 	height: 2rem;
+			// 	animation: spin 0.5s linear infinite;
+
+			// 	@keyframes spin {
+			// 		0% {
+			// 			transform: rotate(0deg);
+			// 		}
+			// 		100% {
+			// 			transform: rotate(360deg);
+			// 		}
+			// 	}
+			// }
+
+			span {
+				font-size: 1.3rem;
+				font-family: 'Arial CE', sans-serif;
+				color: #61677a;
 			}
 		}
 

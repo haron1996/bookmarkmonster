@@ -1,19 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import {
-		currentTagID,
-		loadingItems,
-		selectedTags,
-		session,
-		sideBarVisible,
-		tags
-	} from '../stores/stores';
+	import { loadingItems, session, sideBarVisible, toolTipText } from '../stores/stores';
 	import { closeTagMenu } from '../utils/closeTagMenu';
-	import type { Tag } from '../types/tag';
-	import { showCreateTagComponent } from '../utils/showCreateTagComponent';
 	import { toggleSideBar } from '../utils/toggleSideBar';
 	import logo from '$lib/images/logo.png';
 	import { goto } from '$app/navigation';
+	import ToolTip from './ToolTip.svelte';
 
 	function toggleUserMenu() {
 		const userMenu = document.getElementById('userMenu') as HTMLDivElement | null;
@@ -23,86 +15,39 @@
 		userMenu.classList.toggle('toggleUserMenu');
 	}
 
-	// function logUserOut() {
-	// 	const session = localStorage.getItem('session') as string | null;
+	function logUserOut() {
+		localStorage.removeItem('session');
+		alert('log out successful');
+		goto('/signin');
+		return;
+	}
 
-	// 	if (session === null) return;
+	function showToolTip(e: PointerEvent) {
+		const t = e.currentTarget as HTMLElement;
+		const li = t.closest('li') as HTMLLIElement | null;
+		if (li === null) return;
+		const text: string | undefined = li.dataset.id;
+		if (text === undefined) return;
+		toolTipText.set(text);
+		const tooltip = document.getElementById('toolTip') as HTMLDivElement | null;
 
-	// 	localStorage.removeItem('session');
+		if (tooltip === null) return;
 
-	// 	window.location.reload();
-	// }
+		tooltip.style.top = `${e.clientY}px`;
 
-	// const handleClickOnTag = (e: MouseEvent) => {
-	// 	closeTagMenu();
+		tooltip.style.left = `${e.clientX + 30}px`;
 
-	// 	const clickedEl = e.target as HTMLElement;
+		tooltip.style.visibility = 'visible';
+	}
 
-	// 	const clickedTag = clickedEl.closest('.tag') as HTMLSpanElement | null;
-
-	// 	if (clickedTag === null) return;
-
-	// 	const tags = document.querySelectorAll('.tag') as NodeListOf<HTMLSpanElement>;
-
-	// 	tags.forEach((tag) => {
-	// 		if (tag.classList.contains('active-tag')) {
-	// 			tag.classList.remove('active-tag');
-	// 		}
-	// 	});
-
-	// 	clickedTag.classList.add('active-tag');
-
-	// 	if (clickedTag.closest('.all-tags') === null) {
-	// 		if (clickedTag.dataset.id) {
-	// 			currentTagID.set(clickedTag.dataset.id);
-	// 		}
-	// 	} else if (clickedTag.closest('.all-tags')) {
-	// 		if (clickedTag.dataset.id) {
-	// 			currentTagID.set(clickedTag.dataset.id);
-	// 		}
-	// 	}
-	// };
-
-	// function openTagMenu(e: MouseEvent) {
-	// 	const target = e.currentTarget as HTMLElement;
-
-	// 	const tag = target.closest('.tag') as HTMLDivElement | null;
-
-	// 	if (tag === null) return;
-
-	// 	const t: Tag = {
-	// 		id: tag.dataset.id,
-	// 		name: tag.dataset.name
-	// 	};
-
-	// 	selectedTags.set([]);
-
-	// 	selectedTags.update((values) => [t, ...values]);
-
-	// 	const menu = document.getElementById('tagMenu') as HTMLElement | null;
-
-	// 	if (menu === null) return;
-
-	// 	menu.style.display = 'flex';
-
-	// 	menu.style.top = `${e.clientY}px`;
-
-	// 	menu.style.left = `${e.clientX}px`;
-	// }
-
-	// function handleClickOnRecycleBin() {
-	// 	const url: URL = new URL(`${$page.url.origin}/dashboard/my_bookmarks`);
-	// 	url.searchParams.append('id', 'root');
-	// 	url.searchParams.append('which', 'recycle_bin');
-	// 	goto(url);
-	// }
-
-	// function handleClickOnMyBookmarks() {
-	// 	const url: URL = new URL(`${$page.url.origin}/dashboard/my_bookmarks`);
-	// 	url.searchParams.append('id', 'root');
-	// 	goto(url);
-	// }
+	function hideToolTip() {
+		const tooltip = document.getElementById('toolTip') as HTMLDivElement | null;
+		if (tooltip === null) return;
+		tooltip.style.visibility = 'hidden';
+	}
 </script>
+
+<ToolTip />
 
 <div
 	class="sidebar"
@@ -131,54 +76,47 @@
 		</div>
 
 		<ul>
-			<li>
+			<li data-id="Dashboard" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
 				<a data-sveltekit-preload-data="tap" href="/dashboard">
 					<i class="las la-home" />
-					<span>Dashboard</span></a
-				>
+				</a>
 			</li>
-			<li>
+			<li data-id="All bookmarks" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/allBookmarks">
 					<i class="las la-external-link-square-alt" />
-					<span>Bookmarks</span></a
-				>
+				</a>
 			</li>
-			<li>
+			<li data-id="Collections" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/my_collections?id=root">
 					<i class="las la-folder-open" />
-					<span>Folders</span>
 				</a>
 			</li>
-			<li>
+			<li data-id="Tags" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/tags">
 					<i class="las la-tags" />
-					<span>Tags</span>
 				</a>
 			</li>
-			<li>
+			<li data-id="Screenshots" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/screenshots">
 					<i class="las la-image" />
-					<span>Screenshots</span>
 				</a>
 			</li>
-			<li>
+			<li data-id="PDFs" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/PDFs">
 					<i class="las la-file-pdf" />
-					<span>PDFs</span>
 				</a>
 			</li>
-			<li>
+			<li data-id="Recycle bin" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/recycle_bin">
 					<i class="las la-recycle" />
-					<span>Recycle bin</span></a
-				>
+				</a>
 			</li>
 		</ul>
 	</div>
 
-	<div class="signout">
-		<i class="las la-sign-out-alt" />
-	</div>
+	<li class="signout" data-id="Log Out" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+		<i class="las la-sign-out-alt" role="none" on:click={logUserOut} />
+	</li>
 </div>
 
 <div
@@ -206,15 +144,17 @@
 			flex-direction: column;
 			align-items: center;
 			width: 100%;
-			padding-top: 2em;
 			gap: 2em;
 			min-height: 90vh;
+			padding-top: 0.5em;
+			z-index: inherit;
 
 			.logo {
 				height: 3.5rem;
 				width: 3.5rem;
 				align-items: center;
 				justify-content: center;
+				display: none;
 
 				img {
 					max-inline-size: 100%;
@@ -227,12 +167,12 @@
 				align-items: center;
 				justify-content: space-evenly;
 				width: 100%;
-				padding: 1em 0.5em;
 				cursor: pointer;
 				transition: 0.3s;
 				border-radius: 0.3rem;
 				border-bottom: 0.1rem solid transparent;
 				min-height: 10vh;
+				min-height: max-content;
 
 				.loader {
 					border: 0.2rem solid #f3f3f3;
@@ -306,8 +246,12 @@
 				display: flex;
 				flex-direction: column;
 				gap: 1em;
-				max-height: 80vh;
+				height: 90vh;
 				overflow-y: auto;
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
 
 				&::-webkit-scrollbar {
 					display: none;
@@ -316,6 +260,12 @@
 				li {
 					list-style: none;
 					border-radius: 100vh;
+					position: relative;
+					height: 4rem;
+					width: 4rem;
+					display: flex;
+					align-items: center;
+					justify-content: center;
 
 					a {
 						text-decoration: none;
@@ -335,12 +285,6 @@
 						i {
 							font-size: 2.4rem;
 						}
-
-						span {
-							font-size: 1.5rem;
-							font-family: 'Segoe UI', sans-serif;
-							display: none;
-						}
 					}
 
 					&:hover {
@@ -358,8 +302,8 @@
 			justify-content: center;
 
 			i {
-				height: 5rem;
-				width: 5rem;
+				height: 4rem;
+				width: 4rem;
 				font-size: 2.4rem;
 				display: flex;
 				align-items: center;

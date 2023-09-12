@@ -101,6 +101,14 @@ type Folder struct {
 	Ishidden          bool               `json:"ishidden"`
 }
 
+type Support struct {
+	ID      string    `json:"id"`
+	Email   string    `json:"email"`
+	Title   string    `json:"title"`
+	Comment string    `json:"comment"`
+	Created time.Time `json:"created"`
+}
+
 type Tag struct {
 	ID      string             `json:"id"`
 	Name    string             `json:"name"`
@@ -122,4 +130,13 @@ type Userr struct {
 	RefreshToken    pgtype.Text        `json:"refresh_token"`
 	Deleted         pgtype.Timestamptz `json:"deleted"`
 	SignupMode      SignupMode         `json:"signup_mode"`
+}
+
+type Waitlist struct {
+	ID          string      `json:"id"`
+	Email       string      `json:"email"`
+	Name        string      `json:"name"`
+	CompanyName pgtype.Text `json:"company_name"`
+	Comment     pgtype.Text `json:"comment"`
+	Joined      time.Time   `json:"joined"`
 }

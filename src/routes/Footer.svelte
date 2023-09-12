@@ -2,7 +2,7 @@
 	<a href="#about">About</a>
 	<a href="#features">Features</a>
 	<a href="#pricing">Pricing</a>
-	<a href="/signin">Sign in</a>
+	<a href="/signin">Log In</a>
 	<a href="/signup">Sign up</a>
 	<a href="/pro-waiting-list">Join waiting list</a>
 	<a href="/support">Ask us anything</a>

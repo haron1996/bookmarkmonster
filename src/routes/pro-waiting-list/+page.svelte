@@ -1,3 +1,41 @@
+<script lang="ts">
+	import { apiHost } from '../../stores/stores';
+
+	let name: string = '';
+	let email: string = '';
+	let company_name: string = '';
+	let comment: string = '';
+
+	async function joinWaitList() {
+		if (email === '' || name === '') {
+			alert('email and name required');
+			return;
+		}
+
+		const response = await fetch(`${$apiHost}/care/joinWaitlist`, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({
+				name: name,
+				email: email,
+				company_name: company_name,
+				comment: comment
+			})
+		});
+
+		const result = await response.json();
+
+		console.log(result[0]);
+	}
+</script>
+
 <section>
 	<div class="heading">
 		<h1 data-id="💎">Get notified when we launch a pro version</h1>
@@ -7,24 +45,48 @@
 		<div class="title formItem">
 			<p data-id="required">What's your full name?</p>
 			<span>This helps us personalize our emails to you.</span>
-			<input type="text" name="title" id="title" autocomplete="name" spellcheck="false" />
+			<input
+				type="text"
+				name="title"
+				id="title"
+				autocomplete="name"
+				spellcheck="false"
+				required
+				bind:value={name}
+			/>
 		</div>
 		<div class="title formItem">
 			<p data-id="required">What's your email address?</p>
 			<span>This is where we’ll get back to you. Double check that it’s right.</span>
-			<input type="email" name="title" id="title" spellcheck="false" autocomplete="email" />
+			<input
+				type="email"
+				name="title"
+				id="title"
+				spellcheck="false"
+				autocomplete="email"
+				required
+				bind:value={email}
+			/>
 		</div>
 		<div class="title formItem">
 			<p data-id="optional">What's your company name?</p>
 			<span>This helps us better understand our user base so we can build a better product.</span>
-			<input type="email" name="title" id="title" spellcheck="false" autocomplete="off" />
+			<input
+				type="email"
+				name="title"
+				id="title"
+				spellcheck="false"
+				autocomplete="off"
+				bind:value={company_name}
+			/>
 		</div>
 		<div class="description formItem">
 			<p data-id="optional">Any question, comment, or issue?</p>
 			<span>This helps us know if you have other concerns that you'd like us to know</span>
-			<textarea name="description" id="description" autocomplete="off" />
+			<textarea name="description" id="description" autocomplete="off" bind:value={comment} />
 		</div>
-		<button>Join the pro waiting list</button>
+		<button on:click|preventDefault|stopPropagation={joinWaitList}>Join the pro waiting list</button
+		>
 	</form>
 </section>
 

@@ -30,7 +30,7 @@
 		<nav>
 			<a href="#features">Features</a>
 			<a href="#pricing">Pricing</a>
-			<a href="/signin">Sign in</a>
+			<a href="/signin">Log In</a>
 		</nav>
 
 		<a class="btn" href="/signup">Get my free account</a>
