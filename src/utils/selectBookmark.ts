@@ -9,29 +9,29 @@ export function selectBookmark(e: MouseEvent) {
 
 	if (bookmark === null) return;
 
-	let added;
-	let updated;
+	// let added;
+	// let updated;
 
-	if (bookmark.dataset.added) {
-		added = new Date(bookmark.dataset.added);
-	}
+	// if (bookmark.dataset.added) {
+	// 	added = new Date(bookmark.dataset.added);
+	// }
 
-	if (bookmark.dataset.updated) {
-		updated = new Date(bookmark.dataset.updated);
-	}
+	// if (bookmark.dataset.updated) {
+	// 	updated = new Date(bookmark.dataset.updated);
+	// }
 
 	const b: Bookmark = {
 		id: bookmark.dataset.id,
 		title: bookmark.dataset.title,
 		user_id: bookmark.dataset.userid,
-		added: added,
+		added: bookmark.dataset.added,
 		bookmark: bookmark.dataset.bookmark,
 		deleted: bookmark.dataset.deleted,
 		favicon: bookmark.dataset.favicon,
 		host: bookmark.dataset.host,
 		notes: bookmark.dataset.notes,
 		thumbnail: bookmark.dataset.thumbnail,
-		updated: updated
+		updated: bookmark.dataset.updated
 	};
 
 	let ctrlKeyIsActive: boolean = false;
