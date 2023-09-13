@@ -3,6 +3,7 @@
 		selectedBookmarks,
 		selectedFolders,
 		selectedItems,
+		showMoveItemsPopup,
 		showUpdateBookmark,
 		showUpdateFolder
 	} from '../stores/stores';
@@ -35,7 +36,13 @@
 			<i class="las la-trash" />
 			<span>Delete</span>
 		</div>
-		<div class="move">
+		<div
+			class="move"
+			role="none"
+			on:click={() => {
+				showMoveItemsPopup.set(true);
+			}}
+		>
 			<i class="las la-arrows-alt" />
 			<span>Move</span>
 		</div>
@@ -105,15 +112,18 @@
 				gap: 0.7em;
 				border-radius: 0.3rem;
 				position: relative;
+				transition: all 300ms ease;
 
 				i {
 					font-size: 2rem;
+					transition: all 300ms ease;
 				}
 
 				span {
 					font-size: 1.2rem;
 					font-family: 'Segoe UI', sans-serif;
 					text-transform: uppercase;
+					transition: all 300ms ease;
 				}
 
 				.dis {
@@ -124,6 +134,22 @@
 					height: inherit;
 					width: inherit;
 					background-color: transparent;
+
+					&:hover {
+						background-color: transparent;
+					}
+				}
+
+				&:hover {
+					background-color: #040d12;
+
+					i {
+						color: white;
+					}
+
+					span {
+						color: white;
+					}
 				}
 			}
 

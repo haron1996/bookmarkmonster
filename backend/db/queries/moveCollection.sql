@@ -1,0 +1,2 @@
+-- name: MoveCollections :many
+update folder set path = (select path from folder where folder.label = $1) || subpath(path, nlevel((select path from folder where folder.label = $2))-1) where path <@ (select path from folder where folder.label = $3) returning *;

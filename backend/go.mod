@@ -1,6 +1,6 @@
 module github.com/kwandapchumba/bookmarkmonster
 
-go 1.20
+go 1.21.1
 
 require (
 	aidanwoods.dev/go-paseto v1.5.0

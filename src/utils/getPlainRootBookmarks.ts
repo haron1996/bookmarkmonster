@@ -20,7 +20,7 @@ function getUserSession() {
 
 	unsub();
 }
-export async function getPlainRootBookmarks(fetch: any): Promise<Bookmark[]> {
+export async function getPlainBookmarksOnly(fetch: any): Promise<Bookmark[]> {
 	getApiHost();
 
 	getUserSession();

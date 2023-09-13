@@ -1,5 +1,6 @@
 import { apiHost, session } from '../stores/stores';
 import type { Session } from '../types/session';
+import type { Folder } from '../types/folder';
 
 let apiEndpoint: string;
 let userSession: Partial<Session>;
@@ -19,7 +20,7 @@ function getUserSession() {
 
 	unsub();
 }
-export async function getFolderPath(folderID: string, fetch: any): Promise<any> {
+export async function getFolderPath(folderID: string, fetch: any): Promise<Folder[]> {
 	getUserSession();
 
 	getApiHost();
@@ -27,7 +28,7 @@ export async function getFolderPath(folderID: string, fetch: any): Promise<any> 
 	const response = await fetch(
 		`${apiEndpoint}/authenticated/collections/getFolderPath/${folderID}`,
 		{
-			method: 'get',
+			method: 'GET',
 			mode: 'cors',
 			cache: 'no-cache',
 			credentials: 'include',

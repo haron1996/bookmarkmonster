@@ -9,12 +9,12 @@ import (
 	"context"
 )
 
-const getRootBookmarks = `-- name: GetRootBookmarks :many
-select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified from bookmark where user_id = $1 and folder_id is null and deleted is null and beautified is null order by added desc
+const getUserRootBookmarks = `-- name: GetUserRootBookmarks :many
+select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified from bookmark where user_id = $1 and folder_id is null and deleted is null order by (added) desc
 `
 
-func (q *Queries) GetRootBookmarks(ctx context.Context, userID string) ([]Bookmark, error) {
-	rows, err := q.db.Query(ctx, getRootBookmarks, userID)
+func (q *Queries) GetUserRootBookmarks(ctx context.Context, userID string) ([]Bookmark, error) {
+	rows, err := q.db.Query(ctx, getUserRootBookmarks, userID)
 	if err != nil {
 		return nil, err
 	}

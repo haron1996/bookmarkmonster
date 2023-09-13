@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { folders, selectedFolders } from '../stores/stores';
+	import { folders, selectedFolders, showMoveItemsPopup } from '../stores/stores';
 	import type { Folder } from '../types/folder';
+	import interact from 'interactjs';
 
 	let folder: Folder = {};
 
@@ -23,7 +24,7 @@
 			folder_name: f.dataset.foldername,
 			label: f.dataset.label,
 			path: f.dataset.path,
-			starred: f.dataset.starred,
+			starred: f.dataset.starred ? true : false,
 			subfolder_of: f.dataset.subfolderof,
 			updated_at: f.dataset.updatedat,
 			user_id: f.dataset.userid
@@ -57,13 +58,15 @@
 			div.classList.add('animate__fadeInDown');
 		}
 	}
+
+	function handleFolderDrag() {}
 </script>
 
 {#each $folders as { label, created_at, deleted_at, folder_description, folder_id, folder_name, path, starred, subfolder_of, updated_at, user_id }}
 	<a
 		data-sveltekit-preload-data="tap"
 		href={`/dashboard/my_collections?id=${folder_id}`}
-		class="folder"
+		class="folder f"
 		id="folder"
 		data-id={folder_id}
 		data-label={label}
@@ -76,6 +79,7 @@
 		data-updatedat={updated_at}
 		data-userid={user_id}
 		data-foldername={folder_name}
+		on:drag={handleFolderDrag}
 	>
 		<svg
 			width="24px"
@@ -128,14 +132,13 @@
 			width: 13rem;
 
 			path {
-				fill: #0079ff;
-				stroke: #0079ff;
+				fill: #040d12;
+				stroke: #040d12;
 			}
 		}
 
 		span {
 			font-size: 1.3rem;
-			font-family: 'Arial CE', sans-serif;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -143,7 +146,13 @@
 			height: max-content;
 			padding: 0.5em;
 			border-radius: 0.3rem;
-			color: #080202;
+			color: #040d12;
+			font-family: 'Segoe UI', sans-serif;
+			font-weight: 600;
+
+			&::first-letter {
+				text-transform: uppercase;
+			}
 		}
 
 		.selector {
@@ -202,5 +211,14 @@
 		&:hover {
 			box-shadow: #3740ff 0px 0px 0px 3px !important;
 		}
+	}
+
+	:global(.onTheMove) {
+		box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
+			rgba(255, 255, 255, 0.08) 0px 1px 0px inset !important;
+	}
+
+	:global(.dragEnter) {
+		border: 0.2rem dashed red !important;
 	}
 </style>

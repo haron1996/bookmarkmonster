@@ -76,37 +76,72 @@
 		</div>
 
 		<ul>
-			<li data-id="Dashboard" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+			<li
+				class:active={$page.url.pathname === '/dashboard'}
+				data-id="Dashboard"
+				on:pointerover={showToolTip}
+				on:pointerout={hideToolTip}
+			>
 				<a data-sveltekit-preload-data="tap" href="/dashboard">
 					<i class="las la-home" />
 				</a>
 			</li>
-			<li data-id="All bookmarks" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+			<li
+				class:active={$page.url.pathname === '/dashboard/allBookmarks'}
+				data-id="All bookmarks"
+				on:pointerover={showToolTip}
+				on:pointerout={hideToolTip}
+			>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/allBookmarks">
 					<i class="las la-external-link-square-alt" />
 				</a>
 			</li>
-			<li data-id="Collections" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+			<li
+				class:active={$page.url.searchParams.get('id')}
+				data-id="Collections"
+				on:pointerover={showToolTip}
+				on:pointerout={hideToolTip}
+			>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/my_collections?id=root">
 					<i class="las la-folder-open" />
 				</a>
 			</li>
-			<li data-id="Tags" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+			<li
+				class:active={$page.url.pathname === '/dashboard/tags'}
+				data-id="Tags"
+				on:pointerover={showToolTip}
+				on:pointerout={hideToolTip}
+			>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/tags">
 					<i class="las la-tags" />
 				</a>
 			</li>
-			<li data-id="Screenshots" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+			<li
+				class:active={$page.url.pathname === '/dashboard/screenshots'}
+				data-id="Screenshots"
+				on:pointerover={showToolTip}
+				on:pointerout={hideToolTip}
+			>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/screenshots">
 					<i class="las la-image" />
 				</a>
 			</li>
-			<li data-id="PDFs" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+			<li
+				class:active={$page.url.pathname === '/dashboard/PDFs'}
+				data-id="PDFs"
+				on:pointerover={showToolTip}
+				on:pointerout={hideToolTip}
+			>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/PDFs">
 					<i class="las la-file-pdf" />
 				</a>
 			</li>
-			<li data-id="Recycle bin" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+			<li
+				class:active={$page.url.pathname === '/dashboard/recycle_bin'}
+				data-id="Recycle bin"
+				on:pointerover={showToolTip}
+				on:pointerout={hideToolTip}
+			>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/recycle_bin">
 					<i class="las la-recycle" />
 				</a>
@@ -114,8 +149,14 @@
 		</ul>
 	</div>
 
-	<li class="signout" data-id="Log Out" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
-		<i class="las la-sign-out-alt" role="none" on:click={logUserOut} />
+	<li class="signout" data-id="Log Out">
+		<i
+			class="las la-sign-out-alt"
+			role="none"
+			on:click={logUserOut}
+			on:pointerover={showToolTip}
+			on:pointerout={hideToolTip}
+		/>
 	</li>
 </div>
 
@@ -204,8 +245,8 @@
 				}
 
 				img {
-					width: 3.5rem;
-					height: 3.5rem;
+					width: 4rem;
+					height: 4rem;
 					object-fit: cover;
 					border-radius: 100vh;
 				}
@@ -290,6 +331,14 @@
 					&:hover {
 						background-color: rgb(238, 238, 238);
 					}
+
+					&.active {
+						background-color: #040d12;
+
+						i {
+							color: white;
+						}
+					}
 				}
 			}
 		}
@@ -313,7 +362,8 @@
 				border-radius: 100vh;
 
 				&:hover {
-					background-color: rgb(238, 238, 238);
+					background-color: #040d12;
+					color: white;
 				}
 			}
 		}

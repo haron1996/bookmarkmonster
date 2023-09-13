@@ -158,6 +158,7 @@
 		background-position: center;
 		background-repeat: no-repeat;
 		background-size: cover;
+		background-image: none;
 
 		form {
 			width: 50rem;

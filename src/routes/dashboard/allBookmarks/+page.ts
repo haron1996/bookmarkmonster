@@ -4,7 +4,7 @@ import { browser } from '$app/environment';
 import { redirect } from '@sveltejs/kit';
 import { session } from '../../../stores/stores';
 import type { Bookmark } from '../../../types/bookmark';
-import { getRootBookmarksOnly } from '../../../utils/getRootBookmarksOnly';
+import { getAllUserBookmarks } from '../../../utils/getAllUserBookmarksOnly';
 export const prerender = true;
 
 let bookmarks: Bookmark[] = [];
@@ -25,7 +25,7 @@ export async function load({ fetch, params, url, route }: any) {
 	getUserSession(url);
 
 	if (browser) {
-		bookmarks = await getRootBookmarksOnly(fetch);
+		bookmarks = await getAllUserBookmarks(fetch);
 	}
 
 	return { bookmarks };

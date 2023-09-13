@@ -10,7 +10,7 @@
 	div {
 		width: max-content;
 		padding: 0.5em 1em;
-		background-color: #0f2c59;
+		background-color: #040d12;
 		position: fixed;
 		z-index: 10;
 		cursor: pointer;
@@ -21,9 +21,10 @@
 		transition: visibility 300ms ease;
 
 		span {
-			font-size: 1.3rem;
+			font-size: 1.2rem;
 			color: white;
-			font-family: 'Arial CE', sans-serif;
+			font-family: 'Segoe UI', sans-serif;
+			font-weight: 600;
 		}
 	}
 </style>

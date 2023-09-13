@@ -106,7 +106,7 @@
 			>
 		{/each}
 	</div>
-	<div class="myBookmarks">
+	<div class="myBookmarks" id="myBookmarks">
 		{#if $loadingItems}
 			<div class="loadingItems">
 				<p>Loading...</p>
@@ -175,7 +175,6 @@
 		}
 
 		.myBookmarks {
-			display: flex;
 			height: calc(100vh - calc(8vh + 7vh));
 			overflow-y: auto;
 			display: flex;

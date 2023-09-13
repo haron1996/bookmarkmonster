@@ -6,7 +6,7 @@ export interface Folder {
 	folder_name?: string;
 	label?: string;
 	path?: string;
-	starred?: string;
+	starred?: boolean;
 	subfolder_of?: string | null;
 	updated_at?: string;
 	user_id?: string;

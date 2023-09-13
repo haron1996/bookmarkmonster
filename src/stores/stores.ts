@@ -76,3 +76,12 @@ export const showAddNewBookmark = writable<boolean>(false);
 export const recentUserBookmarks = writable<Bookmark[]>([]);
 
 export const toolTipText = writable<string>('');
+
+// move items operations
+export const showMoveItemsPopup = writable<boolean>(false);
+export const destinationFolder = writable<Folder>({});
+export const destinationFolderPath = writable<Folder[]>([]);
+export const childrenOfDestinationFolder = writable<Folder[]>([]);
+export const bookmarksOfDestinationFolder = writable<Bookmark[]>([]);
+export const showCreateFolderFromMoveFoldersPopup = writable<boolean>(false);
+// end of move items operations

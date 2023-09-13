@@ -195,9 +195,9 @@
 			background-color: inherit;
 			border-radius: 0.3rem;
 			padding: 1em 2em;
-			color: #0079ff;
+			color: #040d12;
 			cursor: pointer;
-			border: 0.1rem solid #0079ff;
+			border: 0.2rem solid #040d12;
 			transition: all 300ms ease;
 			position: relative;
 
@@ -214,7 +214,7 @@
 			}
 
 			&:hover {
-				background-color: #0079ff;
+				background-color: #040d12;
 				color: white;
 				box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
 			}
@@ -273,9 +273,9 @@
 			background-color: inherit;
 			border-radius: 0.3rem;
 			padding: 1em 2em;
-			color: #0079ff;
+			color: #040d12;
 			cursor: pointer;
-			border: 0.1rem solid #0079ff;
+			border: 0.2rem solid #040d12;
 			transition: all 300ms ease;
 			position: relative;
 
@@ -292,14 +292,14 @@
 			}
 
 			&:hover {
-				background-color: #0079ff;
+				background-color: #040d12;
 				color: white;
 				box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
 			}
 		}
 
 		.addButtonIsActive {
-			background-color: #0079ff;
+			background-color: #040d12;
 			color: white;
 			box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
 		}

@@ -35,6 +35,7 @@
 	"dependencies": {
 		"@sveltejs/adapter-node": "^1.3.1",
 		"animate.css": "^4.1.1",
+		"interactjs": "^1.10.18",
 		"lexical": "^0.12.0",
 		"update": "^0.7.4"
 	}

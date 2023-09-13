@@ -60,6 +60,7 @@
 {#each $bookmarks as { added, bookmark, deleted, favicon, host, id, notes, thumbnail, title, updated, user_id }}
 	<div
 		class="plainBookmark bookmark"
+		id="bookmark"
 		data-title={title}
 		data-id={id}
 		data-bookmark={bookmark}
@@ -142,7 +143,6 @@
 			h2 {
 				font-size: 1.7rem;
 				line-height: 1.6;
-				color: #11171a;
 				font-family: 'Product Sans Medium', sans-serif;
 
 				a {
@@ -153,8 +153,7 @@
 					-webkit-box-orient: vertical;
 					overflow: hidden;
 					text-overflow: ellipsis;
-					color: #191919;
-					color: #495464;
+					color: #040d12;
 				}
 			}
 

@@ -65,9 +65,11 @@ func Router() *chi.Mux {
 
 			// lates
 			r.Post("/createBookmark", api.CreateRootBookmark)
-			r.Get("/getRootBookmarks", api.GetRootBookmarks)
+			r.Get("/getRootBookmarks", api.GetUserRootBookmarks)
+			r.Get("/getAllUserBookmarks", api.GetAllBookmarks)
 			r.Get("/getBookmarksInTrash", api.GetBookmarksInTrash)
 			r.Patch("/updateBookmark", api.UpdateBookmark)
+			r.Patch("/moveBookmarks", api.MoveBookmarks)
 		})
 
 		r.Route("/collections", func(r chi.Router) {
@@ -79,6 +81,9 @@ func Router() *chi.Mux {
 			r.Get("/getFolderSubfolders/{folderID}", api.GetFolderSubfolders)
 			r.Get("/getFolderPath/{folderID}", api.GetFolderPath)
 			r.Patch("/updateCollection", api.UpdateFolder)
+			r.Patch("/moveCollectionsToAnother", api.MoveCollectionsToAnother)
+			r.Patch("/moveCollectionsToRoot", api.MoveCollectionsToRoot)
+			r.Get("/getFolder/{folderID}", api.GetFolder)
 		})
 	})
 
