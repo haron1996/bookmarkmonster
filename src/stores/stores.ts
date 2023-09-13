@@ -4,9 +4,9 @@ import type { Bookmark } from '../types/bookmark';
 import type { Session } from '../types/session';
 import type { Folder } from '../types/folder';
 
-//export const apiHost = readable<string>('https://api.bookmarkmonster.xyz');
+export const apiHost = readable<string>('https://api.bookmarkmonster.xyz');
 
-export const apiHost = readable<string>('http://localhost:5000');
+//export const apiHost = readable<string>('http://localhost:5000');
 
 export const sideBarWidth = writable<number>(25);
 
