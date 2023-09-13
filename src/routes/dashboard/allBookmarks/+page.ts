@@ -5,7 +5,6 @@ import { redirect } from '@sveltejs/kit';
 import { session } from '../../../stores/stores';
 import type { Bookmark } from '../../../types/bookmark';
 import { getAllUserBookmarks } from '../../../utils/getAllUserBookmarksOnly';
-export const prerender = true;
 
 let bookmarks: Bookmark[] = [];
 

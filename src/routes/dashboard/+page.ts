@@ -5,7 +5,6 @@ import { redirect } from '@sveltejs/kit';
 import { session } from '../../stores/stores';
 import type { Bookmark } from '../../types/bookmark';
 import { getUserRecentBookmarks } from '../../utils/getUserRecentBookmarks';
-export const prerender = true;
 let recentUserBookmarks: Bookmark[] = [];
 
 function getUserSession(url: any) {

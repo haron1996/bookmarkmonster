@@ -34,18 +34,20 @@
 	});
 
 	async function getDestinationFolder() {
-		const id: string | null = $page.url.searchParams.get('id');
+		if (browser) {
+			const id: string | null = $page.url.searchParams.get('id');
 
-		if (id) {
-			if (id === 'root') {
-				destinationFolder.set({});
+			if (id) {
+				if (id === 'root') {
+					destinationFolder.set({});
+				} else {
+					f = await getFolder(id);
+
+					destinationFolder.set(f);
+				}
 			} else {
-				f = await getFolder(id);
-
-				destinationFolder.set(f);
+				destinationFolder.set({});
 			}
-		} else {
-			destinationFolder.set({});
 		}
 	}
 
