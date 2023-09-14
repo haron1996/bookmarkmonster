@@ -49,5 +49,5 @@ export async function load({ fetch, params, url, route }: any) {
 		}
 	}
 
-	return { folders, bookmarks, folderPath };
+	return { streamed: { folders, bookmarks, folderPath } };
 }

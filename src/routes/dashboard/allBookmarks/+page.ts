@@ -27,5 +27,5 @@ export async function load({ fetch, params, url, route }: any) {
 		bookmarks = await getAllUserBookmarks(fetch);
 	}
 
-	return { bookmarks };
+	return { streamed: { bookmarks } };
 }

@@ -52,13 +52,24 @@
 	}
 
 	$: $page.url.searchParams, handleChangeInSearchParams();
-	$: $page.data.folders,
-		$page.data.folders.length >= 1 ? folders.set($page.data.folders) : folders.set([]);
-	$: $page.data.bookmarks,
-		$page.data.bookmarks.length >= 1 ? bookmarks.set($page.data.bookmarks) : bookmarks.set([]);
-	$: $page.data.folderPath,
-		$page.data.folderPath.length >= 1 ? folderPath.set($page.data.folderPath) : folderPath.set([]);
+
+	$: $page.data.streamed.folders,
+		$page.data.streamed.folders.length >= 1
+			? folders.set($page.data.streamed.folders)
+			: folders.set([]);
+
+	$: $page.data.streamed.bookmarks,
+		$page.data.streamed.bookmarks.length >= 1
+			? bookmarks.set($page.data.streamed.bookmarks)
+			: bookmarks.set([]);
+
+	$: $page.data.streamed.folderPath,
+		$page.data.streamed.folderPath.length >= 1
+			? folderPath.set($page.data.streamed.folderPath)
+			: folderPath.set([]);
+
 	$: $folders, sortFoldersByName($folders);
+
 	$: $bookmarks, sortBookmarksByTitle($bookmarks);
 </script>
 

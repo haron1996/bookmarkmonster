@@ -84,4 +84,8 @@ export const destinationFolderPath = writable<Folder[]>([]);
 export const childrenOfDestinationFolder = writable<Folder[]>([]);
 export const bookmarksOfDestinationFolder = writable<Bookmark[]>([]);
 export const showCreateFolderFromMoveFoldersPopup = writable<boolean>(false);
+
+// drag and drop
+export const foldersToMove = writable<Folder[]>([]);
+
 // end of move items operations

@@ -16,7 +16,7 @@ func VerifyToken(signedToken string) (*PayLoad, error) {
 
 	publicKey, err := paseto.NewV4AsymmetricPublicKeyFromHex(config.PublicKeyHex)
 	if err != nil {
-		return nil, errors.New("something went wrong")
+		return nil, err
 	}
 
 	parser := paseto.NewParser()

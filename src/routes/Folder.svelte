@@ -1,7 +1,15 @@
 <script lang="ts">
-	import { folders, selectedFolders, showMoveItemsPopup } from '../stores/stores';
+	import {
+		apiHost,
+		folders,
+		foldersToMove,
+		selectedFolders,
+		session,
+		showMoveItemsPopup
+	} from '../stores/stores';
 	import type { Folder } from '../types/folder';
 	import interact from 'interactjs';
+	import { removeSelectedClassFromAllDomFolders } from '../utils/removeSelectedClassFromAllDomFolders';
 
 	let folder: Folder = {};
 
@@ -59,7 +67,156 @@
 		}
 	}
 
-	function handleFolderDrag() {}
+	function handleFolderDragStart(e: DragEvent) {
+		const target = e.currentTarget as HTMLElement;
+		const a = target.closest('a') as HTMLAnchorElement | null;
+		if (a === null) return;
+		a.style.opacity = '0';
+
+		let f: Folder = {
+			created_at: a.dataset.createdat,
+			deleted_at: a.dataset.deletedat,
+			folder_description: a.dataset.folderdescription,
+			folder_id: a.dataset.id,
+			folder_name: a.dataset.foldername,
+			label: a.dataset.label,
+			path: a.dataset.path,
+			starred: a.dataset.starred ? false : true,
+			subfolder_of: a.dataset.subfolderof,
+			updated_at: a.dataset.updatedat,
+			user_id: a.dataset.userid
+		};
+
+		foldersToMove.update((values) => [f, ...values]);
+	}
+
+	function handleFolderDragEnd(e: DragEvent) {
+		const target = e.currentTarget as HTMLElement;
+		const a = target.closest('a') as HTMLAnchorElement | null;
+		if (a === null) return;
+		a.style.opacity = '1';
+		a.style.border = '0.1rem solid #e7ebed';
+		const domFolders = document.querySelectorAll('a.f') as NodeListOf<HTMLAnchorElement> | null;
+
+		if (domFolders === null) return;
+
+		domFolders.forEach((f) => {
+			f.style.opacity = '1';
+		});
+
+		selectedFolders.set([]);
+		removeSelectedClassFromAllDomFolders();
+	}
+
+	function handleFolderDragOver(e: DragEvent) {
+		const target = e.currentTarget as HTMLElement;
+		const a = target.closest('a') as HTMLAnchorElement | null;
+		if (a === null) return;
+		a.style.border = 'thick dashed red';
+	}
+
+	function handleFolderDragLeave(e: DragEvent) {
+		const target = e.currentTarget as HTMLElement;
+		const a = target.closest('a') as HTMLAnchorElement | null;
+		if (a === null) return;
+		a.style.border = '0.1rem solid #e7ebed';
+	}
+
+	function handleFolderDrop(e: DragEvent) {
+		const target = e.currentTarget as HTMLElement;
+		const a = target.closest('a') as HTMLAnchorElement | null;
+		if (a === null) return;
+
+		let f: Folder = {
+			created_at: a.dataset.createdat,
+			deleted_at: a.dataset.deletedat,
+			folder_description: a.dataset.folderdescription,
+			folder_id: a.dataset.id,
+			folder_name: a.dataset.foldername,
+			label: a.dataset.label,
+			path: a.dataset.path,
+			starred: a.dataset.starred ? false : true,
+			subfolder_of: a.dataset.subfolderof,
+			updated_at: a.dataset.updatedat,
+			user_id: a.dataset.userid
+		};
+
+		if ($selectedFolders.length >= 1) {
+			$selectedFolders.forEach((sf) => {
+				if (sf.folder_id === f.folder_id) {
+					$selectedFolders = $selectedFolders.filter((value) => {
+						return value.folder_id !== f.folder_id;
+					});
+
+					selectedFolders.set($selectedFolders);
+				}
+			});
+			moveFolders(f, a, $selectedFolders);
+		} else {
+			if (f.folder_id === $foldersToMove[0].folder_id) {
+				alert('cannot move collection to itself');
+				foldersToMove.set([]);
+				return;
+			}
+
+			moveFolders(f, a, $foldersToMove);
+		}
+	}
+
+	function handleFolderDragging(e: DragEvent) {
+		removeSelectedClassFromAllDomFolders();
+		const domFolders = document.querySelectorAll('a.f') as NodeListOf<HTMLAnchorElement> | null;
+
+		if (domFolders === null) return;
+
+		domFolders.forEach((folder) => {
+			$selectedFolders.forEach((f) => {
+				if (folder.dataset.id === f.folder_id) {
+					folder.style.opacity = '.4';
+				}
+			});
+		});
+	}
+
+	async function moveFolders(destination: Folder, a: HTMLAnchorElement, f: Folder[]) {
+		const response = await fetch(`${$apiHost}/authenticated/collections/moveCollectionsToAnother`, {
+			method: 'PATCH',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${$session.AccessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({
+				destination_folder: destination,
+				folders_to_move: f
+			})
+		});
+
+		const result = await response.json();
+
+		const msg = result.message;
+
+		if (msg) {
+			alert(msg);
+			return;
+		}
+
+		const fs: Folder[] = result[0];
+
+		fs.forEach((f) => {
+			$folders = $folders.filter((value) => {
+				return value.folder_id !== f.folder_id;
+			});
+
+			folders.set($folders);
+		});
+
+		a.style.border = '0.1rem solid #e7ebed';
+	}
 </script>
 
 {#each $folders as { label, created_at, deleted_at, folder_description, folder_id, folder_name, path, starred, subfolder_of, updated_at, user_id }}
@@ -79,7 +236,13 @@
 		data-updatedat={updated_at}
 		data-userid={user_id}
 		data-foldername={folder_name}
-		on:drag={handleFolderDrag}
+		draggable="true"
+		on:dragstart={handleFolderDragStart}
+		on:dragend={handleFolderDragEnd}
+		on:dragover|preventDefault={handleFolderDragOver}
+		on:dragleave={handleFolderDragLeave}
+		on:drop={handleFolderDrop}
+		on:drag={handleFolderDragging}
 	>
 		<svg
 			width="24px"
@@ -211,14 +374,5 @@
 		&:hover {
 			box-shadow: #3740ff 0px 0px 0px 3px !important;
 		}
-	}
-
-	:global(.onTheMove) {
-		box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
-			rgba(255, 255, 255, 0.08) 0px 1px 0px inset !important;
-	}
-
-	:global(.dragEnter) {
-		border: 0.2rem dashed red !important;
 	}
 </style>

@@ -37,6 +37,10 @@ func GetAllUserTags(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pool.Config().MinConns = 50
+
+	pool.Config().MaxConns = 150
+
 	defer pool.Close()
 
 	q := sqlc.New(pool)

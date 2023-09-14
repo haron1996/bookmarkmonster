@@ -6,8 +6,10 @@
 	import TopBar from '../../TopBar.svelte';
 	import nodata from '$lib/images/no-data.jpg';
 
-	$: $page.data.bookmarks,
-		$page.data.bookmarks.length >= 1 ? bookmarks.set($page.data.bookmarks) : bookmarks.set([]);
+	$: $page.data.streamed.bookmarks,
+		$page.data.streamed.bookmarks.length >= 1
+			? bookmarks.set($page.data.streamed.bookmarks)
+			: bookmarks.set([]);
 </script>
 
 <svelte:head>
