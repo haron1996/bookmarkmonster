@@ -53,10 +53,8 @@
 
 	$: $page.url.searchParams, handleChangeInSearchParams();
 
-	$: $page.data.streamed.folders,
-		$page.data.streamed.folders.length >= 1
-			? folders.set($page.data.streamed.folders)
-			: folders.set([]);
+	$: $page.data.folders,
+		$page.data.folders.length >= 1 ? folders.set($page.data.folders) : folders.set([]);
 
 	$: $page.data.streamed.bookmarks,
 		$page.data.streamed.bookmarks.length >= 1
