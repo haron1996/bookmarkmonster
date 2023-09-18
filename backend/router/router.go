@@ -70,6 +70,7 @@ func Router() *chi.Mux {
 			r.Get("/getBookmarksInTrash", api.GetBookmarksInTrash)
 			r.Patch("/updateBookmark", api.UpdateBookmark)
 			r.Patch("/moveBookmarks", api.MoveBookmarks)
+			r.Patch("/updateBookmarkHtml", api.UpdateBookmarkHtml)
 		})
 
 		r.Route("/collections", func(r chi.Router) {

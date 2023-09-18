@@ -1,9 +1,12 @@
 import { redirect } from '@sveltejs/kit';
 import { apiHost, session } from '../stores/stores';
 import type { Session } from '../types/session';
+import { page } from '$app/stores';
+import { goto } from '$app/navigation';
 
 let apiEndpoint: string;
 let userSession: Partial<Session>;
+let host: string = '';
 
 function getApiHost() {
 	const unsub = apiHost.subscribe((value) => {
@@ -20,6 +23,15 @@ function getUserSession() {
 
 	unsub();
 }
+
+function getHost() {
+	const unsub = page.subscribe((value) => {
+		host = value.url.host;
+	});
+
+	unsub();
+}
+
 export async function getUserRootFoldersAndPlainBookmarks(fetch: any): Promise<any> {
 	getApiHost();
 
@@ -61,18 +73,32 @@ export async function getUserRootFoldersAndPlainBookmarks(fetch: any): Promise<a
 
 	const f = await responses[0].json();
 
-	if (f.message) {
-		alert(f.message);
-		//
-		throw redirect(302, '/signin');
+	let msg = f.message;
+
+	if (msg) {
+		if (msg === 'token is no longer valid') {
+			getApiHost();
+			window.location.replace(`${host}/signin`);
+		} else {
+			alert(msg);
+		}
+
+		return;
 	}
 
 	const b = await responses[1].json();
 
-	if (b.message) {
-		alert(b.message);
-		//
-		throw redirect(302, '/signin');
+	msg = b.message;
+
+	if (msg) {
+		if (msg === 'token is no longer valid') {
+			getApiHost();
+			window.location.replace(`${host}/signin`);
+		} else {
+			alert(msg);
+		}
+
+		return;
 	}
 
 	return [f[0], b[0]];

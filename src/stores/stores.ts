@@ -89,3 +89,7 @@ export const showCreateFolderFromMoveFoldersPopup = writable<boolean>(false);
 export const foldersToMove = writable<Folder[]>([]);
 
 // end of move items operations
+
+export const breadCrumbIsOverflowing = writable<boolean>(false);
+export const collapsedFolders = writable<Folder[]>([]);
+export const showCollapsedFolders = writable<boolean>(false);

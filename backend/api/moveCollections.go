@@ -73,9 +73,7 @@ func MoveCollectionsToAnother(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if exists {
-			log.Println("collection must not have more that one child with the same name")
-			utils.Response(w, "collection must not have more that one children with the same name", http.StatusForbidden)
-			return
+			continue
 		}
 
 		args2 := sqlc.MoveCollectionsParams{

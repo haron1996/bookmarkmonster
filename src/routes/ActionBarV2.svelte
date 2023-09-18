@@ -1,8 +1,10 @@
 <script lang="ts">
 	import {
+		apiHost,
 		selectedBookmarks,
 		selectedFolders,
 		selectedItems,
+		session,
 		showMoveItemsPopup,
 		showUpdateBookmark,
 		showUpdateFolder
@@ -20,12 +22,34 @@
 			}
 		}
 	}
+
+	async function handleClickOnQuickView() {
+		const response = await fetch(`${$apiHost}/authenticated/bookmarks/updateBookmarkHtml`, {
+			method: 'PATCH',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${$session.AccessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({
+				bookmark_id: $selectedBookmarks[0].id
+			})
+		});
+
+		const result = await response.json();
+
+		console.log(result[0]);
+	}
 </script>
 
 <div
 	class="actionBar animate__animated animate__backInDown"
-	class:showActionBar={$selectedItems.length >= 1}
 	id="actionBar"
+	class:showActionBar={$selectedItems.length >= 1}
 >
 	<div class="actions">
 		<div class="share">
@@ -65,6 +89,10 @@
 				<div class="dis" on:click|stopPropagation|preventDefault={() => {}} role="none" />
 			{/if}
 		</div>
+		<div class="quickView" role="none" on:click={handleClickOnQuickView}>
+			<i class="las la-eye" />
+			<span>quick view</span>
+		</div>
 	</div>
 	<div class="count">
 		<span>{$selectedItems.length} selected</span>
@@ -88,7 +116,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		transition: all 1s ease-in-out;
+		transition: all 200ms ease-in-out;
 		height: 0%;
 		position: fixed;
 		left: 9rem;
@@ -102,8 +130,8 @@
 			display: none;
 
 			div {
-				height: 3.5rem;
-				width: 10rem;
+				min-width: max-content;
+				padding: 0.5em 1em;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -112,7 +140,7 @@
 				gap: 0.7em;
 				border-radius: 0.3rem;
 				position: relative;
-				transition: all 300ms ease;
+				transition: all 200ms ease-in-out;
 
 				i {
 					font-size: 2rem;
@@ -160,6 +188,7 @@
 
 		.count {
 			padding: 0.7em 1em;
+			min-width: max-content;
 			align-items: center;
 			background-color: #f0f0f0;
 			gap: 0.7em;
@@ -182,7 +211,7 @@
 
 	.showActionBar {
 		display: flex;
-		min-height: 8vh;
+		height: 5rem;
 
 		.actions {
 			display: flex;

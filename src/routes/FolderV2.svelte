@@ -130,8 +130,8 @@
 			padding: 0.5em;
 			border-radius: 0.3rem;
 			color: #040d12;
-			font-family: 'Segoe UI', sans-serif;
-			font-weight: 600;
+			font-size: 1.3rem;
+			font-family: 'Arial CE', sans-serif;
 
 			&::first-letter {
 				text-transform: uppercase;

@@ -64,9 +64,7 @@ func MoveCollectionsToRoot(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if exists {
-			log.Println("root collections cannot share name")
-			utils.Response(w, "root collections cannot share name", http.StatusForbidden)
-			return
+			continue
 		}
 
 		args := sqlc.MoveFoldersToRootParams{
@@ -92,3 +90,12 @@ func MoveCollectionsToRoot(w http.ResponseWriter, r *http.Request) {
 
 	utils.JsonResponse(w, folders)
 }
+
+// func findIndex(slice []sqlc.Folder, target sqlc.Folder) int {
+// 	for i, item := range slice {
+// 		if item.FolderID == target.FolderID {
+// 			return i
+// 		}
+// 	}
+// 	return -1 // Return -1 if the item is not found in the slice
+// }

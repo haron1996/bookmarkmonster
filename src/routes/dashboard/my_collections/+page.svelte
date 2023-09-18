@@ -4,11 +4,14 @@
 	import {
 		allItems,
 		bookmarks,
+		breadCrumbIsOverflowing,
+		collapsedFolders,
 		folderPath,
 		folders,
 		loadingItems,
 		selectedBookmarks,
-		selectedFolders
+		selectedFolders,
+		showCollapsedFolders
 	} from '../../../stores/stores';
 	import { removeSelectedClassFromAllDomFolders } from '../../../utils/removeSelectedClassFromAllDomFolders';
 	import { sortBookmarksByTitle } from '../../../utils/sortBookmarks';
@@ -16,21 +19,46 @@
 	import CreateFolder from '../../CreateFolder.svelte';
 	import Folder from '../../Folder.svelte';
 	import CreateBookmark from '../../createBookmark.svelte';
-	import type { Bookmark } from '../../../types/bookmark';
 	import { removeSelectedClassFromAllDomBookmarks } from '../../../utils/removeSelectedClassFromAllSelectedDomBookmarks';
 	import TopBar from '../../TopBar.svelte';
 	import ActionBarV2 from '../../ActionBarV2.svelte';
 	import PlainBookmark from '../../PlainBookmark.svelte';
 	import nodata from '$lib/images/no-data.jpg';
+	import BreadCrumb from '../../BreadCrumb.svelte';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
 	let root: string = 'My collections';
+	let interval: number;
 
 	afterNavigate(() => {
+		showCollapsedFolders.set(false);
+
+		breadCrumbIsOverflowing.set(false);
+
+		collapsedFolders.set([]);
+
+		checkIfBreadCrumbIsOverflowing();
+
 		removeSelectedClassFromAllDomFolders();
+
 		selectedFolders.set([]);
+
 		removeSelectedClassFromAllDomBookmarks();
+
 		selectedBookmarks.set([]);
 	});
+
+	function checkIfBreadCrumbIsOverflowing() {
+		const breadcrumb = document.getElementById('breadCrumb') as HTMLDivElement | null;
+
+		if (breadcrumb === null) return;
+
+		const clientWidth = breadcrumb.clientWidth;
+		const scrollWidth = breadcrumb.scrollWidth;
+
+		breadCrumbIsOverflowing.set(scrollWidth > clientWidth);
+	}
 
 	function handleChangeInSearchParams() {
 		const which: string | null = $page.url.searchParams.get('which');
@@ -51,6 +79,26 @@
 		}
 	}
 
+	function collapseBreadCrumb() {
+		interval = setInterval(() => {
+			if ($folderPath.length >= 1) {
+				collapsedFolders.update((values) => [...values, $folderPath.slice(0, 1)[0]]);
+
+				$folderPath = $folderPath.filter((value) => {
+					return value.folder_id !== $folderPath.slice(0, 1)[0].folder_id;
+				});
+
+				folderPath.set($folderPath);
+
+				checkIfBreadCrumbIsOverflowing();
+			}
+		}, 0.1);
+	}
+
+	function removeInterval() {
+		clearInterval(interval);
+	}
+
 	$: $page.url.searchParams, handleChangeInSearchParams();
 
 	$: $page.data.folders,
@@ -69,6 +117,8 @@
 	$: $folders, sortFoldersByName($folders);
 
 	$: $bookmarks, sortBookmarksByTitle($bookmarks);
+
+	$: $breadCrumbIsOverflowing ? collapseBreadCrumb() : removeInterval();
 </script>
 
 <svelte:head>
@@ -82,39 +132,7 @@
 <div class="app">
 	<ActionBarV2 />
 	<TopBar />
-	<div class="breadcrumb">
-		{#if root === 'My collections'}
-			<a
-				data-sveltekit-preload-data="tap"
-				href="/dashboard/my_collections?id=root"
-				class:disabled={$folderPath.length < 1}
-			>
-				{root}
-			</a>
-		{:else if root === 'Shared'}
-			<a
-				data-sveltekit-preload-data="tap"
-				href="/dashboard/my_collections?id=root&which=shared"
-				class:disabled={$folderPath.length < 1}
-			>
-				{root}
-			</a>
-		{:else if (root = 'Recycle bin')}
-			<a
-				data-sveltekit-preload-data="tap"
-				href="/dashboard/my_collections?id=root"
-				class="disabled"
-			>
-				{root}
-			</a>
-		{/if}
-		{#each $folderPath as { label, created_at, deleted_at, folder_description, folder_id, folder_name, path, starred, subfolder_of, updated_at, user_id }}
-			<i class="las la-long-arrow-alt-right" />
-			<a data-sveltekit-preload-data="tap" href={`/dashboard/my_collections?id=${folder_id}`}
-				>{folder_name}</a
-			>
-		{/each}
-	</div>
+	<BreadCrumb />
 	<div class="myBookmarks" id="myBookmarks">
 		{#if $loadingItems}
 			<div class="loadingItems">
@@ -141,50 +159,8 @@
 		flex-direction: column;
 		background-color: rgb(255, 255, 255);
 
-		.breadcrumb {
-			width: 100%;
-			padding: 0em 1em;
-			display: flex;
-			align-items: center;
-			gap: 0.5em;
-			min-height: 7vh;
-			max-width: fit-content;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			flex: 1;
-			background-color: white;
-
-			i {
-				font-size: 1.5rem;
-			}
-
-			a {
-				font-size: 1.5rem;
-				font-family: 'Arial CE', sans-serif;
-				text-decoration: none;
-				transition: all ease 300ms;
-				color: #61677a;
-				padding: 0.3em 0.6em;
-				border-radius: 0.5rem;
-
-				&:hover {
-					background-color: #eeeeee;
-				}
-			}
-
-			.disabled {
-				pointer-events: none;
-				text-decoration: none;
-				font-family: 'Segoe UI', sans-serif;
-				font-size: 1.8rem;
-				color: #495464;
-				padding: 0 !important;
-			}
-		}
-
 		.myBookmarks {
-			height: calc(100vh - calc(8vh + 7vh));
+			height: calc(100vh - calc(10rem));
 			overflow-y: auto;
 			display: flex;
 			flex-flow: row wrap;

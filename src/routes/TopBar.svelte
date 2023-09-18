@@ -123,13 +123,13 @@
 <style lang="scss">
 	.top {
 		width: 100%;
-		padding: 0em 1em;
+		padding: 0 1em;
 		display: flex;
+		z-index: 1;
 		align-items: center;
 		justify-content: space-between;
-		min-height: 8vh;
-		z-index: 1;
 		background-color: white;
+		height: 5rem;
 
 		i.la-bars {
 			font-size: 3rem;
@@ -229,7 +229,6 @@
 				border-radius: 0.5rem;
 				box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 				padding: 1.5em;
-				gap: 1em;
 				display: flex;
 				gap: 1em;
 				color: #001c30;

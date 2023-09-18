@@ -24,6 +24,7 @@
 	import { getFolderPath } from '../../utils/getFolderPath';
 	import { browser } from '$app/environment';
 	import { sortFoldersByName } from '../../utils/sortFolders';
+	import QuickView from '../QuickView.svelte';
 
 	let f: Folder = {};
 	let fs: Folder[] = [];
@@ -163,6 +164,8 @@
 	$: $childrenOfDestinationFolder, handleChangeInChildrenOfDestinationFolder();
 	$: $childrenOfDestinationFolder, sortFoldersByName($childrenOfDestinationFolder);
 </script>
+
+<QuickView />
 
 <div class="app">
 	<NewBookmark />

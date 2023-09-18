@@ -110,8 +110,8 @@
 
 				span {
 					font-size: 1.3rem;
+					font-family: 'Arial CE', sans-serif;
 					text-transform: uppercase;
-					font-family: 'Roboto', sans-serif;
 					background-color: #f4f4f2;
 					padding: 0.2em;
 					border-radius: 0.3rem;

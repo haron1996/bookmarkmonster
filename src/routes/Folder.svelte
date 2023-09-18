@@ -87,6 +87,8 @@
 			user_id: a.dataset.userid
 		};
 
+		foldersToMove.set([]);
+
 		foldersToMove.update((values) => [f, ...values]);
 	}
 
@@ -127,7 +129,7 @@
 		const a = target.closest('a') as HTMLAnchorElement | null;
 		if (a === null) return;
 
-		let f: Folder = {
+		const f: Folder = {
 			created_at: a.dataset.createdat,
 			deleted_at: a.dataset.deletedat,
 			folder_description: a.dataset.folderdescription,
@@ -154,7 +156,7 @@
 			moveFolders(f, a, $selectedFolders);
 		} else {
 			if (f.folder_id === $foldersToMove[0].folder_id) {
-				alert('cannot move collection to itself');
+				// alert('cannot move collection to itself');
 				foldersToMove.set([]);
 				return;
 			}
@@ -202,6 +204,7 @@
 
 		if (msg) {
 			alert(msg);
+			a.style.border = '0.1rem solid #e7ebed';
 			return;
 		}
 
@@ -310,8 +313,8 @@
 			padding: 0.5em;
 			border-radius: 0.3rem;
 			color: #040d12;
-			font-family: 'Segoe UI', sans-serif;
-			font-weight: 600;
+			font-size: 1.3rem;
+			font-family: 'Arial CE', sans-serif;
 
 			&::first-letter {
 				text-transform: uppercase;
