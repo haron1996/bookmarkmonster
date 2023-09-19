@@ -73,6 +73,16 @@ type Bookmark struct {
 	Beautified pgtype.Timestamptz `json:"beautified"`
 }
 
+type BookmarkScreenshot struct {
+	ID                 string             `json:"id"`
+	ScreenshotLocation string             `json:"screenshot_location"`
+	BookmarkID         string             `json:"bookmark_id"`
+	UserID             string             `json:"user_id"`
+	Added              time.Time          `json:"added"`
+	Deleted            pgtype.Timestamptz `json:"deleted"`
+	Fullpage           bool               `json:"fullpage"`
+}
+
 type BookmarkTag struct {
 	BookmarkID string `json:"bookmark_id"`
 	TagID      string `json:"tag_id"`

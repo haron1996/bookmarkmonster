@@ -3,6 +3,7 @@ import type { Tag } from '../types/tag';
 import type { Bookmark } from '../types/bookmark';
 import type { Session } from '../types/session';
 import type { Folder } from '../types/folder';
+import type { Screenshot } from '../types/screenshot';
 
 export const apiHost = readable<string>('https://api.bookmarkmonster.xyz');
 
@@ -93,3 +94,7 @@ export const foldersToMove = writable<Folder[]>([]);
 export const breadCrumbIsOverflowing = writable<boolean>(false);
 export const collapsedFolders = writable<Folder[]>([]);
 export const showCollapsedFolders = writable<boolean>(false);
+export const showQuickView = writable<boolean>(false);
+export const showCaptureScreeshot = writable<boolean>(false);
+export const screenshot = writable<Screenshot>({});
+export const screenshots = writable<Screenshot[]>([]);

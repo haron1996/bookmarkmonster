@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { json } from '@sveltejs/kit';
-	import { apiHost, processingBookmark } from '../../stores/stores';
+	import { apiHost } from '../../stores/stores';
 	import { goto } from '$app/navigation';
 
 	let email: string = '';

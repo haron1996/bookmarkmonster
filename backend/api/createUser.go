@@ -119,7 +119,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	profilePicUrl, err := vultr.UploadUserProfilePic(profilePicFile)
+	profilePicUrl, err := vultr.UploadImage(profilePicFile, "user-profile-pictures")
 	if err != nil {
 		log.Printf("could not upload google user profile pic: %v", err)
 		utils.Response(w, "something went wrong", http.StatusInternalServerError)

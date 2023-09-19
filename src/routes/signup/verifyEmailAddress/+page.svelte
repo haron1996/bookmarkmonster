@@ -11,6 +11,8 @@
 	onMount(() => {
 		const t: string | null = $page.url.searchParams.get('token');
 
+		alert(t);
+
 		if (t === null) {
 			goto('/signup');
 			return;
@@ -58,8 +60,8 @@
 
 		if (msg) {
 			alert(msg);
-			goto('/signup');
-			return;
+			// goto('/signup');
+			// return;
 		}
 
 		const session = result[0];

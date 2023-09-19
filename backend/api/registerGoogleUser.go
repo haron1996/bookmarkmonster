@@ -104,7 +104,7 @@ func RegisterGoogleUser(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			profilePicUrl, err := vultr.UploadUserProfilePic(file)
+			profilePicUrl, err := vultr.UploadImage(file, "user-profile-pictures")
 			if err != nil {
 				log.Printf("could not upload google user profile pic: %v", err)
 				utils.Response(w, "something went wrong", http.StatusInternalServerError)

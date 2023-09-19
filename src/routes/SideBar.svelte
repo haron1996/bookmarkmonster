@@ -117,16 +117,18 @@
 				</a>
 			</li>
 			<li
+				style="display:none"
 				class:active={$page.url.pathname === '/dashboard/screenshots'}
 				data-id="Screenshots"
 				on:pointerover={showToolTip}
 				on:pointerout={hideToolTip}
 			>
 				<a data-sveltekit-preload-data="tap" href="/dashboard/screenshots">
-					<i class="las la-image" />
+					<i class="las la-file-image" />
 				</a>
 			</li>
 			<li
+				style="display:none"
 				class:active={$page.url.pathname === '/dashboard/PDFs'}
 				data-id="PDFs"
 				on:pointerover={showToolTip}

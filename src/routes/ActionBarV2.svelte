@@ -5,7 +5,9 @@
 		selectedFolders,
 		selectedItems,
 		session,
+		showCaptureScreeshot,
 		showMoveItemsPopup,
+		showQuickView,
 		showUpdateBookmark,
 		showUpdateFolder
 	} from '../stores/stores';
@@ -52,6 +54,16 @@
 	class:showActionBar={$selectedItems.length >= 1}
 >
 	<div class="actions">
+		<div
+			class="captureScreenshot"
+			role="none"
+			on:click={() => {
+				showCaptureScreeshot.set(true);
+			}}
+		>
+			<i class="las la-file-image" />
+			<span>Capture screenshot</span>
+		</div>
 		<div class="share">
 			<i class="las la-share" />
 			<span>Share</span>
@@ -82,14 +94,22 @@
 				<div class="dis" on:click|stopPropagation|preventDefault={() => {}} role="none" />
 			{/if}
 		</div>
-		<div class="beautify" class:disabled={$selectedFolders.length >= 1}>
+		<div style="display: none;" class="beautify" class:disabled={$selectedFolders.length >= 1}>
 			<i class="las la-magic" />
 			<span>Beautify</span>
 			{#if $selectedFolders.length >= 1}
 				<div class="dis" on:click|stopPropagation|preventDefault={() => {}} role="none" />
 			{/if}
 		</div>
-		<div class="quickView" role="none" on:click={handleClickOnQuickView}>
+		<div
+			class="quickView"
+			role="none"
+			on:click={() => {
+				showQuickView.set(true);
+			}}
+			class:disabled={$selectedItems.length > 1 || $selectedFolders.length >= 1}
+			style="display: none"
+		>
 			<i class="las la-eye" />
 			<span>quick view</span>
 		</div>

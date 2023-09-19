@@ -1,5 +1,6 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import { onMount } from 'svelte';
+	import { selectedBookmarks, showQuickView } from '../stores/stores';
 
 	// kcb
 	// kilimall
@@ -14,9 +15,27 @@
 	// sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-scripts allow-top-navigation"
 </script>
 
-<div class="container" id="quickView">
-	<iframe src="https://www.google.com/" frameborder="0" title="quick view" allowfullscreen />
-</div>
+{#if $showQuickView}
+	<div
+		class="container"
+		id="quickView"
+		role="none"
+		on:click={() => {
+			showQuickView.set(false);
+		}}
+	>
+		{#if $selectedBookmarks[0]}
+			<iframe
+				src={$selectedBookmarks[0].bookmark}
+				frameborder="0"
+				title="quick view"
+				allowfullscreen
+				on:click|stopPropagation={() => {}}
+				role="none"
+			/>
+		{/if}
+	</div>
+{/if}
 
 <style lang="scss">
 	#quickView {
@@ -30,17 +49,17 @@
 		align-items: center;
 		justify-content: center;
 		background-color: white;
-		display: none;
 
 		iframe {
 			height: 100vh;
-			width: 100vw;
+			width: 60vw;
 			background-color: inherit;
 			position: relative;
 			display: flex;
 			flex-direction: column;
 			border: none;
 			outline: none;
+			background-color: white;
 		}
 	}
-</style> -->
+</style>

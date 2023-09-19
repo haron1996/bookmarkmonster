@@ -25,6 +25,7 @@
 	import { browser } from '$app/environment';
 	import { sortFoldersByName } from '../../utils/sortFolders';
 	import QuickView from '../QuickView.svelte';
+	import CaptureScreenshot from '../CaptureScreenshot.svelte';
 
 	let f: Folder = {};
 	let fs: Folder[] = [];
@@ -166,6 +167,7 @@
 </script>
 
 <QuickView />
+<CaptureScreenshot />
 
 <div class="app">
 	<NewBookmark />

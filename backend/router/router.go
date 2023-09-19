@@ -71,6 +71,10 @@ func Router() *chi.Mux {
 			r.Patch("/updateBookmark", api.UpdateBookmark)
 			r.Patch("/moveBookmarks", api.MoveBookmarks)
 			r.Patch("/updateBookmarkHtml", api.UpdateBookmarkHtml)
+			r.Post("/captureFullpageScreeshot", api.CaptureFullpageScreeshot)
+			r.Post("/captureAboveTheFoldScreenshot", api.GetAboveTheFoldScreenshot)
+			r.Get("/getFullpageScreenshots", api.GetFullpageScreenshots)
+			r.Get("/getAboveFoldScreenshots", api.GetAboveFoldScreenshots)
 		})
 
 		r.Route("/collections", func(r chi.Router) {
