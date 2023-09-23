@@ -24,21 +24,29 @@ BookmarkMonster is a cloud bookmark manager to help you save and share bookmarks
 
   ## Screenshots
 
+![screenshot-localhost_5173-2023 09 23-09_47_08](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/07c81ecf-eb4f-4a7a-a0aa-661f064b184d)
 
-  ![Screenshot from 2023-09-18 20-42-03](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/3ce0d5a1-fd57-4661-929c-bc54e8984713)
 
-  
 
-  ![Screenshot from 2023-09-18 21-17-11](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/ebf85d6a-701a-4331-beb6-ae46863fd752)
-
-  
-
-  ![Screenshot from 2023-09-18 21-18-03](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/5ec2a07c-0754-4286-9e72-a61d6a7a6ad7)
+![screenshot-localhost_5173-2023 09 23-09_37_40](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/c10ac5f7-20bf-4fda-b7d6-34061bd91470)
 
   
 
-  ![Screenshot from 2023-09-18 21-19-45](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/18da0937-51ca-47ca-a587-ccade88426b7)
+![screenshot-localhost_5173-2023 09 23-09_27_24](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/76654e0c-8297-4e79-ac16-53386e558baf)
 
 
 
-  ![Screenshot from 2023-09-18 22-06-09](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/efa19d7b-d905-4b9b-b99a-c78ae91efcc4)
+
+![screenshot-localhost_5173-2023 09 23-09_31_53](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/e51d67b2-dc48-424d-b9a6-e5b178d
+
+
+
+
+![screenshot-localhost_5173-2023 09 23-09_33_45](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/71ec9792-0eed-470c-9c8a-d564387b4fce)
+
+
+
+![screenshot-localhost_5173-2023 09 23-09_36_50](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/6782dd5b-5ff7-4b9b-afd0-d6565288ec6c)
+
+
+![screenshot-localhost_5173-2023 09 23-09_48_10](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/52be49a3-dae8-44df-a1c4-464a9d68093e)
