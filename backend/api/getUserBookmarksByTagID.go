@@ -19,12 +19,6 @@ func GetUserBookmarksByTagID(w http.ResponseWriter, r *http.Request) {
 
 	tagid := chi.URLParam(r, "tagid")
 
-	// const pLoad mw.ContextKey = "payload"
-
-	// payload := ctx.Value(pLoad).(*token.PayLoad)
-
-	// userid := payload.UserID
-
 	config, err := utils.LoadConfig(".")
 	if err != nil {
 		log.Println(err)

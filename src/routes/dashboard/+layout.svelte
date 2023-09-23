@@ -168,17 +168,15 @@
 
 <QuickView />
 <CaptureScreenshot />
+<NewBookmark />
+<UpdateFolder />
+<UpdateBookmark />
+<MoveItems />
 
 <div class="app">
-	<NewBookmark />
-	<UpdateFolder />
-	<UpdateBookmark />
-	<MoveItems />
-	<div class="bottom">
-		<SideBar />
-		<div class="content">
-			<slot />
-		</div>
+	<SideBar />
+	<div class="content">
+		<slot />
 	</div>
 </div>
 
@@ -193,16 +191,12 @@
 		width: 100vw;
 		overflow: hidden;
 		display: flex;
-		flex-direction: column;
 		background-color: rgb(250, 250, 250);
 
-		.bottom {
-			display: flex;
-
-			.content {
-				height: 100%;
-				width: calc(100vw - 9rem);
-			}
+		.content {
+			height: 100%;
+			width: 100%;
+			background-color: white;
 		}
 	}
 </style>

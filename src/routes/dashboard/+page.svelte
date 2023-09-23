@@ -1,22 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { loadingItems, recentUserBookmarks, session } from '../../stores/stores';
-
-	// let links = [
-	// 	'Learning Sales Funnel Conversion Tactics From 3 Print Ads',
-	// 	'Launching A High Converting Sales Funnel Out Of The Box',
-	// 	'How To Validate A Market For Your Next Sales Funnel',
-	// 	'How To Take The Training Wheels Off Your Sales Funnel',
-	// 	'7 Classic Marketing Books You Must Read Before Funnel Hacking',
-	// 	'Marketer’s Guide to Including Social Proof in Sales Funnel',
-	// 	'How to Advertise on Google Search: Leveraging the Traffic You Control',
-	// 	'Huge Funnel Hack Exposed! Manscaped 6 Step Recipe To Success {Steal This Formula!}',
-	// 	'Traffic Triage: How to Save Your Ad Money!',
-	// 	'How to Create Successful Email Marketing Campaigns',
-	// 	'5 Reasons To Replace Your Stock Standard Website With A Sales Funnel',
-	// 	'Copywriting Hacks in the ClickFunnels Editor to Increase Conversions',
-	// 	'The fastest and easiest way to check and copy CSS'
-	// ];
+	import { hideSideBar, loadingItems, recentUserBookmarks, session } from '../../stores/stores';
 
 	$: $page.data.recentUserBookmarks
 		? recentUserBookmarks.set($page.data.recentUserBookmarks)
@@ -25,15 +9,24 @@
 
 <div class="dashboard">
 	<div class="top">
-		<div class="salutation">
-			<p>Hey,</p>
-			{#if $session.User?.name}
-				<p>{$session.User.name}</p>
-			{:else}
-				<div class="loader" />
-			{/if}
+		<div class="left">
+			<div class="salutation">
+				<p>Hey,</p>
+				{#if $session.User?.name}
+					<p>{$session.User.name}</p>
+				{:else}
+					<div class="loader" />
+				{/if}
+			</div>
+			<span>Here's your brief bookmarking overview</span>
 		</div>
-		<span>Here's your brief bookmarking overview</span>
+		<i
+			class="las la-bars"
+			role="none"
+			on:click={() => {
+				$hideSideBar = !$hideSideBar;
+			}}
+		/>
 	</div>
 	<div class="cards">
 		<div class="recentlyAdded card">
@@ -94,71 +87,55 @@
 		.top {
 			height: 10vh;
 			width: 100%;
-			// display: flex;
-			// align-items: center;
 			padding: 1em;
-			gap: 1em;
 			display: flex;
-			flex-direction: column;
+			justify-content: space-between;
 
-			.salutation {
+			.left {
 				display: flex;
-				align-items: center;
-				gap: 0.3em;
+				flex-direction: column;
+				gap: 0.7em;
 
-				p {
-					font-family: 'Product Sans Medium', sans-serif;
-					font-size: 2rem;
-					color: #495464;
-				}
+				.salutation {
+					display: flex;
+					align-items: center;
+					gap: 0.3em;
 
-				.loader {
-					border: 2px solid #f3f3f3; /* Light grey */
-					border-top: 2px solid #3498db; /* Blue */
-					border-radius: 50%;
-					width: 2rem;
-					height: 2rem;
-					animation: spin 0.5s linear infinite;
+					p {
+						font-family: 'Product Sans Medium', sans-serif;
+						font-size: 2rem;
+						color: #495464;
+					}
 
-					@keyframes spin {
-						0% {
-							transform: rotate(0deg);
-						}
-						100% {
-							transform: rotate(360deg);
+					.loader {
+						border: 2px solid #f3f3f3; /* Light grey */
+						border-top: 2px solid #3498db; /* Blue */
+						border-radius: 50%;
+						width: 2rem;
+						height: 2rem;
+						animation: spin 0.5s linear infinite;
+
+						@keyframes spin {
+							0% {
+								transform: rotate(0deg);
+							}
+							100% {
+								transform: rotate(360deg);
+							}
 						}
 					}
 				}
+
+				span {
+					font-size: 1.3rem;
+					font-family: 'Arial CE', sans-serif;
+					color: #61677a;
+				}
 			}
 
-			// p {
-			// 	font-family: 'Product Sans Medium', sans-serif;
-			// 	font-size: 2rem;
-			// 	color: #495464;
-			// }
-
-			// .loader {
-			// 	border: 2px solid #f3f3f3; /* Light grey */
-			// 	border-top: 2px solid #3498db; /* Blue */
-			// 	border-radius: 50%;
-			// 	width: 2rem;
-			// 	height: 2rem;
-			// 	animation: spin 0.5s linear infinite;
-
-			// 	@keyframes spin {
-			// 		0% {
-			// 			transform: rotate(0deg);
-			// 		}
-			// 		100% {
-			// 			transform: rotate(360deg);
-			// 		}
-			// 	}
-			// }
-
-			span {
-				font-size: 1.3rem;
-				font-family: 'Arial CE', sans-serif;
-				color: #61677a;
+			i {
+				font-size: 2rem;
+				cursor: pointer;
 			}
 		}
 
@@ -277,6 +254,14 @@
 						}
 					}
 				}
+			}
+
+			@media only screen and (width <= 600px) {
+				grid-template-columns: repeat(1, 1fr);
+			}
+
+			@media only screen and (601px <= width <= 1200px) {
+				grid-template-columns: repeat(2, 1fr);
 			}
 		}
 	}

@@ -10,11 +10,16 @@ import (
 )
 
 const trashTag = `-- name: TrashTag :one
-update tag set deleted = now() where id = $1 returning id, name, user_id, added, updated, deleted
+update tag set deleted = now() where id = $1 and user_id = $2 and deleted is null returning id, name, user_id, added, updated, deleted
 `
 
-func (q *Queries) TrashTag(ctx context.Context, id string) (Tag, error) {
-	row := q.db.QueryRow(ctx, trashTag, id)
+type TrashTagParams struct {
+	ID     string `json:"id"`
+	UserID string `json:"user_id"`
+}
+
+func (q *Queries) TrashTag(ctx context.Context, arg TrashTagParams) (Tag, error) {
+	row := q.db.QueryRow(ctx, trashTag, arg.ID, arg.UserID)
 	var i Tag
 	err := row.Scan(
 		&i.ID,

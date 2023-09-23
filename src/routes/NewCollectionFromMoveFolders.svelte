@@ -114,7 +114,7 @@
 		width: 100vw;
 		height: 100vh;
 		background-color: rgb(0, 0, 0, 0.4);
-		z-index: 6;
+		z-index: 11;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -197,6 +197,10 @@
 				font-family: 'Segoe UI', sans-serif;
 				font-weight: 600;
 				font-size: 1.2rem;
+			}
+
+			@media only screen and (width <= 600px) {
+				width: 95%;
 			}
 		}
 	}

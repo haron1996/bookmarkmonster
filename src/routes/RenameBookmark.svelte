@@ -150,6 +150,10 @@
 					}
 				}
 			}
+
+			@media only screen and (width <= 600px) {
+				width: 95%;
+			}
 		}
 	}
 </style>

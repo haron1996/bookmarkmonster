@@ -172,6 +172,10 @@
 					font-family: 'Segoe UI', sans-serif;
 					text-transform: uppercase;
 					transition: all 300ms ease;
+
+					@media only screen and (width <= 768px) {
+						display: none;
+					}
 				}
 
 				.dis {
@@ -197,12 +201,22 @@
 
 					span {
 						color: white;
+						font-weight: 600;
 					}
+				}
+
+				@media only screen and (width <= 768px) {
+					padding: 0;
+					background-color: white;
 				}
 			}
 
 			.disabled {
 				opacity: 0.5;
+			}
+
+			@media only screen and (width <= 768px) {
+				gap: 2em;
 			}
 		}
 
@@ -225,7 +239,21 @@
 				font-size: 1.2rem;
 				font-family: 'Segoe UI', sans-serif;
 				text-transform: uppercase;
+
+				@media only screen and (width <= 768px) {
+					display: none;
+				}
 			}
+
+			@media only screen and (width <= 768px) {
+				padding: 0;
+				background-color: white;
+			}
+		}
+
+		@media only screen and (width <= 768px) {
+			left: 0;
+			width: 100%;
 		}
 	}
 

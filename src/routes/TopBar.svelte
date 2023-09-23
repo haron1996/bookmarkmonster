@@ -1,17 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { query, showAddNewBookmark } from '../stores/stores';
+	import { hideSideBar, query, showAddNewBookmark } from '../stores/stores';
 	import { openCreateBookmark } from '../utils/openCreateBookmark';
 	import { openCreateFolder } from '../utils/openCreateFolder';
 
 	let addMenuShown: boolean = false;
 	let searchPlaceHolder: string = '';
-
-	function handleClickOnBarsIcon() {
-		const sideBar = document.getElementById('sideBar') as HTMLDivElement | null;
-
-		if (sideBar === null) return;
-	}
 
 	$: if ($page.url.pathname === '/dashboard/my_collections') {
 		searchPlaceHolder = 'Search collections';
@@ -21,11 +15,14 @@
 </script>
 
 <div class="top">
-	<i class="las la-bars" role="none" on:click={handleClickOnBarsIcon} />
+	<i
+		class="las la-bars"
+		role="none"
+		on:click={() => {
+			$hideSideBar = !$hideSideBar;
+		}}
+	/>
 	<div class="search">
-		<div class="searchIcon">
-			<i class="las la-search" />
-		</div>
 		<input
 			type="search"
 			name="search"
@@ -47,12 +44,11 @@
 			on:click={() => {
 				addMenuShown = !addMenuShown;
 			}}
-			class:addButtonIsActive={addMenuShown}
 			role="none"
 		>
 			<i class="las la-plus" />
-			<span class="addNew">add new</span>
-			<i class="las la-angle-down" />
+			<!-- <span class="addNew">add new</span>
+			<i class="las la-angle-down" /> -->
 
 			{#if addMenuShown}
 				<div class="addMenu">
@@ -114,8 +110,8 @@
 			role="none"
 		>
 			<i class="las la-plus" />
-			<span class="addNew">add new</span>
-			<i class="las la-angle-down" />
+			<!-- <span class="addNew">add new</span>
+			<i class="las la-angle-down" /> -->
 		</div>
 	{/if}
 </div>
@@ -132,41 +128,31 @@
 		height: 5rem;
 
 		i.la-bars {
-			font-size: 3rem;
+			font-size: 2rem;
 			cursor: pointer;
 		}
 
 		.search {
 			display: flex;
 			align-items: center;
-			border: 0.1rem solid rgb(0, 0, 0, 0.1);
-			min-width: 50rem;
-			height: 4rem;
+			width: 40rem;
+			height: 3rem;
 			border-radius: 0.3rem;
-			background-color: rgb(232, 240, 254);
-
-			.searchIcon {
-				min-width: 10%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				height: 100%;
-
-				i {
-					font-size: 1.8rem;
-				}
-			}
+			background-color: white;
 
 			input {
 				border: none;
 				outline: none;
-				min-width: 80%;
-				max-width: 90%;
+				width: 90%;
 				font-size: 1.3rem;
 				font-family: 'Arial CE', sans-serif;
 				height: 100%;
 				padding: 0 0.5em;
 				background-color: inherit;
+
+				&::placeholder {
+					color: #d8d9da;
+				}
 			}
 
 			::-webkit-search-cancel-button {
@@ -185,6 +171,10 @@
 					font-size: 1.8rem;
 				}
 			}
+
+			@media only screen and (width <= 425px) {
+				width: 50%;
+			}
 		}
 
 		.new {
@@ -193,30 +183,13 @@
 			align-items: center;
 			gap: 0.7em;
 			background-color: inherit;
-			border-radius: 0.3rem;
-			padding: 1em 2em;
 			color: #040d12;
 			cursor: pointer;
-			border: 0.2rem solid #040d12;
 			transition: all 300ms ease;
 			position: relative;
 
-			i.la-plus,
-			i.la-angle-down {
-				font-size: 1.8rem;
-			}
-
-			span.addNew {
-				font-size: 1.3rem;
-				font-family: 'Arial CE', sans-serif;
-				font-weight: 600;
-				text-transform: uppercase;
-			}
-
-			&:hover {
-				background-color: #040d12;
-				color: white;
-				box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+			i.la-plus {
+				font-size: 2rem;
 			}
 
 			.addMenu {
@@ -242,13 +215,13 @@
 					border: 0.1rem solid rgb(0, 0, 0, 0.1);
 					padding: 1em;
 					border-radius: 0.5rem;
-					height: 20rem;
-					width: 20rem;
+					height: 10rem;
+					width: 10rem;
 					transition: all 300ms ease;
 
 					svg {
-						height: 3rem;
-						width: 3rem;
+						height: 2rem;
+						width: 2rem;
 					}
 
 					span {
@@ -274,33 +247,16 @@
 			padding: 1em 2em;
 			color: #040d12;
 			cursor: pointer;
-			border: 0.2rem solid #040d12;
 			transition: all 300ms ease;
 			position: relative;
 
-			i.la-plus,
-			i.la-angle-down {
-				font-size: 1.8rem;
-			}
-
-			span.addNew {
-				font-size: 1.3rem;
-				font-family: 'Arial CE', sans-serif;
-				font-weight: 600;
-				text-transform: uppercase;
-			}
-
-			&:hover {
-				background-color: #040d12;
-				color: white;
-				box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+			i.la-plus {
+				font-size: 2rem;
 			}
 		}
 
-		.addButtonIsActive {
-			background-color: #040d12;
-			color: white;
-			box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+		@media only screen and (width <= 600px) {
+			justify-content: space-between;
 		}
 	}
 </style>

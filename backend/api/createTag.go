@@ -73,6 +73,7 @@ func CreateTag(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		log.Printf("could not create tag: %v", err)
 		utils.Response(w, "could not create tag", http.StatusInternalServerError)
 		return
 	}

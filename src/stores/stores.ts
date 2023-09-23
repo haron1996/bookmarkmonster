@@ -11,6 +11,8 @@ export const apiHost = readable<string>('https://api.bookmarkmonster.xyz');
 
 export const sideBarWidth = writable<number>(25);
 
+export const hideSideBar = writable<boolean>(false);
+
 export const session = writable<Partial<Session>>({});
 
 export const tags = writable<Tag[]>([]);
@@ -29,15 +31,13 @@ export const query = writable<string>('');
 
 export const selectedBookmarks = writable<Bookmark[]>([]);
 
-export const selectedTags = writable<Tag[]>([]);
-
-export const matchedTagsFromDB = writable<Tag[]>([]);
-
-export const bookmarkTags = writable<Tag[]>([]);
-
 export const tagName = writable<string>('');
 
+// alerts
 export const error = writable<string>('');
+export const successMessage = writable<string>('');
+export const errorMessage = writable<string>('');
+// end of alerts
 
 export const ctrlKeyActive = writable<boolean>(false);
 
@@ -98,3 +98,13 @@ export const showQuickView = writable<boolean>(false);
 export const showCaptureScreeshot = writable<boolean>(false);
 export const screenshot = writable<Screenshot>({});
 export const screenshots = writable<Screenshot[]>([]);
+
+// tags
+export const currentTag = writable<Tag>({});
+export const selectedTag = writable<Tag>({});
+export const tagsBarCollapsed = writable<boolean>(false);
+export const selectedTags = writable<Tag[]>([]);
+export const matchedTagsFromDB = writable<Tag[]>([]);
+export const bookmarkTags = writable<Tag[]>([]);
+export const showCreatBookmarkFromTagPage = writable<boolean>(false);
+// end of tags

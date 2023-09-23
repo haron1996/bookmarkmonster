@@ -50,9 +50,20 @@
 	}
 </script>
 
-<div class="updateBookmark" class:showUpdateBookmark={$showUpdateBookmark}>
+<div
+	class="updateBookmark"
+	class:showUpdateBookmark={$showUpdateBookmark}
+	role="none"
+	on:click={() => {
+		showUpdateBookmark.set(false);
+	}}
+>
 	{#if $selectedBookmarks[0]}
-		<form class="animate__animated animate__backInDown">
+		<form
+			class="animate__animated animate__backInDown"
+			on:click|stopPropagation={() => {}}
+			role="none"
+		>
 			<div class="top">
 				<p>update <span>{$selectedBookmarks[0].title}</span></p>
 				<span
@@ -92,14 +103,19 @@
 
 <style lang="scss">
 	.updateBookmark {
-		width: 100%;
-		min-height: 0%;
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100vw;
+		height: 100vh;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		transition: all 300ms ease;
-		background-color: white;
 		flex-direction: column;
+		z-index: 10;
+		display: none;
+		background-color: rgb(0, 0, 0, 0.7);
 
 		form {
 			width: 60rem;
@@ -109,8 +125,11 @@
 			border-radius: 0.5rem;
 			gap: 3em;
 			transition: all 300ms ease;
-			box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
 			display: none;
+			background-color: white;
+			box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px,
+				rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px,
+				rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
 
 			.top {
 				display: flex;
@@ -174,7 +193,7 @@
 				padding: 1em 0.7em;
 				border: none;
 				cursor: pointer;
-				background-color: #0079ff;
+				background-color: rgb(4, 13, 18);
 				border-radius: 0.3rem;
 				color: white;
 				box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
@@ -209,12 +228,15 @@
 					font-weight: 600;
 				}
 			}
+
+			@media only screen and (width <= 600px) {
+				width: 95%;
+			}
 		}
 	}
 
 	.showUpdateBookmark {
-		min-height: 100%;
-		max-height: 100%;
+		display: flex;
 
 		form {
 			display: flex;

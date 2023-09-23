@@ -103,7 +103,7 @@
 		justify-content: center;
 		padding: 1em;
 		border-radius: 0.3rem;
-		width: 40rem;
+		width: 30rem;
 		height: 25rem;
 		text-decoration: none;
 		transition: all ease 300ms;
@@ -115,8 +115,8 @@
 			width: 13rem;
 
 			path {
-				fill: #040d12;
-				stroke: #040d12;
+				fill: #454545;
+				stroke: #454545;
 			}
 		}
 
@@ -140,6 +140,14 @@
 
 		&:hover {
 			background-color: #eeeeee;
+		}
+
+		@media only screen and (width <= 425px) {
+			width: 100%;
+		}
+
+		@media only screen and (426px <= width <= 768px) {
+			width: 30rem;
 		}
 	}
 

@@ -1,8 +1,8 @@
 export interface Tag {
-	added?: Date;
-	deleted?: Date | null;
+	added?: string;
+	deleted?: string | null;
 	id?: string;
 	name?: string;
-	updated?: Date | null;
+	updated?: string | null;
 	user_id?: string;
 }

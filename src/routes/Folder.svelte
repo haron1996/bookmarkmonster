@@ -286,7 +286,7 @@
 		justify-content: center;
 		padding: 1em;
 		border-radius: 0.3rem;
-		width: 40rem;
+		width: 30rem;
 		height: 25rem;
 		text-decoration: none;
 		transition: all ease 300ms;
@@ -298,8 +298,8 @@
 			width: 13rem;
 
 			path {
-				fill: #040d12;
-				stroke: #040d12;
+				fill: #454545;
+				stroke: #454545;
 			}
 		}
 
@@ -348,6 +348,10 @@
 					opacity: 1;
 				}
 			}
+
+			@media only screen and (width <= 768px) {
+				opacity: 1;
+			}
 		}
 
 		&:hover {
@@ -357,13 +361,21 @@
 				opacity: 1;
 			}
 		}
+
+		@media only screen and (width <= 425px) {
+			width: 100%;
+		}
+
+		@media only screen and (426px <= width <= 768px) {
+			width: 30rem;
+		}
 	}
 
 	:global(.selected) {
 		box-shadow: #3740ff 0px 0px 0px 3px;
 
 		.selector {
-			background-color: #0079ff !important;
+			background-color: rgb(4, 13, 18) !important;
 			box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 			opacity: 1 !important;
 			border-color: white !important;
@@ -375,7 +387,7 @@
 		}
 
 		&:hover {
-			box-shadow: #3740ff 0px 0px 0px 3px !important;
+			box-shadow: rgb(4, 13, 18) 0px 0px 0px 3px !important;
 		}
 	}
 </style>

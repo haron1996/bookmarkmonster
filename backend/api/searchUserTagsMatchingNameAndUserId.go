@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -38,6 +39,12 @@ func SearchUserTags(w http.ResponseWriter, r *http.Request) {
 		utils.Response(w, "something went wrong", 500)
 		return
 	}
+
+	pool.Config().MinConns = 50
+
+	pool.Config().MaxConns = 150
+
+	pool.Config().MaxConnIdleTime = 5 * time.Second
 
 	defer pool.Close()
 

@@ -1,6 +1,20 @@
 <script lang="ts">
 	import 'animate.css';
 	import Error from './Error.svelte';
+	import Success from './Success.svelte';
+	import { errorMessage, successMessage } from '../stores/stores';
+	import ErrorV2 from './ErrorV2.svelte';
+
+	$: $successMessage !== ''
+		? setTimeout(() => {
+				successMessage.set('');
+		  }, 6000)
+		: () => {};
+	$: $errorMessage !== ''
+		? setTimeout(() => {
+				errorMessage.set('');
+		  }, 6000)
+		: () => {};
 </script>
 
 <div class="app">
@@ -13,6 +27,8 @@
 	<!-- <Footer /> -->
 
 	<Error />
+	<Success />
+	<ErrorV2 />
 </div>
 
 <style lang="scss" global>

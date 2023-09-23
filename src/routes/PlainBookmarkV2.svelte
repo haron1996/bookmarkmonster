@@ -50,7 +50,7 @@
 		transition: all 300ms ease-in-out;
 		word-break: break-word;
 		border-radius: 0.5rem;
-		width: 40rem;
+		width: 30rem;
 		height: 25rem;
 		position: relative;
 
@@ -152,14 +152,22 @@
 		&:hover {
 			background-color: #eeeeee;
 		}
+
+		@media only screen and (width <= 425px) {
+			width: 100%;
+		}
+
+		@media only screen and (426px <= width <= 768px) {
+			width: 30rem;
+		}
 	}
 
 	// global
 	:global(.bookmarkSelected) {
-		box-shadow: #3740ff 0px 0px 0px 3px;
+		box-shadow: rgb(4, 13, 18) 0px 0px 0px 3px;
 
 		:global(.selector) {
-			background-color: #0079ff !important;
+			background-color: rgb(4, 13, 18) !important;
 			box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 			opacity: 1 !important;
 			border-color: white !important;
@@ -171,7 +179,7 @@
 		}
 
 		&:hover {
-			box-shadow: #3740ff 0px 0px 0px 3px !important;
+			box-shadow: rgb(4, 13, 18) 0px 0px 0px 3px !important;
 		}
 	}
 </style>

@@ -49,6 +49,7 @@ func Router() *chi.Mux {
 			r.Patch("/renameTag", api.RenameTag)
 			r.Patch("/trashTag", api.TrashTag)
 			r.Patch("/restoreTag", api.RestoreTag)
+			r.Get("/searchTagBookmarks/{tag_id}/{query}", api.SearchTagBookmarks)
 		})
 
 		r.Route("/bookmarks", func(r chi.Router) {
@@ -75,6 +76,7 @@ func Router() *chi.Mux {
 			r.Post("/captureAboveTheFoldScreenshot", api.GetAboveTheFoldScreenshot)
 			r.Get("/getFullpageScreenshots", api.GetFullpageScreenshots)
 			r.Get("/getAboveFoldScreenshots", api.GetAboveFoldScreenshots)
+			r.Post("/createAndTagBookmark", api.CreateAndTagBookmark)
 		})
 
 		r.Route("/collections", func(r chi.Router) {

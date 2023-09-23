@@ -98,7 +98,7 @@
 				padding: 1em 0.7em;
 				border: none;
 				cursor: pointer;
-				background-color: #0079ff;
+				background-color: rgb(4, 13, 18);
 				border-radius: 0.3rem;
 				color: white;
 				box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
@@ -131,6 +131,10 @@
 					font-family: 'Arial CE', sans-serif;
 					font-weight: 600;
 				}
+			}
+
+			@media only screen and (width <= 600px) {
+				width: 95%;
 			}
 		}
 	}

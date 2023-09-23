@@ -7,6 +7,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	sqlc "github.com/kwandapchumba/bookmarkmonster/db/sqlc"
+	"github.com/kwandapchumba/bookmarkmonster/mw"
+	token "github.com/kwandapchumba/bookmarkmonster/token"
 	"github.com/kwandapchumba/bookmarkmonster/utils"
 )
 
@@ -53,7 +55,11 @@ func RenameTag(w http.ResponseWriter, r *http.Request) {
 
 	q := sqlc.New(pool)
 
-	tag, err := q.RenameTag(ctx, sqlc.RenameTagParams{Name: req.Tag.Name, ID: req.Tag.ID})
+	const pLoad mw.ContextKey = "payload"
+
+	payload := ctx.Value(pLoad).(*token.PayLoad)
+
+	tag, err := q.RenameTag(ctx, sqlc.RenameTagParams{Name: req.Tag.Name, ID: req.Tag.ID, UserID: payload.UserID})
 	if err != nil {
 		log.Printf("could not rename tag: %v", err)
 		utils.Response(w, "something went wrong", http.StatusInternalServerError)

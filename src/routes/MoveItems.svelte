@@ -289,16 +289,18 @@
 
 <style lang="scss">
 	.container {
-		min-height: 100%;
-		max-height: 100%;
-		width: 100%;
-		background-color: white;
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100vw;
+		height: 100vh;
 		display: flex;
 		flex-direction: column;
+		z-index: 10;
+		background-color: white;
 
 		.breadcrumb {
 			min-height: 10vh;
-			// background-color: lightblue;
 			display: flex;
 			align-items: center;
 			padding: 1em;
