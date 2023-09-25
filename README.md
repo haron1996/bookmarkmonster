@@ -24,6 +24,9 @@ BookmarkMonster is a cloud bookmark manager to help you save and share bookmarks
 
   ## Screenshots
 
+![screenshot-localhost_5173-2023 09 25-09_22_33](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/15be7979-90d4-47ca-9e27-8ec2a1524d38)
+
+
 ![screenshot-localhost_5173-2023 09 23-09_47_08](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/07c81ecf-eb4f-4a7a-a0aa-661f064b184d)
 
 
