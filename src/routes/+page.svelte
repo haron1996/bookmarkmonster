@@ -310,6 +310,10 @@
 	</div>
 </div>
 
+<div class="signup">
+	<a href="/signup">Get a free account</a>
+</div>
+
 <Footer />
 
 <style lang="scss">
@@ -387,11 +391,10 @@
 			padding: 1em;
 			background-color: #0079ff;
 			font-size: 1.3rem;
-			font-family: 'Poppins', sans-serif;
+			font-family: 'Arial CE', sans-serif;
 			color: white;
 			text-decoration: none;
 			border-radius: 0.3rem;
-			font-weight: 600;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -458,8 +461,7 @@
 				min-height: max-content;
 				padding: 1em;
 				gap: 1em;
-				box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset,
-					rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+				border: 0.1rem solid rgb(4, 13, 18, 0.2);
 
 				i {
 					font-size: 2.5rem;
@@ -531,6 +533,7 @@
 		gap: 2em;
 		background-color: inherit;
 		padding: 2em 0;
+		display: none;
 
 		.title {
 			display: flex;
@@ -642,8 +645,8 @@
 						align-items: center;
 						justify-content: center;
 						border-radius: 0.3rem;
-						font-family: 'Poppins', sans-serif;
 						font-size: 1.3rem;
+						font-family: 'Arial CE', sans-serif;
 						font-weight: 600;
 						text-decoration: none;
 						box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
@@ -692,6 +695,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		display: none;
 
 		.card {
 			display: flex;
@@ -715,6 +719,25 @@
 			@media only screen and (min-width: 601px) and (max-width: 992px) {
 				width: 90%;
 			}
+		}
+	}
+
+	.signup {
+		padding: 1em;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		a {
+			text-decoration: none;
+			padding: 1em;
+			font-size: 1.3rem;
+			font-family: 'Arial CE', sans-serif;
+			background-color: #0079ff;
+			color: white;
+			border-radius: 0.3rem;
+			width: max-content;
 		}
 	}
 </style>

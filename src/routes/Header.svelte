@@ -70,17 +70,11 @@
 				gap: 1em;
 
 				a {
-					color: #025464;
+					color: #040d12;
 					font-size: 1.3rem;
-					font-weight: 600;
 					text-decoration-color: transparent;
 					transition: all ease 300ms;
-					font-family: 'Roboto', sans-serif;
-
-					&:hover {
-						color: #0079ff;
-						text-decoration-color: #0079ff;
-					}
+					font-family: 'Arial CE', sans-serif;
 				}
 
 				@media only screen and (max-width: 600px) {
@@ -93,11 +87,10 @@
 				padding: 0.5em 1em;
 				background-color: #0079ff;
 				font-size: 1.3rem;
-				font-family: 'Poppins', sans-serif;
+				font-family: 'Arial CE', sans-serif;
 				color: white;
 				text-decoration: none;
 				border-radius: 0.3rem;
-				font-weight: 600;
 			}
 
 			@media only screen and (max-width: 768px) {

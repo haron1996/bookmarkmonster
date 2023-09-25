@@ -21,11 +21,10 @@
 		flex-flow: row wrap;
 
 		a {
-			color: #0079ff;
+			color: #040d12;
 			font-size: 1.3rem;
-			font-weight: 600;
-			text-decoration-thickness: 0.2rem;
-			font-family: 'Poppins', sans-serif;
+			font-family: 'Arial CE', sans-serif;
+			text-decoration: none;
 		}
 	}
 </style>
