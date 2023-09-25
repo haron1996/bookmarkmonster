@@ -42,6 +42,11 @@ func Router() *chi.Mux {
 
 	r.Route("/authenticated", func(r chi.Router) {
 		r.Use(mw.AuthenticateRequest())
+
+		r.Post("/requestPocketAuthorizationCode", api.RequestPocketAuthorizationCode)
+		r.Post("/convertPocketRequestTokenToAccessToken", api.ConverPocketRequestTokenToAccessToken)
+		r.Post("/importFromPocket", api.ImportFromPocket)
+
 		r.Route("/tags", func(r chi.Router) {
 			r.Get("/", api.GetAllUserTags)
 			r.Get("/{tagName}", api.SearchUserTags)

@@ -1,5 +1,5 @@
 -- +goose Up
-DROP TABLE IF EXISTS userr;
+DROP TABLE IF EXISTS userr cascade;
 
 CREATE TABLE userr (
     id TEXT PRIMARY KEY,
@@ -20,7 +20,7 @@ SELECT 'up SQL query';
 -- +goose StatementEnd
 
 -- +goose Down
-DROP TABLE IF EXISTS userr;
+DROP TABLE IF EXISTS userr cascade;
 -- +goose StatementBegin
 SELECT 'down SQL query';
 -- +goose StatementEnd

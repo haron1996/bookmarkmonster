@@ -372,7 +372,7 @@
 	}
 
 	:global(.selected) {
-		box-shadow: #3740ff 0px 0px 0px 3px;
+		box-shadow: rgb(4, 13, 18) 0px 0px 0px 3px;
 
 		.selector {
 			background-color: rgb(4, 13, 18) !important;

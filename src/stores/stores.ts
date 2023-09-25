@@ -108,3 +108,5 @@ export const matchedTagsFromDB = writable<Tag[]>([]);
 export const bookmarkTags = writable<Tag[]>([]);
 export const showCreatBookmarkFromTagPage = writable<boolean>(false);
 // end of tags
+
+export const showImportData = writable<boolean>(false);

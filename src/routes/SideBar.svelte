@@ -5,6 +5,7 @@
 		hideSideBar,
 		loadingItems,
 		session,
+		showImportData,
 		sideBarVisible,
 		toolTipText
 	} from '../stores/stores';
@@ -141,6 +142,17 @@
 		>
 			<a data-sveltekit-preload-data="tap" href="/dashboard/recycle_bin">
 				<i class="las la-recycle" />
+			</a>
+		</li>
+		<li data-id="Import" on:pointerover={showToolTip} on:pointerout={hideToolTip}>
+			<a
+				data-sveltekit-preload-data="tap"
+				href="/"
+				on:click|preventDefault={() => {
+					showImportData.set(true);
+				}}
+			>
+				<i class="las la-download" />
 			</a>
 		</li>
 	</ul>

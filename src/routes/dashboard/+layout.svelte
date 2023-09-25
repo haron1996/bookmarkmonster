@@ -26,6 +26,7 @@
 	import { sortFoldersByName } from '../../utils/sortFolders';
 	import QuickView from '../QuickView.svelte';
 	import CaptureScreenshot from '../CaptureScreenshot.svelte';
+	import Import from '../Import.svelte';
 
 	let f: Folder = {};
 	let fs: Folder[] = [];
@@ -172,6 +173,7 @@
 <UpdateFolder />
 <UpdateBookmark />
 <MoveItems />
+<Import />
 
 <div class="app">
 	<SideBar />

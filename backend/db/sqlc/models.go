@@ -111,6 +111,17 @@ type Folder struct {
 	Ishidden          bool               `json:"ishidden"`
 }
 
+type PocketCode struct {
+	UserID string `json:"user_id"`
+	Code   string `json:"code"`
+}
+
+type PocketToken struct {
+	AccessToken string `json:"access_token"`
+	Username    string `json:"username"`
+	UserID      string `json:"user_id"`
+}
+
 type Support struct {
 	ID      string    `json:"id"`
 	Email   string    `json:"email"`

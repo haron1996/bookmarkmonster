@@ -24,6 +24,8 @@ type Config struct {
 	VultrHostname          string        `mapstructure:"vultrHostname"`
 	VultrRegion            string        `mapstructure:"vultrRegion"`
 	AdminCode              string        `mapstructure:"adminCode"`
+	PocketConsumerKey      string        `mapstructure:"pocketConsumerKey"`
+	PocketRedirectUrl      string        `mapstructure:"pocketRedirectUrl"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

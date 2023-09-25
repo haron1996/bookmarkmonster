@@ -124,20 +124,25 @@
 		}}
 	>
 		<div class="card" role="none" on:click|stopPropagation={() => {}}>
-			{#if gettingScreenshot}
-				<div class="capturing">
-					<div class="loader" />
-					<p>Capturing screenshot...</p>
-				</div>
-			{:else if !gettingScreenshot && $screenshot.screenshot_location !== undefined}
-				<div class="download">
-					<button on:click|preventDefault={downloadScreenshot}> Download screenshot </button>
-				</div>
-			{:else if !gettingScreenshot && $screenshot.screenshot_location === undefined}
-				<span role="none" on:click={captureFullpageScreenshot}>Capture full page</span>
-				<span role="none" on:click={captureAboveTheFoldScreenshot}>Capture above the fold</span>
-				<span>Capture element screenshot</span>
-			{/if}
+			<div class="title">
+				<p>Capture screenshot</p>
+			</div>
+			<div class="options">
+				{#if gettingScreenshot}
+					<div class="capturing">
+						<div class="loader" />
+						<p>Capturing screenshot...</p>
+					</div>
+				{:else if !gettingScreenshot && $screenshot.screenshot_location !== undefined}
+					<div class="download">
+						<button on:click|preventDefault={downloadScreenshot}> Download screenshot </button>
+					</div>
+				{:else if !gettingScreenshot && $screenshot.screenshot_location === undefined}
+					<span role="none" on:click={captureFullpageScreenshot}>Capture full page</span>
+					<span role="none" on:click={captureAboveTheFoldScreenshot}>Capture above the fold</span>
+					<span>Capture element screenshot</span>
+				{/if}
+			</div>
 		</div>
 	</div>
 {/if}
@@ -162,84 +167,92 @@
 			min-height: 10rem;
 			min-width: 40rem;
 			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 1em;
-			gap: 1em;
+			flex-direction: column;
+			padding: 2em;
+			gap: 2em;
 			box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 
-			.capturing {
-				min-height: inherit;
-				min-width: inherit;
+			.title {
 				display: flex;
 				align-items: center;
-				justify-content: center;
+
+				p {
+					font-family: 'Arial CE', sans-serif;
+					font-size: 1.5rem;
+					color: #272829;
+				}
+			}
+
+			.options {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
 				gap: 1em;
 
-				.loader {
-					border: 0.2rem solid #f3f3f3;
-					border-top: 0.2rem solid #040d12;
-					border-radius: 50%;
-					width: 3rem;
-					height: 3rem;
-					animation: spin 0.5s linear infinite;
+				.capturing {
+					min-height: inherit;
+					min-width: inherit;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					gap: 1em;
 
-					@keyframes spin {
-						0% {
-							transform: rotate(0deg);
+					.loader {
+						border: 0.2rem solid #f3f3f3;
+						border-top: 0.2rem solid #040d12;
+						border-radius: 50%;
+						width: 2rem;
+						height: 2rem;
+						animation: spin 0.5s linear infinite;
+
+						@keyframes spin {
+							0% {
+								transform: rotate(0deg);
+							}
+							100% {
+								transform: rotate(360deg);
+							}
 						}
-						100% {
-							transform: rotate(360deg);
+					}
+
+					p {
+						font-size: 1.3rem;
+						font-family: 'Arial CE', sans-serif;
+					}
+				}
+
+				.download {
+					min-height: inherit;
+					min-width: inherit;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+
+					button {
+						border: none;
+						font-size: 1.3rem;
+						font-family: 'Arial CE', sans-serif;
+						padding: 0.7em 1em;
+						cursor: pointer;
+						transition: all 300ms ease;
+
+						&:hover {
+							box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 						}
 					}
 				}
 
-				p {
-					font-size: 1.3rem;
-					font-family: 'Arial CE', sans-serif;
-				}
-			}
-
-			.download {
-				min-height: inherit;
-				min-width: inherit;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-
-				button {
-					border: none;
-					font-size: 1.3rem;
-					font-family: 'Arial CE', sans-serif;
-					background-color: #040d12;
-					color: white;
+				span {
 					padding: 0.7em 1em;
+					border: 0.1rem solid #d8d9da;
+					font-size: 1.3rem;
+					font-family: 'Arial CE', sans-serif;
 					cursor: pointer;
+					border-radius: 0.2rem;
 					transition: all 300ms ease;
 
 					&:hover {
-						box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
-							rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
-						border-radius: 0.3rem;
+						box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
 					}
-				}
-			}
-
-			span {
-				padding: 0.7em 1em;
-				border: 0.2rem solid #040d12;
-				font-size: 1.3rem;
-				font-family: 'Arial CE', sans-serif;
-				cursor: pointer;
-				border-radius: 0.2rem;
-				transition: all 300ms ease;
-
-				&:hover {
-					background-color: #040d12;
-					color: white;
-					box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
-						rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
-					font-weight: 600;
 				}
 			}
 		}
