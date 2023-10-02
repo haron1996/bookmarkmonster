@@ -32,7 +32,7 @@ func AuthenticateRequest() func(next http.Handler) http.Handler {
 
 				account, err := db.GetUser(ctx, payload.UserEmail, payload.UserID)
 				if err != nil {
-					log.Println(err)
+					log.Printf("could not get user: %v", err)
 					utils.Response(w, "user does not exist", http.StatusUnauthorized)
 					return
 				}

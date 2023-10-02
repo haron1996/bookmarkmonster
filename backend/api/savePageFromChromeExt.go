@@ -24,6 +24,7 @@ type savePageFromChromeExtensionRequest struct {
 }
 
 func SavePageFromChromeExtension(w http.ResponseWriter, r *http.Request) {
+
 	ctx := r.Context()
 
 	jsonDecoder := json.NewDecoder(r.Body)
@@ -53,6 +54,8 @@ func SavePageFromChromeExtension(w http.ResponseWriter, r *http.Request) {
 	const pLoad mw.ContextKey = "payload"
 
 	payload := ctx.Value(pLoad).(*token.PayLoad)
+
+	log.Printf("payload: %v", payload)
 
 	config, err := utils.LoadConfig(".")
 	if err != nil {
