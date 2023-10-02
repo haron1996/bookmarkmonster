@@ -4,6 +4,8 @@ BookmarkMonster is a cloud bookmark manager to help you save and share bookmarks
 
 ## Features
 
+- Chrome extension v0.0.1
+- Import from pocket, csv, html, raindrop
 - Nested collections
 - Tags
 - Get bookmark screenshot (fullpage, above fold, element screenshot)
@@ -23,6 +25,9 @@ BookmarkMonster is a cloud bookmark manager to help you save and share bookmarks
 - and more...
 
   ## Screenshots
+
+![Screenshot from 2023-10-02 09-07-18](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/8cad3959-1853-436e-93da-32f108caac6b)
+
 
 ![screenshot-localhost_5173-2023 09 25-09_22_33](https://github.com/kwandapchumba/bookmarkmonster/assets/104693526/15be7979-90d4-47ca-9e27-8ec2a1524d38)
 
