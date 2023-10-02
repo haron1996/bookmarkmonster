@@ -5,8 +5,8 @@
 	<a href="/signin">Log In</a>
 	<a href="/signup">Sign up</a>
 	<a href="/pro-waiting-list">Join waiting list</a>
-	<a href="/support">Ask us anything</a>
-	<a href="#about">Built in Nairobi</a>
+	<a href="/support">Contact us</a>
+	<!-- <a href="#about">Built in Nairobi</a> -->
 </footer>
 
 <style lang="scss">
@@ -19,6 +19,7 @@
 		gap: 1em;
 		background-color: #e6fffd;
 		flex-flow: row wrap;
+		background-color: white;
 
 		a {
 			color: #040d12;

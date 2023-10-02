@@ -1,5 +1,5 @@
 <script lang="ts">
-	import hero from '$lib/images/dashboard.png';
+	import hero from '$lib/images/hero.png';
 	import Footer from './Footer.svelte';
 	import Header from './Header.svelte';
 	import signature from '$lib/images/signature.png';
@@ -13,6 +13,11 @@
 <Header />
 
 <section id="section1">
+	<div class="offer">
+		<h1>Standalone cloud bookmark manager</h1>
+		<p>Save, organize, and share links online.</p>
+	</div>
+	<a href="/signup">Get my free account</a>
 	<img
 		src={hero}
 		alt="hero"
@@ -21,15 +26,6 @@
 		on:contextmenu|preventDefault={() => {}}
 		draggable="false"
 	/>
-	<div class="offer">
-		<h1>FREE Bookmark Manager for Individuals, researchers, and Teams.</h1>
-		<p>
-			Save, organize, and share links with team... has tags, nested categories, and a built-in to-do
-			list. 🔥
-		</p>
-	</div>
-
-	<a href="/signup">Get my free account</a>
 </section>
 
 <section id="features">
@@ -218,7 +214,7 @@
 				</div>
 			</div>
 			<div class="bottom">
-				<a href="/signup">Get my free account</a>
+				<a href="/signup">Create account</a>
 			</div>
 		</div>
 		<div class="priceCard pro">
@@ -311,12 +307,14 @@
 </div>
 
 <div class="signup">
-	<a href="/signup">Get a free account</a>
+	<a href="/signup">Create account</a>
 </div>
 
 <Footer />
 
 <style lang="scss">
+	@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
+
 	#section1 {
 		display: flex;
 		flex-direction: column;
@@ -325,12 +323,13 @@
 		width: 100%;
 		min-height: max-content;
 		min-height: 100vh;
-		gap: 2em;
-		background-color: #e6fffd;
+		gap: 3em;
+		background-color: #f8fdcf;
+		height: max-content;
+		padding: 5em 0;
 
 		img.hero {
-			width: 60%;
-			height: 60%;
+			width: 100%;
 			max-inline-size: 60%;
 			object-fit: fill;
 			object-position: center;
@@ -349,7 +348,7 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			gap: 1em;
+			gap: 2em;
 			text-align: center;
 
 			h1 {
@@ -358,7 +357,7 @@
 				font-weight: 900;
 				max-width: 80%;
 				line-height: 1.3;
-				font-family: 'Poppins', sans-serif;
+				font-family: 'Bricolage Grotesque', sans-serif;
 				max-width: fit-content;
 			}
 
@@ -369,6 +368,7 @@
 				font-weight: 500;
 				line-height: 1.3;
 				max-width: fit-content;
+				font-family: 'Bricolage Grotesque', sans-serif;
 			}
 
 			@media only screen and (max-width: 992px) {
@@ -398,7 +398,6 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			min-width: 30rem;
 
 			@media only screen and (max-width: 600px) {
 				min-width: 80%;

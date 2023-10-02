@@ -147,7 +147,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	accessTokenDuration := config.Access_Token_Duration
 
-	accessToken, _, err := token.CreateToken(user.ID, user.Name, user.Email, issuedAt, accessTokenDuration)
+	accessToken, accessTokenPayload, err := token.CreateToken(user.ID, user.Name, user.Email, issuedAt, accessTokenDuration)
 	if err != nil {
 		log.Printf("could not create access token: %v", err)
 		utils.Response(w, "could not create access token", http.StatusInternalServerError)
@@ -156,7 +156,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	refreshTokenDuration := config.Refresh_Token_Duration
 
-	refreshToken, _, err := token.CreateToken(user.ID, user.Name, user.Email, issuedAt, refreshTokenDuration)
+	refreshToken, refreshTokenPayload, err := token.CreateToken(user.ID, user.Name, user.Email, issuedAt, refreshTokenDuration)
 	if err != nil {
 		log.Printf("could not create refresh token: %v", err)
 		utils.Response(w, "could not create refresh token", http.StatusInternalServerError)
@@ -183,6 +183,30 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		utils.Response(w, "something went wrong", 500)
 		return
 	}
+
+	accessTokenCookie := http.Cookie{
+		Name:     "accessTokenCookie",
+		Value:    accessToken,
+		Path:     "/",
+		Expires:  accessTokenPayload.Expiry,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+		HttpOnly: true,
+	}
+
+	refreshTokenCookie := http.Cookie{
+		Name:     "refreshTokenCookie",
+		Value:    refreshToken,
+		Path:     "/",
+		Expires:  refreshTokenPayload.Expiry,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, &accessTokenCookie)
+
+	http.SetCookie(w, &refreshTokenCookie)
 
 	utils.JsonResponse(w, authenticatedUser)
 }

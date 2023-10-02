@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/kwandapchumba/bookmarkmonster/api"
+	cookieapis "github.com/kwandapchumba/bookmarkmonster/api/cookieApis"
 	"github.com/kwandapchumba/bookmarkmonster/mw"
 )
 
@@ -82,6 +83,7 @@ func Router() *chi.Mux {
 			r.Get("/getFullpageScreenshots", api.GetFullpageScreenshots)
 			r.Get("/getAboveFoldScreenshots", api.GetAboveFoldScreenshots)
 			r.Post("/createAndTagBookmark", api.CreateAndTagBookmark)
+			r.Post("/savePageFromChromeExtension", api.SavePageFromChromeExtension)
 		})
 
 		r.Route("/collections", func(r chi.Router) {
@@ -96,6 +98,7 @@ func Router() *chi.Mux {
 			r.Patch("/moveCollectionsToAnother", api.MoveCollectionsToAnother)
 			r.Patch("/moveCollectionsToRoot", api.MoveCollectionsToRoot)
 			r.Get("/getFolder/{folderID}", api.GetFolder)
+			r.Get("/searchUserFolders/{folderName}", api.SearchUserFolders)
 		})
 	})
 
@@ -108,6 +111,10 @@ func Router() *chi.Mux {
 	r.Route("/care", func(r chi.Router) {
 		r.Post("/joinWaitlist", api.JoinWaitList)
 		r.Post("/contactSupport", api.ContactSupport)
+	})
+
+	r.Route("/cookie", func(r chi.Router) {
+		r.Get("/searchTags/{tagName}", cookieapis.SearchTags)
 	})
 
 	return r

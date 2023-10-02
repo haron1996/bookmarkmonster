@@ -33,7 +33,7 @@
 			<a href="/signin">Log In</a>
 		</nav>
 
-		<a class="btn" href="/signup">Get my free account</a>
+		<a class="btn" href="/signup">Create account</a>
 	</div>
 </header>
 
@@ -43,7 +43,7 @@
 		display: flex;
 		align-content: center;
 		justify-content: center;
-		background-color: #e6fffd;
+		background-color: white;
 		padding: 1em;
 
 		.innerContainer {
@@ -84,7 +84,7 @@
 
 			a.btn {
 				min-width: max-content;
-				padding: 0.5em 1em;
+				padding: 1em;
 				background-color: #0079ff;
 				font-size: 1.3rem;
 				font-family: 'Arial CE', sans-serif;

@@ -12,6 +12,15 @@ import (
 )
 
 func GetAllBookmarks(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("accessTokenCookie")
+	if err != nil {
+		log.Printf("could not get cookie: %v", err)
+		utils.Response(w, "something went wrong", 500)
+		return
+	}
+
+	log.Printf("Cookie: %v", c)
+
 	ctx := r.Context()
 
 	const pLoad mw.ContextKey = "payload"
