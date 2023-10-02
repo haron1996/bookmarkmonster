@@ -11,15 +11,16 @@
 	//const apiURL = 'http://localhost:5000';
 	const apiURL = 'https://api.bookmarkmonster.xyz';
 	let accessToken = '';
+	//let cookiesDomain = 'localhost';
 
 	onMount(() => {
 		getCurrentTabUrlAndTitle();
-		getAccessToken();
+		getAccessToken('bookmarkmonster.xyz');
 	});
 
-	async function getAccessToken() {
+	async function getAccessToken(domain: string) {
 		const t = await chrome.cookies.getAll({
-			domain: 'localhost',
+			domain: domain,
 			secure: true,
 			name: 'accessTokenCookie'
 		});
@@ -435,8 +436,6 @@
 		});
 
 		const result = await response.json();
-
-		//alert(result[0].title);
 
 		pageSaved.set(true);
 	}

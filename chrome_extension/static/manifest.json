@@ -21,8 +21,8 @@
 			"extension_ids": ["*"]
 		}
 	],
-	"permissions": ["activeTab", "storage", "favicon", "bookmarks", "sidePanel", "cookies"],
-	"host_permissions": ["<all_urls>", "*://*/*"],
+	"permissions": ["activeTab", "bookmarks", "cookies"],
+	"host_permissions": ["*://*.bookmarkmonster.xyz/"],
 	"short_name": "BM",
 	"background": {
 		"service_worker": "service-worker.js",
