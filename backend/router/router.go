@@ -84,6 +84,7 @@ func Router() *chi.Mux {
 			r.Get("/getAboveFoldScreenshots", api.GetAboveFoldScreenshots)
 			r.Post("/createAndTagBookmark", api.CreateAndTagBookmark)
 			r.Post("/savePageFromChromeExtension", api.SavePageFromChromeExtension)
+			r.Post("/syncChromeBookmarks", api.SyncChromeBookmarks)
 		})
 
 		r.Route("/collections", func(r chi.Router) {

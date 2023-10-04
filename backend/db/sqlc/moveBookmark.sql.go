@@ -12,7 +12,7 @@ import (
 )
 
 const moveBookmark = `-- name: MoveBookmark :one
-update bookmark set folder_id = $1 where id = $2 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified
+update bookmark set folder_id = $1 where id = $2 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome
 `
 
 type MoveBookmarkParams struct {
@@ -37,6 +37,7 @@ func (q *Queries) MoveBookmark(ctx context.Context, arg MoveBookmarkParams) (Boo
 		&i.Deleted,
 		&i.FolderID,
 		&i.Beautified,
+		&i.Fromchrome,
 	)
 	return i, err
 }

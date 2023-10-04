@@ -24,8 +24,6 @@ func SearchTags(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	log.Println(payload)
-
 	config, err := utils.LoadConfig(".")
 	if err != nil {
 		log.Println(err)

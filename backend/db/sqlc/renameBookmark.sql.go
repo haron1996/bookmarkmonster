@@ -10,7 +10,7 @@ import (
 )
 
 const renameBookmark = `-- name: RenameBookmark :one
-update bookmark set title = $1 where id = $2 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified
+update bookmark set title = $1 where id = $2 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome
 `
 
 type RenameBookmarkParams struct {
@@ -35,6 +35,7 @@ func (q *Queries) RenameBookmark(ctx context.Context, arg RenameBookmarkParams) 
 		&i.Deleted,
 		&i.FolderID,
 		&i.Beautified,
+		&i.Fromchrome,
 	)
 	return i, err
 }

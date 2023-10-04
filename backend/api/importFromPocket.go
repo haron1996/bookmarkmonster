@@ -113,7 +113,7 @@ func ImportFromPocket(w http.ResponseWriter, r *http.Request) {
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		fmt.Printf("Error reading response: %v", err)
+		fmt.Printf("error reading response: %v", err)
 		utils.Response(w, "something went wrong", 500)
 		return
 	}

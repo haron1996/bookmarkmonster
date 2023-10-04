@@ -12,7 +12,7 @@ import (
 )
 
 const getFolderBookmarks = `-- name: GetFolderBookmarks :many
-select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified from bookmark where user_id = $1 and folder_id = $2 and deleted is null and beautified is null order by added desc
+select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome from bookmark where user_id = $1 and folder_id = $2 and deleted is null and beautified is null order by added desc
 `
 
 type GetFolderBookmarksParams struct {
@@ -43,6 +43,7 @@ func (q *Queries) GetFolderBookmarks(ctx context.Context, arg GetFolderBookmarks
 			&i.Deleted,
 			&i.FolderID,
 			&i.Beautified,
+			&i.Fromchrome,
 		); err != nil {
 			return nil, err
 		}

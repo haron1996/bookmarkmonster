@@ -12,19 +12,20 @@ import (
 )
 
 const createBookmark = `-- name: CreateBookmark :one
-INSERT INTO bookmark (id, title, bookmark, host, user_id, notes, folder_id)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified
+INSERT INTO bookmark (id, title, bookmark, host, user_id, notes, folder_id, fromChrome)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome
 `
 
 type CreateBookmarkParams struct {
-	ID       string      `json:"id"`
-	Title    string      `json:"title"`
-	Bookmark string      `json:"bookmark"`
-	Host     string      `json:"host"`
-	UserID   string      `json:"user_id"`
-	Notes    pgtype.Text `json:"notes"`
-	FolderID pgtype.Text `json:"folder_id"`
+	ID         string      `json:"id"`
+	Title      string      `json:"title"`
+	Bookmark   string      `json:"bookmark"`
+	Host       string      `json:"host"`
+	UserID     string      `json:"user_id"`
+	Notes      pgtype.Text `json:"notes"`
+	FolderID   pgtype.Text `json:"folder_id"`
+	Fromchrome bool        `json:"fromchrome"`
 }
 
 func (q *Queries) CreateBookmark(ctx context.Context, arg CreateBookmarkParams) (Bookmark, error) {
@@ -36,6 +37,7 @@ func (q *Queries) CreateBookmark(ctx context.Context, arg CreateBookmarkParams) 
 		arg.UserID,
 		arg.Notes,
 		arg.FolderID,
+		arg.Fromchrome,
 	)
 	var i Bookmark
 	err := row.Scan(
@@ -52,6 +54,7 @@ func (q *Queries) CreateBookmark(ctx context.Context, arg CreateBookmarkParams) 
 		&i.Deleted,
 		&i.FolderID,
 		&i.Beautified,
+		&i.Fromchrome,
 	)
 	return i, err
 }

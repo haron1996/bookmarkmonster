@@ -10,7 +10,7 @@ import (
 )
 
 const getBookmarkByIdAndUserId = `-- name: GetBookmarkByIdAndUserId :one
-select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified from bookmark where id =$1 and user_id = $2 limit 1
+select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome from bookmark where id =$1 and user_id = $2 limit 1
 `
 
 type GetBookmarkByIdAndUserIdParams struct {
@@ -35,6 +35,7 @@ func (q *Queries) GetBookmarkByIdAndUserId(ctx context.Context, arg GetBookmarkB
 		&i.Deleted,
 		&i.FolderID,
 		&i.Beautified,
+		&i.Fromchrome,
 	)
 	return i, err
 }

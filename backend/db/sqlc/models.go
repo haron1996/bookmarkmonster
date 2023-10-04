@@ -71,6 +71,7 @@ type Bookmark struct {
 	Deleted    pgtype.Timestamptz `json:"deleted"`
 	FolderID   pgtype.Text        `json:"folder_id"`
 	Beautified pgtype.Timestamptz `json:"beautified"`
+	Fromchrome bool               `json:"fromchrome"`
 }
 
 type BookmarkScreenshot struct {

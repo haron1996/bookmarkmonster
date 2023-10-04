@@ -14,7 +14,7 @@ import (
 const addBookmark = `-- name: AddBookmark :one
 INSERT INTO bookmark (id, title, bookmark, host, favicon, thumbnail, user_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified
+RETURNING id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome
 `
 
 type AddBookmarkParams struct {
@@ -52,6 +52,7 @@ func (q *Queries) AddBookmark(ctx context.Context, arg AddBookmarkParams) (Bookm
 		&i.Deleted,
 		&i.FolderID,
 		&i.Beautified,
+		&i.Fromchrome,
 	)
 	return i, err
 }

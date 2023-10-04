@@ -10,7 +10,7 @@ import (
 )
 
 const getAllBookmarks = `-- name: GetAllBookmarks :many
-select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified from bookmark where user_id = $1 and deleted is null and beautified is null order by added desc
+select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome from bookmark where user_id = $1 and deleted is null and beautified is null order by added desc
 `
 
 func (q *Queries) GetAllBookmarks(ctx context.Context, userID string) ([]Bookmark, error) {
@@ -36,6 +36,7 @@ func (q *Queries) GetAllBookmarks(ctx context.Context, userID string) ([]Bookmar
 			&i.Deleted,
 			&i.FolderID,
 			&i.Beautified,
+			&i.Fromchrome,
 		); err != nil {
 			return nil, err
 		}

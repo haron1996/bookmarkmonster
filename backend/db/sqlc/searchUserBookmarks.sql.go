@@ -10,7 +10,7 @@ import (
 )
 
 const searchUserBookmarks = `-- name: SearchUserBookmarks :many
-SELECT id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified FROM bookmark
+SELECT id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome FROM bookmark
 WHERE title ~~* $1 AND user_id = $2 AND deleted IS NULL
 `
 
@@ -42,6 +42,7 @@ func (q *Queries) SearchUserBookmarks(ctx context.Context, arg SearchUserBookmar
 			&i.Deleted,
 			&i.FolderID,
 			&i.Beautified,
+			&i.Fromchrome,
 		); err != nil {
 			return nil, err
 		}

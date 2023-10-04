@@ -10,7 +10,7 @@ import (
 )
 
 const trashBookmark = `-- name: TrashBookmark :one
-update bookmark set deleted = now() where id = $1 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified
+update bookmark set deleted = now() where id = $1 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome
 `
 
 func (q *Queries) TrashBookmark(ctx context.Context, id string) (Bookmark, error) {
@@ -30,6 +30,7 @@ func (q *Queries) TrashBookmark(ctx context.Context, id string) (Bookmark, error
 		&i.Deleted,
 		&i.FolderID,
 		&i.Beautified,
+		&i.Fromchrome,
 	)
 	return i, err
 }

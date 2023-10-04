@@ -12,7 +12,7 @@ import (
 )
 
 const updateBookmark = `-- name: UpdateBookmark :one
-update bookmark set title = $1, notes = $2 where id = $3 and user_id = $4 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified
+update bookmark set title = $1, notes = $2 where id = $3 and user_id = $4 returning id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome
 `
 
 type UpdateBookmarkParams struct {
@@ -44,6 +44,7 @@ func (q *Queries) UpdateBookmark(ctx context.Context, arg UpdateBookmarkParams) 
 		&i.Deleted,
 		&i.FolderID,
 		&i.Beautified,
+		&i.Fromchrome,
 	)
 	return i, err
 }

@@ -10,7 +10,7 @@ import (
 )
 
 const getBookmarksInTrash = `-- name: GetBookmarksInTrash :many
-select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified from bookmark where deleted is not null and user_id = $1 order by deleted desc
+select id, title, bookmark, host, favicon, thumbnail, notes, user_id, added, updated, deleted, folder_id, beautified, fromchrome from bookmark where deleted is not null and user_id = $1 order by deleted desc
 `
 
 func (q *Queries) GetBookmarksInTrash(ctx context.Context, userID string) ([]Bookmark, error) {
@@ -36,6 +36,7 @@ func (q *Queries) GetBookmarksInTrash(ctx context.Context, userID string) ([]Boo
 			&i.Deleted,
 			&i.FolderID,
 			&i.Beautified,
+			&i.Fromchrome,
 		); err != nil {
 			return nil, err
 		}

@@ -44,7 +44,8 @@ func SavePageFromChromeExtension(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	host, standardURL, err := getHostAndStandardURLFromURL(req.URL)
+
+	host, standardURL, err := GetHostAndStandardURLFromURL(req.URL)
 	if err != nil {
 		log.Printf("could not get host and standard url from req url: %v", err)
 		utils.Response(w, "something went wrong", 500)
@@ -54,8 +55,6 @@ func SavePageFromChromeExtension(w http.ResponseWriter, r *http.Request) {
 	const pLoad mw.ContextKey = "payload"
 
 	payload := ctx.Value(pLoad).(*token.PayLoad)
-
-	log.Printf("payload: %v", payload)
 
 	config, err := utils.LoadConfig(".")
 	if err != nil {
@@ -127,7 +126,7 @@ func SavePageFromChromeExtension(w http.ResponseWriter, r *http.Request) {
 	utils.JsonResponse(w, bookmark)
 }
 
-func getHostAndStandardURLFromURL(URL string) (string, string, error) {
+func GetHostAndStandardURLFromURL(URL string) (string, string, error) {
 	var host string
 
 	var normalizedURL string
