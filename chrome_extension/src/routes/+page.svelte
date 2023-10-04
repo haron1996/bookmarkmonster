@@ -158,6 +158,12 @@
 
 		const result = await response.json();
 
+		if (result.message) {
+			alert(result.message);
+			syncingChromeBookmarks = false;
+			return;
+		}
+
 		syncingChromeBookmarks = false;
 
 		alertMessage.set(result[0]);
