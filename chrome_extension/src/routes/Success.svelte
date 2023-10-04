@@ -1,23 +1,23 @@
 <script lang="ts">
 	import check from '../../static/icons8-check.png';
-	import { pageSaved } from '../../store/stores';
+	import { alertMessage } from '../../store/stores';
 
-	$: $pageSaved,
-		$pageSaved
+	$: $alertMessage,
+		$alertMessage !== ''
 			? setTimeout(() => {
-					pageSaved.set(false);
+					alertMessage.set('');
 			  }, 3000)
 			: () => {};
 </script>
 
-{#if $pageSaved}
+{#if $alertMessage !== ''}
 	<div class="success">
 		<img src={check} alt="check" />
-		<span>Page bookmarked successfully</span>
+		<span>{$alertMessage}</span>
 		<small
 			role="none"
 			on:click={() => {
-				pageSaved.set(false);
+				alertMessage.set('');
 			}}>ok</small
 		>
 	</div>

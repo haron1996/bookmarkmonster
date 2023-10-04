@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { afterNavigate, goto } from '$app/navigation';
+	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { apiHost } from '../../../stores/stores';
 
@@ -32,7 +32,7 @@
 
 			localStorage.setItem('session', JSON.stringify(session));
 
-			goto('/dashboard');
+			window.location.href = '/dashboard';
 		}
 	};
 </script>

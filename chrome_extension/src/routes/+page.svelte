@@ -2,28 +2,40 @@
 	import { onMount } from 'svelte';
 	import logo from '../../static/logo.png';
 	import Success from './Success.svelte';
-	import { pageSaved } from '../../store/stores';
+	import { alertMessage } from '../../store/stores';
 
 	let tagName = '';
 	let collectionName = '';
 	let url = '';
 	let title = '';
+	let accessToken = '';
+	let syncingChromeBookmarks = false;
+
 	//const apiURL = 'http://localhost:5000';
 	const apiURL = 'https://api.bookmarkmonster.xyz';
-	let accessToken = '';
+
 	//let cookiesDomain = 'localhost';
+	let cookiesDomain = 'bookmarkmonster.xyz';
+
+	let loginURL = 'https://bookmarkmonster.xyz/signin';
+	//let loginURL = 'http://localhost:5173/signin';
 
 	onMount(() => {
+		getAccessToken(cookiesDomain);
 		getCurrentTabUrlAndTitle();
-		getAccessToken('bookmarkmonster.xyz');
 	});
 
-	async function getAccessToken(domain: string) {
+	async function getAccessToken(cookiesDomain: string) {
 		const t = await chrome.cookies.getAll({
-			domain: domain,
+			domain: cookiesDomain,
 			secure: true,
 			name: 'accessTokenCookie'
 		});
+
+		if (t.length < 1) {
+			window.open(loginURL, '_blank');
+			return;
+		}
 
 		accessToken = t[0].value;
 	}
@@ -49,6 +61,11 @@
 		subfolder_of?: string | null;
 		updated_at?: string;
 		user_id?: string;
+	}
+
+	interface Bookmark {
+		title?: string;
+		bookmark?: string;
 	}
 
 	let chosenTags: Tag[] = [];
@@ -93,7 +110,11 @@
 		tagsMatchingQuery = result[0];
 	}
 
-	function syncChromeBookmarks() {
+	let bs: Bookmark[] = [];
+
+	function SyncChromeBookmarks() {
+		syncingChromeBookmarks = true;
+
 		chrome.bookmarks.getTree((tree) => {
 			const nodes = tree[0].children;
 
@@ -102,12 +123,44 @@
 					const bookmarks = node.children;
 					if (bookmarks) {
 						for (const bookmark of bookmarks) {
-							alert(bookmark);
+							if (bookmark.title && bookmark.url) {
+								const b: Bookmark = {
+									title: bookmark.title,
+									bookmark: bookmark.url
+								};
+								bs = [b, ...bs];
+							}
 						}
 					}
 				}
 			}
+
+			syncChromeBookmarks(bs);
 		});
+	}
+
+	async function syncChromeBookmarks(bookmarks: Bookmark[]) {
+		const response = await fetch(`${apiURL}/authenticated/bookmarks/syncChromeBookmarks`, {
+			method: 'POST',
+			mode: 'cors',
+			cache: 'no-cache',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: `Bearer${accessToken}`
+			},
+			redirect: 'follow',
+			referrerPolicy: 'no-referrer',
+			body: JSON.stringify({
+				bookmarks: bookmarks
+			})
+		});
+
+		const result = await response.json();
+
+		syncingChromeBookmarks = false;
+
+		alertMessage.set(result[0]);
 	}
 
 	function handleTagInputKeydown(e: KeyboardEvent) {
@@ -437,7 +490,7 @@
 
 		const result = await response.json();
 
-		pageSaved.set(true);
+		alertMessage.set('page bookmarked successfully');
 	}
 </script>
 
@@ -585,8 +638,13 @@
 		</div>
 		<div class="buttons">
 			<button on:click|preventDefault={savePage}>Bookmark this page</button>
-			<div class="importChromeBookmarks">
-				<span>Sync chrome bookmarks</span>
+			<div
+				class="importChromeBookmarks"
+				role="none"
+				on:click={SyncChromeBookmarks}
+				class:syncButtonDisabled={syncingChromeBookmarks}
+			>
+				<span>{syncingChromeBookmarks ? 'Sync in progress...' : 'Sync chrome bookmarks'}</span>
 			</div>
 		</div>
 	</form>
@@ -871,6 +929,11 @@
 							color: white;
 						}
 					}
+				}
+
+				& .syncButtonDisabled {
+					pointer-events: none;
+					opacity: 0.5;
 				}
 			}
 		}

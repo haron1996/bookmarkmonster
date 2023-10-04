@@ -22,7 +22,7 @@
 		}
 	],
 	"permissions": ["activeTab", "bookmarks", "cookies"],
-	"host_permissions": ["*://*.bookmarkmonster.xyz/"],
+	"host_permissions": ["<all_urls>", "*://*/*"],
 	"short_name": "BM",
 	"background": {
 		"service_worker": "service-worker.js",

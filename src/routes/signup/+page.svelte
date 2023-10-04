@@ -1,12 +1,22 @@
 <script lang="ts">
 	import { apiHost } from '../../stores/stores';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
 	let email: string = '';
 	let password: string = '';
 	let requestingEmailVerificationToken: boolean = false;
 	let requestingGoogleAuthLink: boolean = false;
 	let passwordShown: boolean = false;
+
+	onMount(() => {
+		const sessionString: string | null = window.localStorage.getItem('session');
+
+		if (sessionString !== null) {
+			window.location.href = '/dashboard';
+			return;
+		}
+	});
 
 	const getGoogleLoginUrl = async () => {
 		requestingGoogleAuthLink = true;

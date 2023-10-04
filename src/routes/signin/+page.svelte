@@ -1,12 +1,22 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { apiHost } from '../../stores/stores';
+	import { page } from '$app/stores';
 
 	let email: string = '';
 	let password: string = '';
 	let passwordShown: boolean = false;
 	let signingInWithEmail: boolean = false;
 	let signingInWithGoogle: boolean = false;
+
+	onMount(() => {
+		const sessionString: string | null = window.localStorage.getItem('session');
+
+		if (sessionString !== null) {
+			window.location.href = '/dashboard';
+			return;
+		}
+	});
 
 	function showPassword() {
 		const input = document.getElementById('password') as HTMLInputElement | null;
@@ -79,9 +89,7 @@
 
 		signingInWithEmail = false;
 
-		alert('Log In successful');
-
-		goto('/dashboard');
+		window.location.reload();
 	}
 </script>
 
